@@ -33,22 +33,30 @@
         .nav-pills { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
         .nav-pills .nav-link { 
             border-radius: 12px; font-weight: bold; color: var(--primary-blue); 
-            padding: 12px 25px; font-size: 1.1rem; transition: 0.3s; border: 1px solid transparent; 
+            padding: 10px 20px; font-size: 1rem; transition: 0.3s; border: 1px solid transparent; 
         }
         .nav-pills .nav-link.active { background-color: var(--primary-blue); color: white; box-shadow: 0 4px 10px rgba(12,74,110,0.3); }
 
-        .dashboard-item { background: var(--bg-card); border-radius: 15px; overflow: hidden; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 4px 6px rgba(0,0,0,0.02); display: flex; flex-direction: column; height: 100%; }
-        .dashboard-header { background: rgba(56,189,248,0.05); padding: 15px 20px; border-bottom: 1px solid rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; }
-        .dashboard-header h6 { margin: 0; font-weight: bold; font-size: 1.1rem; }
-        .dashboard-body { padding: 10px; flex-grow: 1; }
+        /* تنسيق الشبكة المدمجة (Compact Grid) للرئيسية */
+        .dashboard-item { background: var(--bg-card); border-radius: 12px; overflow: hidden; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 2px 4px rgba(0,0,0,0.02); display: flex; flex-direction: column; height: 100%; transition: transform 0.2s; }
+        .dashboard-item:hover { transform: translateY(-2px); box-shadow: 0 6px 12px rgba(0,0,0,0.05); }
+        .dashboard-header { background: rgba(56,189,248,0.03); padding: 10px 12px; border-bottom: 1px solid rgba(0,0,0,0.03); display: flex; flex-direction: column; align-items: center; }
+        .dashboard-header h6 { margin: 0 0 8px 0; font-weight: bold; font-size: 0.95rem; width: 100%; text-align: center; color: var(--primary-blue); }
+        .dashboard-body { padding: 5px; flex-grow: 1; }
 
+        /* الكروت التفصيلية داخل التبويبات (كما هي كبيرة) */
         .stat-card { background: var(--bg-card); border-radius: 15px; padding: 20px; border: 1px solid rgba(0,0,0,0.05); height: 100%; box-shadow: 0 4px 6px rgba(0,0,0,0.02); display: flex; flex-direction: column; }
-        .chart-wrapper { background: var(--bg-card); border-radius: 20px; padding: 20px; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
+        .chart-wrapper { background: var(--bg-card); border-radius: 15px; padding: 15px; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
 
-        .details-grid { display: flex; gap: 8px; width: 100%; margin-top: 10px; flex-wrap: wrap; justify-content: center; }
-        .details-box { background: var(--bg-card); border: 1px solid rgba(0,0,0,0.08); padding: 8px; border-radius: 8px; flex: 1; min-width: 80px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.02); display: flex; flex-direction: column; justify-content: center;}
-        .details-box span { display: block; font-size: 0.75rem; font-weight: bold; opacity: 0.8; margin-bottom: 3px; line-height: 1.2; }
-        .details-box strong { font-size: 1.2rem; color: var(--primary-blue); }
+        /* المربعات التفصيلية المصغرة للرئيسية */
+        .details-grid { display: flex; gap: 4px; width: 100%; flex-wrap: wrap; justify-content: center; }
+        .details-box { background: var(--bg-card); border: 1px solid rgba(0,0,0,0.05); padding: 4px; border-radius: 6px; flex: 1 1 45%; min-width: 60px; text-align: center; box-shadow: 0 1px 2px rgba(0,0,0,0.01); display: flex; flex-direction: column; justify-content: center;}
+        .details-box span { display: block; font-size: 0.65rem; font-weight: bold; opacity: 0.7; margin-bottom: 2px; line-height: 1.1; }
+        .details-box strong { font-size: 1rem; color: var(--primary-blue); line-height: 1; }
+
+        /* التبويبات الكبيرة تحتفظ بحجم المربعات الأكبر */
+        .stat-card .d-flex { font-size: 0.95rem; }
+        .stat-card strong { font-size: 1.2rem; }
 
         .apexcharts-toolbar { display: flex !important; opacity: 1 !important; visibility: visible !important; top: -10px !important; z-index: 10 !important; }
         .lens-icon { stroke: #0c4a6e; transition: 0.3s; }
@@ -63,100 +71,98 @@
 
 <div id="loader" class="loading-overlay">
     <div class="spinner-grow text-accent mb-3" style="width: 3rem; height: 3rem; color: var(--accent-blue);"></div>
-    <h5 id="loadMsg">جاري تحديث البيانات من السيرفر ...</h5>
+    <h5 id="loadMsg">جاري جلب وعرض البيانات...</h5>
 </div>
-
-
 
 <div class="top-navbar">
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
-        
         <div class="d-flex align-items-center gap-3 text-center text-md-start flex-column flex-md-row">
-            <img src="https://raw.githubusercontent.com/agzaidan13-ctrl/no2/main/boti.png" alt="شعار المعهد" style="height: 70px; width: auto;">
-            
+            <img src="boti.png" alt="شعار المعهد" style="height: 60px; width: auto;">
             <div>
-                <h4 class="fw-bold mb-1 text-primary-blue">إحصائيات معهد التدريب النفطي / بغداد</h4>
-                <h6 class="mb-0 text-secondary" style="font-size: 0.95rem; opacity: 0.8;">برمجة وتصميم: م. علي غازي</h6>
+                <h5 class="fw-bold mb-1 text-primary-blue">إحصائيات معهد التدريب النفطي / بغداد</h5>
+                <h6 class="mb-0 text-secondary" style="font-size: 0.85rem; opacity: 0.8;">برمجة وتصميم: م. علي غازي</h6>
             </div>
         </div>
-
-        <button class="btn btn-sm btn-outline-secondary rounded-pill px-3 mt-2 mt-md-0" onclick="toggleDarkMode()" id="themeBtn" style="white-space: nowrap;">🌙 الوضع الداكن</button>
-        
+        <button class="btn btn-sm btn-outline-secondary rounded-pill px-3 mt-2 mt-md-0" onclick="toggleDarkMode()" id="themeBtn">🌙 الوضع الداكن</button>
     </div>
 </div>
 
-
-<div class="container-fluid px-4 pb-5">
-    <ul class="nav nav-pills my-4" id="mainTabs">
+<div class="container-fluid px-3 pb-5">
+    <ul class="nav nav-pills my-3" id="mainTabs">
         <li class="nav-item"><button class="nav-link active" data-bs-toggle="pill" data-bs-target="#tab-home" onclick="resizeCharts()">🏠 الرئيسية</button></li>
         <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-students" onclick="resizeCharts()">الطلاب</button></li>
-        <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-weekly" onclick="resizeCharts()">الدورات الإسبوعية</button></li>
-        <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-monthly" onclick="resizeCharts()">الدورات الشهرية</button></li>
-        <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-workshops" onclick="resizeCharts()">الورش و الندوات</button></li>
+        <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-weekly" onclick="resizeCharts()">الأسبوعية</button></li>
+        <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-monthly" onclick="resizeCharts()">الشهرية</button></li>
+        <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-workshops" onclick="resizeCharts()">الورش والندوات</button></li>
     </ul>
 
     <div class="tab-content">
         <div class="tab-pane fade show active" id="tab-home">
-            <div class="row g-4">
-                <div class="col-12 col-xl-6">
+            <div class="row g-3">
+                
+                <div class="col-12 col-md-6 col-xl-3">
                     <div class="dashboard-item">
-                        <div class="dashboard-header flex-column align-items-start" style="padding-bottom: 5px;">
-                            <h6 style="width: 100%; text-align: center; margin-bottom: 5px;">إحصائيات الطلاب الفعلية</h6>
+                        <div class="dashboard-header">
+                            <h6>الطلاب الفعليون</h6>
                             <div class="details-grid">
-                                <div class="details-box"><span>المرحلة الأولى</span><strong id="v-st-first-h">--</strong></div>
-                                <div class="details-box"><span>المرحلة الثانية</span><strong id="v-st-second-h">--</strong></div>
-                                <div class="details-box" style="background: rgba(56,189,248,0.1);"><span>المجموع الكلي</span><strong id="v-st-total-h">--</strong></div>
+                                <div class="details-box"><span>مرحلة 1</span><strong id="v-st-first-h">--</strong></div>
+                                <div class="details-box"><span>مرحلة 2</span><strong id="v-st-second-h">--</strong></div>
+                                <div class="details-box" style="background: rgba(56,189,248,0.1); flex-basis: 100%;"><span>المجموع الكلي</span><strong id="v-st-total-h">--</strong></div>
                             </div>
                         </div>
                         <div class="dashboard-body"><div id="c-st-h"></div></div>
                     </div>
                 </div>
-                <div class="col-12 col-xl-6">
+
+                <div class="col-12 col-md-6 col-xl-3">
                     <div class="dashboard-item">
-                        <div class="dashboard-header flex-column align-items-start" style="padding-bottom: 5px;">
-                            <h6 style="width: 100%; text-align: center; margin-bottom: 5px;">الدورات الأسبوعية</h6>
+                        <div class="dashboard-header">
+                            <h6>الدورات الأسبوعية</h6>
                             <div class="details-grid">
-                                <div class="details-box"><span>عدد الدورات</span><strong id="v-wk-courses-h">--</strong></div>
-                                <div class="details-box" style="background: rgba(56,189,248,0.1);"><span>إجمالي المتدربين</span><strong id="v-wk-part-h">--</strong></div>
+                                <div class="details-box"><span>دورات</span><strong id="v-wk-courses-h">--</strong></div>
+                                <div class="details-box" style="background: rgba(56,189,248,0.1);"><span>متدربين</span><strong id="v-wk-part-h">--</strong></div>
                             </div>
                         </div>
                         <div class="dashboard-body"><div id="c-wk-h"></div></div>
                     </div>
                 </div>
-                <div class="col-12 col-xl-6">
+
+                <div class="col-12 col-md-6 col-xl-3">
                     <div class="dashboard-item">
-                        <div class="dashboard-header flex-column align-items-start" style="padding-bottom: 5px;">
-                            <h6 style="width: 100%; text-align: center; margin-bottom: 5px;">الدورات الشهرية</h6>
+                        <div class="dashboard-header">
+                            <h6>الدورات الشهرية</h6>
                             <div class="details-grid">
-                                <div class="details-box"><span>عدد الدورات</span><strong id="v-mo-courses-h">--</strong></div>
-                                <div class="details-box" style="background: rgba(56,189,248,0.1);"><span>إجمالي المتدربين</span><strong id="v-mo-part-h">--</strong></div>
+                                <div class="details-box"><span>دورات</span><strong id="v-mo-courses-h">--</strong></div>
+                                <div class="details-box" style="background: rgba(56,189,248,0.1);"><span>متدربين</span><strong id="v-mo-part-h">--</strong></div>
                             </div>
                         </div>
                         <div class="dashboard-body"><div id="c-mo-h"></div></div>
                     </div>
                 </div>
-                <div class="col-12 col-xl-6">
+                
+                <div class="col-12 col-md-6 col-xl-3">
                     <div class="dashboard-item">
-                        <div class="dashboard-header flex-column align-items-start" style="padding-bottom: 5px;">
-                            <h6 style="width: 100%; text-align: center; margin-bottom: 5px;">الورش والندوات</h6>
+                        <div class="dashboard-header">
+                            <h6>الورش والندوات</h6>
                             <div class="details-grid">
-                                <div class="details-box"><span>الورش</span><strong id="v-wr-count-h">--</strong></div>
-                                <div class="details-box"><span>مشاركي الورش</span><strong id="v-wr-part-h">--</strong></div>
-                                <div class="details-box"><span>الندوات</span><strong id="v-se-count-h">--</strong></div>
-                                <div class="details-box"><span>مشاركي الندوات</span><strong id="v-se-part-h">--</strong></div>
+                                <div class="details-box"><span>ورش</span><strong id="v-wr-count-h">--</strong></div>
+                                <div class="details-box"><span>مشاركين</span><strong id="v-wr-part-h">--</strong></div>
+                                <div class="details-box"><span>ندوات</span><strong id="v-se-count-h">--</strong></div>
+                                <div class="details-box"><span>مشاركين</span><strong id="v-se-part-h">--</strong></div>
                             </div>
                         </div>
                         <div class="dashboard-body"><div id="c-wr-h"></div></div>
                     </div>
                 </div>
-            </div>
+
+                </div>
         </div>
 
         <div class="tab-pane fade" id="tab-students">
             <div class="row g-3">
                 <div class="col-md-3">
                     <div class="stat-card">
-                        <h6 style="margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px dashed rgba(0,0,0,0.1); text-align: center;">إحصائيات الطلاب</h6>
+                        <h6 style="margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px dashed rgba(0,0,0,0.1); text-align: center;">تفاصيل الطلاب</h6>
                         <div class="d-flex justify-content-between mb-3"><span>المرحلة الأولى:</span> <strong id="v-st-first-t">--</strong></div>
                         <div class="d-flex justify-content-between mb-3"><span>المرحلة الثانية:</span> <strong id="v-st-second-t">--</strong></div>
                         <div class="d-flex justify-content-between p-2 rounded" style="background: rgba(56,189,248,0.1);"><span>المجموع الكلي:</span> <strong id="v-st-total-t">--</strong></div>
@@ -171,7 +177,7 @@
                     <div class="stat-card">
                         <h6 style="margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px dashed rgba(0,0,0,0.1); text-align: center;">الأسبوعية</h6>
                         <div class="d-flex justify-content-between mb-3"><span>عدد الدورات:</span> <strong id="v-wk-courses-t">--</strong></div>
-                        <div class="d-flex justify-content-between p-2 rounded" style="background: rgba(56,189,248,0.1);"><span>المتدربين:</span> <strong id="v-wk-part-t">--</strong></div>
+                        <div class="d-flex justify-content-between p-2 rounded" style="background: rgba(56,189,248,0.1);"><span>إجمالي المتدربين:</span> <strong id="v-wk-part-t">--</strong></div>
                     </div>
                 </div>
                 <div class="col-md-9"><div class="chart-wrapper"><div id="c-wk-t"></div></div></div>
@@ -183,7 +189,7 @@
                     <div class="stat-card">
                         <h6 style="margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px dashed rgba(0,0,0,0.1); text-align: center;">الشهرية</h6>
                         <div class="d-flex justify-content-between mb-3"><span>عدد الدورات:</span> <strong id="v-mo-courses-t">--</strong></div>
-                        <div class="d-flex justify-content-between p-2 rounded" style="background: rgba(56,189,248,0.1);"><span>المتدربين:</span> <strong id="v-mo-part-t">--</strong></div>
+                        <div class="d-flex justify-content-between p-2 rounded" style="background: rgba(56,189,248,0.1);"><span>إجمالي المتدربين:</span> <strong id="v-mo-part-t">--</strong></div>
                     </div>
                 </div>
                 <div class="col-md-9"><div class="chart-wrapper"><div id="c-mo-t"></div></div></div>
@@ -217,11 +223,23 @@
     };
 
     const customLensSVG = '<svg class="lens-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>';
+    const rightArrowSVG = '<svg class="lens-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>';
+    const leftArrowSVG  = '<svg class="lens-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>';
 
     const baseCfg = (s, h) => ({
         chart: { 
             type: 'line', height: h, stacked: s,
-            toolbar: { show: true, tools: { download: true, selection: false, zoom: false, zoomin: true, zoomout: true, pan: true, reset: customLensSVG }, autoSelected: 'pan' }
+            toolbar: { 
+                show: true, 
+                tools: { 
+                    download: true, selection: false, zoom: false, zoomin: true, zoomout: true, pan: true, reset: customLensSVG,
+                    customIcons: [
+                        { icon: rightArrowSVG, index: 7, title: 'لليمين', class: 'custom-pan-right', click: function (c) { let min = c.w.globals.minX; let max = c.w.globals.maxX; if(min===undefined) return; let shift = Math.max(1, Math.round((max-min)*0.25)); c.zoomX(min-shift, max-shift); } },
+                        { icon: leftArrowSVG, index: 8, title: 'لليسار', class: 'custom-pan-left', click: function (c) { let min = c.w.globals.minX; let max = c.w.globals.maxX; if(min===undefined) return; let shift = Math.max(1, Math.round((max-min)*0.25)); c.zoomX(min+shift, max+shift); } }
+                    ]
+                }, 
+                autoSelected: 'pan' 
+            }
         },
         stroke: { curve: 'smooth', width: 2 },
         colors: ['#0c4a6e', '#38bdf8', '#0ea5e9', '#0284c7'],
@@ -229,17 +247,18 @@
         xaxis: { type: 'category', categories: [], labels: { show: true, rotate: -45, hideOverlappingLabels: false, style: { colors: '#0c4a6e', fontFamily: 'Cairo', fontSize: '11px' } } },
         yaxis: { labels: { style: { colors: '#0c4a6e', fontFamily: 'Cairo' } } },
         legend: { position: 'top', labels: { colors: '#0c4a6e', fontFamily: 'Cairo' } },
-        plotOptions: { bar: { columnWidth: '45%', borderRadius: 3 } }
+        plotOptions: { bar: { columnWidth: '55%', borderRadius: 3 } }
     });
 
+    // تم تغيير الارتفاع في الواجهة الرئيسية (H) إلى 180 بدلاً من 250 ليناسب العرض المضغوط الجديد
     let charts = {
-        stH: new ApexCharts(document.querySelector("#c-st-h"), baseCfg(true, 250)),
+        stH: new ApexCharts(document.querySelector("#c-st-h"), baseCfg(true, 180)),
         stT: new ApexCharts(document.querySelector("#c-st-t"), baseCfg(true, 400)),
-        wkH: new ApexCharts(document.querySelector("#c-wk-h"), baseCfg(false, 250)),
+        wkH: new ApexCharts(document.querySelector("#c-wk-h"), baseCfg(false, 180)),
         wkT: new ApexCharts(document.querySelector("#c-wk-t"), baseCfg(false, 400)),
-        moH: new ApexCharts(document.querySelector("#c-mo-h"), baseCfg(false, 250)),
+        moH: new ApexCharts(document.querySelector("#c-mo-h"), baseCfg(false, 180)),
         moT: new ApexCharts(document.querySelector("#c-mo-t"), baseCfg(false, 400)),
-        wrH: new ApexCharts(document.querySelector("#c-wr-h"), baseCfg(false, 250)),
+        wrH: new ApexCharts(document.querySelector("#c-wr-h"), baseCfg(false, 180)),
         wrT: new ApexCharts(document.querySelector("#c-wr-t"), baseCfg(false, 400))
     };
 
@@ -283,9 +302,7 @@
             Papa.parse(csvText, {
                 header: true, skipEmptyLines: true,
                 complete: function(results) {
-                    if(results.data && results.data.length > 0) {
-                        upd(targetCharts, results.data, sectionType, chartTypeSeries);
-                    }
+                    if(results.data && results.data.length > 0) { upd(targetCharts, results.data, sectionType, chartTypeSeries); }
                 }
             });
         } catch (error) {
@@ -308,10 +325,7 @@
             for (let i = data.length - 1; i >= 0; i--) {
                 let fVal = parseFloat(data[i][colFirst]) || 0;
                 let sVal = parseFloat(data[i][colSecond]) || 0;
-                if (fVal + sVal > 0) {
-                    first = fVal; second = sVal; total = fVal + sVal;
-                    break;
-                }
+                if (fVal + sVal > 0) { first = fVal; second = sVal; total = fVal + sVal; break; }
             }
             ['v-st-first-h', 'v-st-first-t'].forEach(id => { if(document.getElementById(id)) document.getElementById(id).innerText = first.toLocaleString(); });
             ['v-st-second-h', 'v-st-second-t'].forEach(id => { if(document.getElementById(id)) document.getElementById(id).innerText = second.toLocaleString(); });
