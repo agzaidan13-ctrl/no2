@@ -37,32 +37,53 @@
         }
         .nav-pills .nav-link.active { background-color: var(--primary-blue); color: white; box-shadow: 0 4px 10px rgba(12,74,110,0.3); }
 
-        /* تنسيق الشبكة المدمجة (Compact Grid) للرئيسية */
         .dashboard-item { background: var(--bg-card); border-radius: 12px; overflow: hidden; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 2px 4px rgba(0,0,0,0.02); display: flex; flex-direction: column; height: 100%; transition: transform 0.2s; }
         .dashboard-item:hover { transform: translateY(-2px); box-shadow: 0 6px 12px rgba(0,0,0,0.05); }
         .dashboard-header { background: rgba(56,189,248,0.03); padding: 10px 12px; border-bottom: 1px solid rgba(0,0,0,0.03); display: flex; flex-direction: column; align-items: center; }
         .dashboard-header h6 { margin: 0 0 8px 0; font-weight: bold; font-size: 0.95rem; width: 100%; text-align: center; color: var(--primary-blue); }
         .dashboard-body { padding: 5px; flex-grow: 1; }
 
-        /* الكروت التفصيلية داخل التبويبات (كما هي كبيرة) */
         .stat-card { background: var(--bg-card); border-radius: 15px; padding: 20px; border: 1px solid rgba(0,0,0,0.05); height: 100%; box-shadow: 0 4px 6px rgba(0,0,0,0.02); display: flex; flex-direction: column; }
         .chart-wrapper { background: var(--bg-card); border-radius: 15px; padding: 15px; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
 
-        /* المربعات التفصيلية المصغرة للرئيسية */
         .details-grid { display: flex; gap: 4px; width: 100%; flex-wrap: wrap; justify-content: center; }
         .details-box { background: var(--bg-card); border: 1px solid rgba(0,0,0,0.05); padding: 4px; border-radius: 6px; flex: 1 1 45%; min-width: 60px; text-align: center; box-shadow: 0 1px 2px rgba(0,0,0,0.01); display: flex; flex-direction: column; justify-content: center;}
         .details-box span { display: block; font-size: 0.65rem; font-weight: bold; opacity: 0.7; margin-bottom: 2px; line-height: 1.1; }
         .details-box strong { font-size: 1rem; color: var(--primary-blue); line-height: 1; }
 
-        /* التبويبات الكبيرة تحتفظ بحجم المربعات الأكبر */
         .stat-card .d-flex { font-size: 0.95rem; }
         .stat-card strong { font-size: 1.2rem; }
 
+        /* ----------------------------------------------------- */
+        /* السيطرة الكاملة على شريط الأيقونات وإصلاح الخلل */
+        /* ----------------------------------------------------- */
         .apexcharts-toolbar { display: flex !important; opacity: 1 !important; visibility: visible !important; top: -10px !important; z-index: 10 !important; }
-        .lens-icon { stroke: #0c4a6e; transition: 0.3s; }
-        .lens-icon:hover { stroke: #38bdf8; }
-        [data-bs-theme="dark"] .lens-icon { stroke: #f0f9ff; }
-        [data-bs-theme="dark"] .lens-icon:hover { stroke: #38bdf8; }
+        
+        /* إخفاء عدسة التحديد المربعة */
+        .apexcharts-zoom-icon { display: none !important; } 
+
+        /* تصميم الأسهم اليمين واليسار */
+        .custom-arrow { stroke: #0c4a6e; transition: 0.3s; margin-top: 2px; }
+        .custom-arrow:hover { stroke: #38bdf8; }
+        [data-bs-theme="dark"] .custom-arrow { stroke: #f0f9ff; }
+        [data-bs-theme="dark"] .custom-arrow:hover { stroke: #38bdf8; }
+
+        /* تحويل أيقونة المنزل (Reset) إلى عدسة احترافية عبر الـ CSS */
+        .apexcharts-reset-icon svg { display: none !important; } /* إخفاء شكل المنزل */
+        .apexcharts-reset-icon {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230c4a6e' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'%3E%3C/circle%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'%3E%3C/line%3E%3C/svg%3E") !important;
+            background-size: 18px !important; background-repeat: no-repeat !important; background-position: center !important;
+            width: 20px !important; height: 20px !important; margin-top: 2px; opacity: 1 !important; transition: 0.3s;
+        }
+        .apexcharts-reset-icon:hover {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2338bdf8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'%3E%3C/circle%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'%3E%3C/line%3E%3C/svg%3E") !important;
+        }
+        [data-bs-theme="dark"] .apexcharts-reset-icon {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f0f9ff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'%3E%3C/circle%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'%3E%3C/line%3E%3C/svg%3E") !important;
+        }
+        [data-bs-theme="dark"] .apexcharts-reset-icon:hover {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2338bdf8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'%3E%3C/circle%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'%3E%3C/line%3E%3C/svg%3E") !important;
+        }
 
         .loading-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 9999; justify-content: center; align-items: center; color: white; flex-direction: column; backdrop-filter: blur(5px); }
     </style>
@@ -99,7 +120,6 @@
     <div class="tab-content">
         <div class="tab-pane fade show active" id="tab-home">
             <div class="row g-3">
-                
                 <div class="col-12 col-md-6 col-xl-3">
                     <div class="dashboard-item">
                         <div class="dashboard-header">
@@ -113,7 +133,6 @@
                         <div class="dashboard-body"><div id="c-st-h"></div></div>
                     </div>
                 </div>
-
                 <div class="col-12 col-md-6 col-xl-3">
                     <div class="dashboard-item">
                         <div class="dashboard-header">
@@ -126,7 +145,6 @@
                         <div class="dashboard-body"><div id="c-wk-h"></div></div>
                     </div>
                 </div>
-
                 <div class="col-12 col-md-6 col-xl-3">
                     <div class="dashboard-item">
                         <div class="dashboard-header">
@@ -139,7 +157,6 @@
                         <div class="dashboard-body"><div id="c-mo-h"></div></div>
                     </div>
                 </div>
-                
                 <div class="col-12 col-md-6 col-xl-3">
                     <div class="dashboard-item">
                         <div class="dashboard-header">
@@ -154,8 +171,7 @@
                         <div class="dashboard-body"><div id="c-wr-h"></div></div>
                     </div>
                 </div>
-
-                </div>
+            </div>
         </div>
 
         <div class="tab-pane fade" id="tab-students">
@@ -222,9 +238,9 @@
         wr: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vR7qo1jO0NlRy6N6RfIZlfwHWxyDH71dMsnxEmyIXHuD5StSxpNrw4kxuUF2rE9tA/pub?gid=422925715&single=true&output=csv'
     };
 
-    const customLensSVG = '<svg class="lens-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>';
-    const rightArrowSVG = '<svg class="lens-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>';
-    const leftArrowSVG  = '<svg class="lens-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>';
+    // تصميم أسهم التحريك اليمين واليسار (تعمل باللمس للموبايل)
+    const rightArrowSVG = '<svg class="custom-arrow" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>';
+    const leftArrowSVG  = '<svg class="custom-arrow" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>';
 
     const baseCfg = (s, h) => ({
         chart: { 
@@ -232,10 +248,40 @@
             toolbar: { 
                 show: true, 
                 tools: { 
-                    download: true, selection: false, zoom: false, zoomin: true, zoomout: true, pan: true, reset: customLensSVG,
+                    download: true, 
+                    selection: false, // تم إخفاء مربع التحديد 
+                    zoom: false,      // تم إخفاء الزوم الافتراضي المزعج
+                    zoomin: true, 
+                    zoomout: true, 
+                    pan: true, 
+                    reset: true,      // يعمل كزر أساسي وتم تجميله بالـ CSS كعدسة
                     customIcons: [
-                        { icon: rightArrowSVG, index: 7, title: 'لليمين', class: 'custom-pan-right', click: function (c) { let min = c.w.globals.minX; let max = c.w.globals.maxX; if(min===undefined) return; let shift = Math.max(1, Math.round((max-min)*0.25)); c.zoomX(min-shift, max-shift); } },
-                        { icon: leftArrowSVG, index: 8, title: 'لليسار', class: 'custom-pan-left', click: function (c) { let min = c.w.globals.minX; let max = c.w.globals.maxX; if(min===undefined) return; let shift = Math.max(1, Math.round((max-min)*0.25)); c.zoomX(min+shift, max+shift); } }
+                        {
+                            icon: rightArrowSVG,
+                            index: 7,
+                            title: 'تحريك لليمين',
+                            class: 'custom-pan-right',
+                            click: function (chart) {
+                                let min = chart.w.globals.minX;
+                                let max = chart.w.globals.maxX;
+                                if(min === undefined || max === undefined) return;
+                                let shift = Math.max(1, Math.round((max - min) * 0.25));
+                                chart.zoomX(min - shift, max - shift);
+                            }
+                        },
+                        {
+                            icon: leftArrowSVG,
+                            index: 8,
+                            title: 'تحريك لليسار',
+                            class: 'custom-pan-left',
+                            click: function (chart) {
+                                let min = chart.w.globals.minX;
+                                let max = chart.w.globals.maxX;
+                                if(min === undefined || max === undefined) return;
+                                let shift = Math.max(1, Math.round((max - min) * 0.25));
+                                chart.zoomX(min + shift, max + shift);
+                            }
+                        }
                     ]
                 }, 
                 autoSelected: 'pan' 
@@ -250,7 +296,6 @@
         plotOptions: { bar: { columnWidth: '55%', borderRadius: 3 } }
     });
 
-    // تم تغيير الارتفاع في الواجهة الرئيسية (H) إلى 180 بدلاً من 250 ليناسب العرض المضغوط الجديد
     let charts = {
         stH: new ApexCharts(document.querySelector("#c-st-h"), baseCfg(true, 180)),
         stT: new ApexCharts(document.querySelector("#c-st-t"), baseCfg(true, 400)),
