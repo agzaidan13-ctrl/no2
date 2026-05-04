@@ -54,24 +54,9 @@
         .stat-card .d-flex { font-size: 0.95rem; }
         .stat-card strong { font-size: 1.2rem; }
 
-        /* شريط الأيقونات والأسهم بالنظام الجديد */
+        /* شريط الأيقونات */
         .apexcharts-toolbar { display: flex !important; opacity: 1 !important; visibility: visible !important; top: -10px !important; z-index: 10 !important; }
         .apexcharts-zoom-icon { display: none !important; } 
-
-        /* تنسيق أسهم التحريك لتكون واضحة كالنصوص */
-        .custom-nav-arrow { 
-            color: #0c4a6e; 
-            font-size: 20px; 
-            font-weight: 900; 
-            display: inline-block; 
-            padding: 0 5px; 
-            transition: 0.3s; 
-            user-select: none;
-            cursor: pointer;
-        }
-        .custom-nav-arrow:hover { color: #38bdf8; }
-        [data-bs-theme="dark"] .custom-nav-arrow { color: #f0f9ff; }
-        [data-bs-theme="dark"] .custom-nav-arrow:hover { color: #38bdf8; }
 
         .apexcharts-reset-icon svg { display: none !important; } 
         .apexcharts-reset-icon {
@@ -239,9 +224,9 @@
         wr: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vR7qo1jO0NlRy6N6RfIZlfwHWxyDH71dMsnxEmyIXHuD5StSxpNrw4kxuUF2rE9tA/pub?gid=422925715&single=true&output=csv'
     };
 
-    // تم تغيير الأسهم إلى نصوص HTML متوافقة 100% لتجنب اختفائها
-    const rightArrowIcon = '<div class="custom-nav-arrow">&rarr;</div>'; // سهم لليمين
-    const leftArrowIcon  = '<div class="custom-nav-arrow">&larr;</div>'; // سهم لليسار
+    // استخدام كود الـ SVG الأصلي والقياسي المدعوم تلقائياً من مكتبة المخططات
+    const rightArrowSVG = '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>';
+    const leftArrowSVG  = '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>';
 
     const baseCfg = (s, h) => ({
         chart: { 
@@ -257,8 +242,8 @@
                     pan: true, 
                     reset: true, 
                     customIcons: [
-                        { icon: rightArrowIcon, index: 10, title: 'تحريك لليمين', class: 'custom-pan-right', click: function (c) { let min = c.w.globals.minX; let max = c.w.globals.maxX; if(min===undefined) return; let shift = Math.max(1, Math.round((max-min)*0.25)); c.zoomX(min-shift, max-shift); } },
-                        { icon: leftArrowIcon, index: 11, title: 'تحريك لليسار', class: 'custom-pan-left', click: function (c) { let min = c.w.globals.minX; let max = c.w.globals.maxX; if(min===undefined) return; let shift = Math.max(1, Math.round((max-min)*0.25)); c.zoomX(min+shift, max+shift); } }
+                        { icon: rightArrowSVG, index: 10, title: 'تحريك لليمين', class: 'custom-pan-icon', click: function (c) { let min = c.w.globals.minX; let max = c.w.globals.maxX; if(min===undefined) return; let shift = Math.max(1, Math.round((max-min)*0.25)); c.zoomX(min+shift, max+shift); } },
+                        { icon: leftArrowSVG, index: 11, title: 'تحريك لليسار', class: 'custom-pan-icon', click: function (c) { let min = c.w.globals.minX; let max = c.w.globals.maxX; if(min===undefined) return; let shift = Math.max(1, Math.round((max-min)*0.25)); c.zoomX(min-shift, max-shift); } }
                     ]
                 }, 
                 autoSelected: 'pan' 
