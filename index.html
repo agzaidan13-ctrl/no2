@@ -39,8 +39,19 @@
 
         .dashboard-item { background: var(--bg-card); border-radius: 12px; overflow: hidden; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 2px 4px rgba(0,0,0,0.02); display: flex; flex-direction: column; height: 100%; transition: transform 0.2s; }
         .dashboard-item:hover { transform: translateY(-2px); box-shadow: 0 6px 12px rgba(0,0,0,0.05); }
-        .dashboard-header { background: rgba(56,189,248,0.03); padding: 10px 12px; border-bottom: 1px solid rgba(0,0,0,0.03); display: flex; flex-direction: column; align-items: center; }
-        .dashboard-header h6 { margin: 0 0 8px 0; font-weight: bold; font-size: 0.95rem; width: 100%; text-align: center; color: var(--primary-blue); }
+        
+        /* === هذا هو التعديل الأخضر الجذري للاختبار === */
+        .dashboard-header { 
+            background-color: #d1e7dd !important; 
+            padding: 10px 12px; 
+            border-bottom: 2px solid #198754 !important; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+        }
+        .dashboard-header h6 { margin: 0 0 8px 0; font-weight: bold; font-size: 0.95rem; width: 100%; text-align: center; color: #0f5132 !important; }
+        /* ================================================= */
+
         .dashboard-body { padding: 5px; flex-grow: 1; }
 
         .stat-card { background: var(--bg-card); border-radius: 15px; padding: 20px; border: 1px solid rgba(0,0,0,0.05); height: 100%; box-shadow: 0 4px 6px rgba(0,0,0,0.02); display: flex; flex-direction: column; }
@@ -48,15 +59,29 @@
 
         .details-grid { display: flex; gap: 4px; width: 100%; flex-wrap: wrap; justify-content: center; }
         .details-box { background: var(--bg-card); border: 1px solid rgba(0,0,0,0.05); padding: 4px; border-radius: 6px; flex: 1 1 45%; min-width: 60px; text-align: center; box-shadow: 0 1px 2px rgba(0,0,0,0.01); display: flex; flex-direction: column; justify-content: center;}
-        .details-box span { display: block; font-size: 0.65rem; font-weight: bold; opacity: 0.7; margin-bottom: 2px; line-height: 1.1; }
+        .details-box span { display: block; font-size: 0.65rem; font-weight: bold; opacity: 0.7; margin-bottom: 2px; line-height: 1.1; color: var(--text-dark); }
         .details-box strong { font-size: 1rem; color: var(--primary-blue); line-height: 1; }
 
         .stat-card .d-flex { font-size: 0.95rem; }
         .stat-card strong { font-size: 1.2rem; }
 
-        /* شريط الأيقونات */
+        /* شريط الأيقونات والأسهم بالنظام القياسي */
         .apexcharts-toolbar { display: flex !important; opacity: 1 !important; visibility: visible !important; top: -10px !important; z-index: 10 !important; }
         .apexcharts-zoom-icon { display: none !important; } 
+
+        .custom-nav-arrow { 
+            color: #0c4a6e; 
+            font-size: 20px; 
+            font-weight: 900; 
+            display: inline-block; 
+            padding: 0 5px; 
+            transition: 0.3s; 
+            user-select: none;
+            cursor: pointer;
+        }
+        .custom-nav-arrow:hover { color: #38bdf8; }
+        [data-bs-theme="dark"] .custom-nav-arrow { color: #f0f9ff; }
+        [data-bs-theme="dark"] .custom-nav-arrow:hover { color: #38bdf8; }
 
         .apexcharts-reset-icon svg { display: none !important; } 
         .apexcharts-reset-icon {
@@ -113,7 +138,7 @@
                             <div class="details-grid">
                                 <div class="details-box"><span>مرحلة 1</span><strong id="v-st-first-h">--</strong></div>
                                 <div class="details-box"><span>مرحلة 2</span><strong id="v-st-second-h">--</strong></div>
-                                <div class="details-box" style="background: rgba(56,189,248,0.1); flex-basis: 100%;"><span>المجموع الكلي</span><strong id="v-st-total-h">--</strong></div>
+                                <div class="details-box" style="background: rgba(255,255,255,0.5); flex-basis: 100%;"><span>المجموع الكلي</span><strong id="v-st-total-h">--</strong></div>
                             </div>
                         </div>
                         <div class="dashboard-body"><div id="c-st-h"></div></div>
@@ -125,7 +150,7 @@
                             <h6>الدورات الأسبوعية</h6>
                             <div class="details-grid">
                                 <div class="details-box"><span>دورات</span><strong id="v-wk-courses-h">--</strong></div>
-                                <div class="details-box" style="background: rgba(56,189,248,0.1);"><span>متدربين</span><strong id="v-wk-part-h">--</strong></div>
+                                <div class="details-box" style="background: rgba(255,255,255,0.5);"><span>متدربين</span><strong id="v-wk-part-h">--</strong></div>
                             </div>
                         </div>
                         <div class="dashboard-body"><div id="c-wk-h"></div></div>
@@ -137,7 +162,7 @@
                             <h6>الدورات الشهرية</h6>
                             <div class="details-grid">
                                 <div class="details-box"><span>دورات</span><strong id="v-mo-courses-h">--</strong></div>
-                                <div class="details-box" style="background: rgba(56,189,248,0.1);"><span>متدربين</span><strong id="v-mo-part-h">--</strong></div>
+                                <div class="details-box" style="background: rgba(255,255,255,0.5);"><span>متدربين</span><strong id="v-mo-part-h">--</strong></div>
                             </div>
                         </div>
                         <div class="dashboard-body"><div id="c-mo-h"></div></div>
@@ -224,9 +249,9 @@
         wr: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vR7qo1jO0NlRy6N6RfIZlfwHWxyDH71dMsnxEmyIXHuD5StSxpNrw4kxuUF2rE9tA/pub?gid=422925715&single=true&output=csv'
     };
 
-    // استخدام كود الـ SVG الأصلي والقياسي المدعوم تلقائياً من مكتبة المخططات
-    const rightArrowSVG = '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>';
-    const leftArrowSVG  = '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>';
+    // الأسهم كعناصر نصوص داخل الشريط
+    const rightArrowIcon = '<div class="custom-nav-arrow">&rarr;</div>';
+    const leftArrowIcon  = '<div class="custom-nav-arrow">&larr;</div>';
 
     const baseCfg = (s, h) => ({
         chart: { 
@@ -242,8 +267,8 @@
                     pan: true, 
                     reset: true, 
                     customIcons: [
-                        { icon: rightArrowSVG, index: 10, title: 'تحريك لليمين', class: 'custom-pan-icon', click: function (c) { let min = c.w.globals.minX; let max = c.w.globals.maxX; if(min===undefined) return; let shift = Math.max(1, Math.round((max-min)*0.25)); c.zoomX(min+shift, max+shift); } },
-                        { icon: leftArrowSVG, index: 11, title: 'تحريك لليسار', class: 'custom-pan-icon', click: function (c) { let min = c.w.globals.minX; let max = c.w.globals.maxX; if(min===undefined) return; let shift = Math.max(1, Math.round((max-min)*0.25)); c.zoomX(min-shift, max-shift); } }
+                        { icon: rightArrowIcon, index: 10, title: 'تحريك لليمين', class: 'custom-pan-right', click: function (c) { let min = c.w.globals.minX; let max = c.w.globals.maxX; if(min===undefined) return; let shift = Math.max(1, Math.round((max-min)*0.25)); c.zoomX(min-shift, max-shift); } },
+                        { icon: leftArrowIcon, index: 11, title: 'تحريك لليسار', class: 'custom-pan-left', click: function (c) { let min = c.w.globals.minX; let max = c.w.globals.maxX; if(min===undefined) return; let shift = Math.max(1, Math.round((max-min)*0.25)); c.zoomX(min+shift, max+shift); } }
                     ]
                 }, 
                 autoSelected: 'pan' 
