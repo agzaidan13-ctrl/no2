@@ -153,25 +153,12 @@
                     </div>
                 </div>
                 <div class="col-12 col-xl-5">
-                    <div class="row g-4 h-100">
-                        <div class="col-12 h-50">
-                            <div class="dashboard-item">
-                                <div class="dashboard-header">
-                                    <h6>أعداد الطلبة الحاليين</h6>
-                                    <div class="d-flex gap-1" dir="ltr"><button class="pan-btn" onclick="panChart('student_count', 'left')">◀</button><button class="pan-btn" onclick="panChart('student_count', 'right')">▶</button></div>
-                                </div>
-                                <div class="dashboard-body"><div id="chart-student-count"></div></div>
-                            </div>
+                    <div class="dashboard-item">
+                        <div class="dashboard-header">
+                            <h6>أعداد الطلبة الحاليين</h6>
+                            <div class="d-flex gap-1" dir="ltr"><button class="pan-btn" onclick="panChart('student_count', 'left')">◀</button><button class="pan-btn" onclick="panChart('student_count', 'right')">▶</button></div>
                         </div>
-                        <div class="col-12 h-50">
-                            <div class="dashboard-item">
-                                <div class="dashboard-header">
-                                    <h6>حركة وتدفق الطلبة (قبول / رقن قيد / تأجيل)</h6>
-                                    <div class="d-flex gap-1" dir="ltr"><button class="pan-btn" onclick="panChart('student_move', 'left')">◀</button><button class="pan-btn" onclick="panChart('student_move', 'right')">▶</button></div>
-                                </div>
-                                <div class="dashboard-body"><div id="chart-student-move"></div></div>
-                            </div>
-                        </div>
+                        <div class="dashboard-body"><div id="chart-student-count"></div></div>
                     </div>
                 </div>
             </div>
@@ -274,7 +261,7 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-    // روابط البيانات الـ 15 المحدثة والمصححة
+    // تم إزالة رابط حركة الطلبة من قائمة الشيتات
     const SHEETS_DB = {
         emp_total: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=398430626&single=true&output=csv',
         emp_dept: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=255359164&single=true&output=csv',
@@ -285,7 +272,6 @@
         participants_internal: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=845162776&single=true&output=csv',
         courses_external: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=1627689816&single=true&output=csv',
         workshops_seminars: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=1501097808&single=true&output=csv',
-        student_move: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=1103326192&single=true&output=csv',
         student_count: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=876030086&single=true&output=csv',
         graduates: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=325367955&single=true&output=csv',
         scientific_visits: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=340829433&single=true&output=csv',
@@ -298,6 +284,12 @@
             type: type, height: '100%', width: '100%',
             toolbar: { show: true, tools: { download: true, selection: false, zoom: false, zoomin: true, zoomout: true, pan: true, reset: true }, autoSelected: 'pan' }
         },
+        noData: {
+            text: 'جاري تحميل وعرض البيانات...',
+            align: 'center',
+            verticalAlign: 'middle',
+            style: { color: '#0c4a6e', fontSize: '14px', fontFamily: 'Cairo' }
+        },
         stroke: { curve: 'smooth', width: 2.5 },
         colors: ['#0c4a6e', '#0ea5e9', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'],
         series: [],
@@ -308,6 +300,7 @@
         dataLabels: { enabled: false }
     });
 
+    // تم إزالة مخطط حركة الطلبة من قائمة التهيئة
     let charts = {
         emp_total: new ApexCharts(document.querySelector("#chart-emp-total"), buildChartConfig('bar')),
         emp_dept: new ApexCharts(document.querySelector("#chart-emp-dept"), buildChartConfig('bar')),
@@ -318,7 +311,6 @@
         participants_internal: new ApexCharts(document.querySelector("#chart-participants-internal"), buildChartConfig('column')),
         courses_external: new ApexCharts(document.querySelector("#chart-courses-external"), buildChartConfig('line')),
         workshops_seminars: new ApexCharts(document.querySelector("#chart-workshops-seminars"), buildChartConfig('column')),
-        student_move: new ApexCharts(document.querySelector("#chart-student-move"), buildChartConfig('column')),
         student_count: new ApexCharts(document.querySelector("#chart-student-count"), buildChartConfig('bar')),
         graduates: new ApexCharts(document.querySelector("#chart-graduates"), buildChartConfig('area')),
         scientific_visits: new ApexCharts(document.querySelector("#chart-scientific-visits"), buildChartConfig('column')),
@@ -372,10 +364,13 @@
             const csvData = await fetchCSVWithRetry(SHEETS_DB[key]);
             if (csvData) {
                 Papa.parse(csvData, {
-                    header: true, skipEmptyLines: true,
+                    header: false,
+                    skipEmptyLines: true,
                     complete: function(results) {
-                        if(results.data && results.data.length > 0) {
+                        if(results.data && results.data.length > 1) {
                             processAndPopulate(charts[key], results.data);
+                        } else {
+                            if(charts[key]) charts[key].updateOptions({ noData: { text: '⚠️ الجدول فارغ أو غير منسق' } });
                         }
                     }
                 });
@@ -388,31 +383,46 @@
         document.getElementById('loader').style.display = 'none';
     }
 
-    // المحرك الذكي المطور (يتجاوز الصفوف الفارغة الناتجة عن الإكسل)
-    function processAndPopulate(chartObj, dataRow) {
-        if(!chartObj || !dataRow || dataRow.length === 0) return;
+    function processAndPopulate(chartObj, dataMatrix) {
+        if(!chartObj || !dataMatrix || dataMatrix.length < 2) return;
         
-        // جلب أسماء الأعمدة الفعلية وتجاهل أي عمود مجهول أو فارغ
-        const columns = Object.keys(dataRow[0]).filter(c => c.trim() !== ''); 
-        if(columns.length === 0) return;
+        const headers = dataMatrix[0];
+        const validCols = [];
         
-        // فلتر ذكي: استبعاد أي صف لا يحتوي على قيمة في العمود الأول (تنظيف الصفوف الفارغة من الإكسل)
-        const validRows = dataRow.filter(row => row[columns[0]] && String(row[columns[0]]).trim() !== '');
-        if(validRows.length === 0) return;
+        for(let i = 1; i < headers.length; i++) {
+            if(headers[i] && headers[i].trim() !== '') validCols.push(i);
+        }
+        
+        if(validCols.length === 0) {
+            chartObj.updateOptions({ noData: { text: '⚠️ لم يتم العثور على أعمدة بيانات صالحة' } });
+            return;
+        }
 
-        const xLabels = validRows.map(row => row[columns[0]] || 'بدون عنوان');
-        
-        const ySeries = columns.slice(1).map(colName => ({
-            name: colName || 'قيمة',
-            data: validRows.map(row => {
-                let valStr = String(row[colName] || '0');
-                let cleanVal = valStr.replace(/[^0-9.-]+/g,""); // تحويل آمن للأرقام
-                return parseFloat(cleanVal) || 0;
-            })
+        const xLabels = [];
+        const seriesData = validCols.map(colIndex => ({
+            name: headers[colIndex].trim(),
+            data: []
         }));
 
-        chartObj.updateOptions({ xaxis: { categories: xLabels } });
-        chartObj.updateSeries(ySeries);
+        for(let r = 1; r < dataMatrix.length; r++) {
+            const row = dataMatrix[r];
+            if(!row[0] || String(row[0]).trim() === '') continue;
+            
+            xLabels.push(String(row[0]).trim());
+            
+            validCols.forEach((colIndex, i) => {
+                let valStr = String(row[colIndex] || '0');
+                let cleanVal = valStr.replace(/[^0-9.-]+/g,"");
+                seriesData[i].data.push(parseFloat(cleanVal) || 0);
+            });
+        }
+
+        if(xLabels.length > 0) {
+            chartObj.updateOptions({ xaxis: { categories: xLabels } });
+            chartObj.updateSeries(seriesData);
+        } else {
+            chartObj.updateOptions({ noData: { text: '⚠️ لا توجد صفوف بيانات صالحة' } });
+        }
     }
 
     function resizeCharts() { 
@@ -436,7 +446,8 @@
                 theme: { mode: nextTheme },
                 xaxis: { labels: { style: { colors: textColor } } },
                 yaxis: { labels: { style: { colors: textColor } } },
-                legend: { labels: { colors: textColor } }
+                legend: { labels: { colors: textColor } },
+                noData: { style: { color: textColor } }
             });
         });
     }
