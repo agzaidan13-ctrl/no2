@@ -37,7 +37,9 @@
         }
         .nav-pills .nav-link.active { background-color: var(--primary-blue); color: white; box-shadow: 0 4px 10px rgba(12,74,110,0.3); }
 
-        .dashboard-item { background: var(--bg-card); border-radius: 15px; overflow: hidden; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 4px 6px rgba(0,0,0,0.02); display: flex; flex-direction: column; height: 100%; margin-bottom: 5px; }
+        .dashboard-item { background: var(--bg-card); border-radius: 15px; overflow: hidden; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 4px 6px rgba(0,0,0,0.02); display: flex; flex-direction: column; height: 100%; transition: 0.2s; }
+        .dashboard-item:hover { transform: translateY(-3px); box-shadow: 0 6px 12px rgba(0,0,0,0.06); }
+        
         .dashboard-header { background: rgba(56,189,248,0.05); padding: 15px 20px; border-bottom: 1px solid rgba(0,0,0,0.05); display: flex; flex-direction: column; align-items: center; }
         .dashboard-header h6 { margin: 0 0 10px 0; font-weight: bold; font-size: 1.1rem; color: var(--primary-blue); text-align: center; }
         .dashboard-body { padding: 10px; flex-grow: 1; }
@@ -60,7 +62,7 @@
 
 <div id="loader" class="loading-overlay">
     <div class="spinner-grow text-accent mb-3" style="width: 3rem; height: 3rem; color: var(--accent-blue);"></div>
-    <h5 id="loadMsg" class="fw-bold">جاري تحميل وتزامن مؤشرات المنظومة الإحصائية...</h5>
+    <h5 id="loadMsg" class="fw-bold">جاري تحميل المنظومة (قد يستغرق بضع ثوانٍ لمنع الحظر)...</h5>
 </div>
 
 <div class="top-navbar">
@@ -77,6 +79,7 @@
 </div>
 
 <div class="container-fluid px-4 pb-5">
+    
     <ul class="nav nav-pills my-4" id="mainTabs" role="tablist">
         <li class="nav-item" role="presentation"><button class="nav-link active" data-bs-toggle="pill" data-bs-target="#tab-home" type="button" role="tab">🏠 الرئيسية</button></li>
         <li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-detail" type="button" role="tab">📊 التفاصيل الكاملة</button></li>
@@ -98,7 +101,7 @@
                 <div class="col-md-9">
                     <div class="chart-wrapper">
                         <div id="c-detail-view" style="min-height: 400px;">
-                            <h5 class="text-center mt-5 text-muted">يرجى اختيار أحد المخططات من الواجهة الرئيسية لعرض تفاصيله الكاملة هنا</h5>
+                            <h5 class="text-center mt-5 text-muted">يرجى اختيار أحد المخططات من الواجهة الرئيسية لعرض تفاصيله هنا</h5>
                         </div>
                     </div>
                 </div>
@@ -106,6 +109,8 @@
         </div>
     </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
     const CONFIG = [
@@ -135,7 +140,7 @@
         CONFIG.forEach(item => {
             html += `
             <div class="col-12 col-xl-6">
-                <div class="dashboard-item" style="cursor: pointer;" onclick="openDetailView('${item.id}')">
+                <div class="dashboard-item" style="cursor: pointer;" onclick="openDetailView('${item.id}')" title="انقر لعرض التفاصيل المتقدمة">
                     <div class="dashboard-header">
                         <h6>${item.title}</h6>
                         <div class="details-grid">
@@ -166,78 +171,110 @@
             yaxis: isPie ? undefined : { labels: { style: { colors: '#0c4a6e', fontFamily: 'Cairo' } } },
             legend: { position: 'bottom', fontSize: '11px', labels: { colors: '#0c4a6e', fontFamily: 'Cairo' } },
             plotOptions: isPie ? { pie: { donut: { size: '60%' } } } : { bar: { columnWidth: '50%', borderRadius: 3 } },
-            dataLabels: { enabled: isPie }
+            dataLabels: { enabled: isPie },
+            // إضافة مؤشر مرئي واضح يخبر المستخدم أن هذا المخطط يتم تحميله الآن
+            noData: {
+                text: '⏳ جاري جلب البيانات...',
+                align: 'center',
+                verticalAlign: 'middle',
+                style: { color: '#0c4a6e', fontSize: '14px', fontFamily: 'Cairo', fontWeight: 'bold' }
+            }
         };
     };
 
-    // نظام الطابور التتابعي الحقيقي لمنع الحظر وضمان التحميل الكامل
+    // نظام الطابور (السر الذي سيحل مشكلة جوجل)
     async function loadDataSequentially() {
         document.getElementById('loader').style.display = 'flex';
         buildHomeGrid();
 
+        // 1. نهيئ جميع المخططات الـ 14 بحالة "جاري التحميل" لتظهر فورا
+        CONFIG.forEach(item => {
+            chartsObj[item.id] = new ApexCharts(document.querySelector(`#c-${item.id}`), getChartConfig(item.type, 240));
+            chartsObj[item.id].render();
+        });
+
+        // 2. نقوم بتحميل البيانات واحدة تلو الأخرى لمنع حظر خوادم جوجل
         for (const item of CONFIG) {
             try {
-                const res = await fetch(item.url + '&nocache=' + new Date().getTime() + Math.random());
-                const csvText = await res.text();
-                
-                // تحويل التفسير إلى Promise لضمان التتابع المطلق
-                await new Promise((resolve) => {
-                    Papa.parse(csvText, {
-                        header: true, skipEmptyLines: true,
-                        complete: function(results) {
-                            if(results.data && results.data.length > 0) {
-                                rawDataStore[item.id] = results.data;
-                                renderChartData(item, results.data);
+                let success = false;
+                // محاولة الجلب لـ 3 مرات كحد أقصى لكل ملف
+                for (let retry = 0; retry < 3; retry++) {
+                    const res = await fetch(item.url + '&nocache=' + new Date().getTime() + Math.random());
+                    if (!res.ok) throw new Error("HTTP Status Error");
+                    
+                    const csvText = await res.text();
+                    if (csvText.includes('<html')) throw new Error("Google Blocked (HTML returned)");
+
+                    await new Promise((resolve) => {
+                        Papa.parse(csvText, {
+                            header: true, skipEmptyLines: 'greedy',
+                            complete: function(results) {
+                                if(results.data && results.data.length > 0) {
+                                    rawDataStore[item.id] = results.data;
+                                    renderChartData(item, results.data);
+                                    success = true;
+                                }
+                                resolve();
                             }
-                            resolve(); // الانتقال للشيت التالي بعد رسم الحالي بنجاح
-                        },
-                        error: () => resolve()
+                        });
                     });
-                });
-                await new Promise(r => setTimeout(r, 250)); // مسافة أمان زمنية بين طلبات جوجل لحماية السيرفر
+
+                    if (success) break; // إذا نجحنا نخرج من حلقة الإعادة
+                    await new Promise(r => setTimeout(r, 1000)); // انتظار ثانية قبل المحاولة مجددا
+                }
+                
+                if (!success) {
+                    chartsObj[item.id].updateOptions({ noData: { text: "⚠️ الجدول فارغ أو غير مدعوم" } });
+                }
+
+                // تأخير 600 مللي ثانية بين كل شيت والذي يليه لإرضاء سيرفرات جوجل
+                await new Promise(r => setTimeout(r, 600)); 
+
             } catch (err) {
-                console.error("خطأ في جلب بيانات شيت:", item.title);
+                console.error("فشل الجلب للمخطط:", item.title, err);
+                chartsObj[item.id].updateOptions({ noData: { text: "❌ تم الحظر من سيرفر جوجل" } });
+                document.getElementById(`v-${item.id}-total`).innerText = "خطأ";
             }
         }
         document.getElementById('loader').style.display = 'none';
-        
-        document.querySelectorAll('button[data-bs-toggle="pill"]').forEach(btn => {
-            btn.addEventListener('shown.bs.tab', () => window.dispatchEvent(new Event('resize')));
-        });
     }
 
     function renderChartData(itemConfig, data) {
-        const cols = Object.keys(data[0]);
-        const isPie = itemConfig.type === 'donut' || itemConfig.type === 'pie';
-        let labels = [], series = [], totalSum = 0;
+        try {
+            // تصفية الأعمدة لإزالة أي أعمدة فارغة ناتجة عن التنسيق الخاطئ في الإكسل
+            const cols = Object.keys(data[0]).filter(k => k && k.trim() !== '');
+            if(cols.length < 2) throw new Error("أعمدة غير كافية");
 
-        if (isPie) {
-            labels = data.map(r => r[cols[0]]);
-            series = data.map(r => {
-                let val = parseFloat(String(r[cols[1]] || '0').replace(/[^0-9.-]+/g,"")) || 0;
-                totalSum += val; return val;
-            });
-        } else {
-            labels = data.map(r => r[cols[0]]);
-            series = cols.slice(1).map(colName => ({
-                name: colName,
-                type: itemConfig.type,
-                data: data.map(r => {
-                    let val = parseFloat(String(r[colName] || '0').replace(/[^0-9.-]+/g,"")) || 0;
+            const isPie = itemConfig.type === 'donut' || itemConfig.type === 'pie';
+            let labels = [], series = [], totalSum = 0;
+
+            if (isPie) {
+                labels = data.map(r => r[cols[0]]);
+                series = data.map(r => {
+                    let val = parseFloat(String(r[cols[1]] || '0').replace(/[^0-9.-]+/g,"")) || 0;
                     totalSum += val; return val;
-                })
-            }));
+                });
+                chartsObj[itemConfig.id].updateOptions({ labels: labels });
+                chartsObj[itemConfig.id].updateSeries(series);
+            } else {
+                labels = data.map(r => r[cols[0]]);
+                series = cols.slice(1).map(colName => ({
+                    name: colName,
+                    type: itemConfig.type,
+                    data: data.map(r => {
+                        let val = parseFloat(String(r[colName] || '0').replace(/[^0-9.-]+/g,"")) || 0;
+                        totalSum += val; return val;
+                    })
+                }));
+                chartsObj[itemConfig.id].updateOptions({ xaxis: { categories: labels } });
+                chartsObj[itemConfig.id].updateSeries(series);
+            }
+
+            const totalEl = document.getElementById(`v-${itemConfig.id}-total`);
+            if(totalEl) totalEl.innerText = totalSum.toLocaleString();
+        } catch (e) {
+            chartsObj[itemConfig.id].updateOptions({ noData: { text: "⚠️ خطأ في قراءة بيانات الجدول" } });
         }
-
-        const cfg = getChartConfig(itemConfig.type, 240);
-        if(isPie) { cfg.labels = labels; cfg.series = series; } 
-        else { cfg.xaxis.categories = labels; cfg.series = series; }
-        
-        chartsObj[itemConfig.id] = new ApexCharts(document.querySelector(`#c-${itemConfig.id}`), cfg);
-        chartsObj[itemConfig.id].render();
-
-        const totalEl = document.getElementById(`v-${itemConfig.id}-total`);
-        if(totalEl) totalEl.innerText = totalSum.toLocaleString();
     }
 
     function openDetailView(id) {
@@ -248,7 +285,7 @@
         const detailTabBtn = new bootstrap.Tab(document.querySelector('button[data-bs-target="#tab-detail"]'));
         detailTabBtn.show();
 
-        const cols = Object.keys(data[0]);
+        const cols = Object.keys(data[0]).filter(k => k && k.trim() !== '');
         let statsHtml = `<h6 style="margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px dashed rgba(0,0,0,0.1); text-align: center;">${itemConfig.title}</h6>`;
         
         let total = 0;
@@ -258,13 +295,14 @@
             total += colSum;
             statsHtml += `<div class="d-flex justify-content-between mb-3" style="font-size:0.9rem;"><span>${col}:</span> <strong>${colSum.toLocaleString()}</strong></div>`;
         });
-        statsHtml += `<div class="d-flex justify-content-between p-2 rounded mt-3" style="background: rgba(56,189,248,0.1);"><span>الإجمالي:</span> <strong>${total.toLocaleString()}</strong></div>`;
+        statsHtml += `<div class="d-flex justify-content-between p-2 rounded mt-3" style="background: rgba(56,189,248,0.1);"><span>الإجمالي الكلي:</span> <strong>${total.toLocaleString()}</strong></div>`;
         document.getElementById('detail-stats-container').innerHTML = statsHtml;
 
         if(activeDetailChart) activeDetailChart.destroy();
         
         const isPie = itemConfig.type === 'donut' || itemConfig.type === 'pie';
         const cfg = getChartConfig(itemConfig.type, 450);
+        cfg.noData = { text: 'جاري الرسم...' }; // إزالة التوسيط
         
         if (isPie) {
             cfg.labels = data.map(r => r[cols[0]]);
