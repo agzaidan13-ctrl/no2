@@ -40,17 +40,17 @@
         .dashboard-item { background: var(--bg-card); border-radius: 15px; overflow: hidden; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 4px 6px rgba(0,0,0,0.02); display: flex; flex-direction: column; height: 100%; transition: 0.2s; }
         .dashboard-item:hover { transform: translateY(-3px); box-shadow: 0 6px 12px rgba(0,0,0,0.06); }
         
-        .dashboard-header { background: rgba(56,189,248,0.05); padding: 15px 20px; border-bottom: 1px solid rgba(0,0,0,0.05); display: flex; flex-direction: column; align-items: center; }
-        .dashboard-header h6 { margin: 0 0 10px 0; font-weight: bold; font-size: 1.1rem; color: var(--primary-blue); text-align: center; }
-        .dashboard-body { padding: 10px; flex-grow: 1; }
+        .dashboard-header { background: rgba(56,189,248,0.05); padding: 12px 10px; border-bottom: 1px solid rgba(0,0,0,0.05); display: flex; flex-direction: column; align-items: center; }
+        .dashboard-header h6 { margin: 0 0 8px 0; font-weight: bold; font-size: 0.9rem; color: var(--primary-blue); text-align: center; line-height: 1.3; }
+        .dashboard-body { padding: 5px; flex-grow: 1; }
 
         .stat-card { background: var(--bg-card); border-radius: 15px; padding: 20px; border: 1px solid rgba(0,0,0,0.05); height: 100%; box-shadow: 0 4px 6px rgba(0,0,0,0.02); display: flex; flex-direction: column; }
         .chart-wrapper { background: var(--bg-card); border-radius: 20px; padding: 20px; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
 
-        .details-grid { display: flex; gap: 8px; width: 100%; flex-wrap: wrap; justify-content: center; }
-        .details-box { background: var(--bg-card); border: 1px solid rgba(0,0,0,0.08); padding: 8px; border-radius: 8px; flex: 1; min-width: 80px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.02); display: flex; flex-direction: column; justify-content: center;}
-        .details-box span { display: block; font-size: 0.75rem; font-weight: bold; opacity: 0.8; margin-bottom: 3px; line-height: 1.2; }
-        .details-box strong { font-size: 1.2rem; color: var(--primary-blue); }
+        .details-grid { display: flex; gap: 5px; width: 100%; flex-wrap: wrap; justify-content: center; }
+        .details-box { background: var(--bg-card); border: 1px solid rgba(0,0,0,0.08); padding: 5px; border-radius: 8px; flex: 1; min-width: 60px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.02); display: flex; flex-direction: column; justify-content: center;}
+        .details-box span { display: block; font-size: 0.65rem; font-weight: bold; opacity: 0.8; margin-bottom: 2px; }
+        .details-box strong { font-size: 1rem; color: var(--primary-blue); }
 
         .apexcharts-toolbar { display: flex !important; opacity: 1 !important; visibility: visible !important; top: -10px !important; z-index: 10 !important; }
 
@@ -77,7 +77,7 @@
     </div>
 </div>
 
-<div class="container-fluid px-4 pb-5">
+<div class="container-fluid px-3 pb-5">
     
     <ul class="nav nav-pills my-4" id="mainTabs" role="tablist">
         <li class="nav-item" role="presentation"><button class="nav-link active" data-bs-toggle="pill" data-bs-target="#tab-home" type="button" role="tab">🏠 الرئيسية</button></li>
@@ -86,7 +86,7 @@
 
     <div class="tab-content">
         <div class="tab-pane fade show active" id="tab-home" role="tabpanel">
-            <div class="row g-4" id="home-charts-container">
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-5 g-3" id="home-charts-container">
                 </div>
         </div>
 
@@ -112,7 +112,6 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-    // تم تحويل المخططات الدائرية السابقة إلى bar (أشرطة أفقية) لمنع أي مشاكل برمجية مع المحافظة على التنوع
     const CONFIG = [
         { id: 'emp_total', title: 'أعداد المنتسبين', type: 'column', horizontal: false, url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=398430626&single=true&output=csv' },
         { id: 'emp_dept', title: 'المنتسبين حسب الأقسام', type: 'bar', horizontal: true, url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=255359164&single=true&output=csv' },
@@ -139,13 +138,13 @@
         let html = '';
         CONFIG.forEach(item => {
             html += `
-            <div class="col-12 col-xl-6">
+            <div class="col">
                 <div class="dashboard-item" style="cursor: pointer;" onclick="openDetailView('${item.id}')" title="انقر لعرض التفاصيل المتقدمة">
                     <div class="dashboard-header">
                         <h6>${item.title}</h6>
                         <div class="details-grid">
                             <div class="details-box" style="background: rgba(56,189,248,0.1);">
-                                <span>إجمالي المؤشرات</span>
+                                <span>المؤشر الكلي</span>
                                 <strong id="v-${item.id}-total">--</strong>
                             </div>
                         </div>
@@ -161,19 +160,20 @@
 
     const customLensSVG = '<svg class="lens-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>';
 
-    // ضبط المخطط ليكون مقاوماً لأي تباين في الإكسل
+    // ضبط ارتفاع المخططات لتناسب العرض الصغير في الـ 5x5
     const getChartConfig = (type, h, horizontal) => {
         return {
-            chart: { type: type, height: h, width: '100%', toolbar: { show: true, tools: { download: true, selection: false, zoom: false, zoomin: true, zoomout: true, pan: true, reset: customLensSVG }, autoSelected: 'pan' } },
+            chart: { type: type, height: h, width: '100%', toolbar: { show: false } },
             stroke: { curve: 'smooth', width: 2 },
             colors: ['#0c4a6e', '#38bdf8', '#0ea5e9', '#0284c7', '#10b981', '#f59e0b', '#ef4444'],
             series: [],
-            xaxis: { type: 'category', categories: [], labels: { style: { colors: '#0c4a6e', fontFamily: 'Cairo', fontSize: '10px' } } },
-            yaxis: { labels: { style: { colors: '#0c4a6e', fontFamily: 'Cairo' } } },
-            legend: { position: 'bottom', fontSize: '11px', labels: { colors: '#0c4a6e', fontFamily: 'Cairo' } },
-            plotOptions: { bar: { horizontal: horizontal, columnWidth: '50%', borderRadius: 3 } },
+            xaxis: { type: 'category', categories: [], labels: { show: false } }, // إخفاء نصوص المحور الأفقي لمنع التكدس في العرض الصغير
+            yaxis: { labels: { show: false } }, // إخفاء نصوص المحور العمودي في الرئيسية
+            grid: { padding: { left: 0, right: 0, top: 0, bottom: 0 } },
+            legend: { show: false }, // إخفاء مفتاح الخريطة في الرئيسية لتوفير المساحة
+            plotOptions: { bar: { horizontal: horizontal, columnWidth: '70%', borderRadius: 2 } },
             dataLabels: { enabled: false },
-            noData: { text: '⏳ جاري جلب البيانات...', align: 'center', verticalAlign: 'middle', style: { color: '#0c4a6e', fontSize: '14px', fontFamily: 'Cairo', fontWeight: 'bold' } }
+            noData: { text: '⏳ جاري جلب البيانات...', align: 'center', verticalAlign: 'middle', style: { color: '#0c4a6e', fontSize: '12px', fontFamily: 'Cairo', fontWeight: 'bold' } }
         };
     };
 
@@ -181,13 +181,11 @@
         document.getElementById('loader').style.display = 'flex';
         buildHomeGrid();
 
-        // 1. تهيئة جميع المخططات لتعمل بوضع (الأعمدة والخطوط المتوافقة 100%)
         CONFIG.forEach(item => {
-            chartsObj[item.id] = new ApexCharts(document.querySelector(`#c-${item.id}`), getChartConfig(item.type, 240, item.horizontal));
+            chartsObj[item.id] = new ApexCharts(document.querySelector(`#c-${item.id}`), getChartConfig(item.type, 160, item.horizontal));
             chartsObj[item.id].render();
         });
 
-        // 2. جلب الملفات وتحليلها بسرعة وبشكل آمن
         for (const item of CONFIG) {
             try {
                 const res = await fetch(item.url + '&nocache=' + new Date().getTime());
@@ -211,7 +209,7 @@
                         }
                     });
                 });
-                await new Promise(r => setTimeout(r, 50)); // مسافة آمنة وسريعة
+                await new Promise(r => setTimeout(r, 50)); 
             } catch (err) {
                 chartsObj[item.id].updateOptions({ noData: { text: "❌ فشل الاتصال" } });
             }
@@ -221,7 +219,6 @@
 
     function renderChartData(itemConfig, data) {
         try {
-            // تصفية الأعمدة لإزالة الفارغة
             const cols = Object.keys(data[0]).filter(k => k && k.trim() !== '');
             if(cols.length < 2) throw new Error("أعمدة غير كافية");
 
@@ -237,14 +234,13 @@
                 })
             }));
 
-            // تحديث المخطط بالبيانات القياسية المستقرة
             chartsObj[itemConfig.id].updateOptions({ xaxis: { categories: labels } });
             chartsObj[itemConfig.id].updateSeries(series);
 
             const totalEl = document.getElementById(`v-${itemConfig.id}-total`);
             if(totalEl) totalEl.innerText = totalSum.toLocaleString();
         } catch (e) {
-            chartsObj[itemConfig.id].updateOptions({ noData: { text: "⚠️ خطأ في قراءة بيانات الجدول" } });
+            chartsObj[itemConfig.id].updateOptions({ noData: { text: "⚠️ خطأ في القراءة" } });
         }
     }
 
@@ -271,14 +267,21 @@
 
         if(activeDetailChart) activeDetailChart.destroy();
         
-        const cfg = getChartConfig(itemConfig.type, 450, itemConfig.horizontal);
-        cfg.noData = { text: 'جاري الرسم...' };
-        
-        cfg.xaxis.categories = data.map(r => r[cols[0]]);
-        cfg.series = cols.slice(1).map(colName => ({
-            name: colName, type: itemConfig.type === 'bar' && itemConfig.horizontal ? 'bar' : itemConfig.type,
-            data: data.map(r => parseFloat(String(r[colName] || '0').replace(/[^0-9.-]+/g,"")) || 0)
-        }));
+        // إعادة الخصائص كاملة في نافذة التفاصيل (ظهور المحاور والأدوات)
+        const cfg = {
+            chart: { type: itemConfig.type, height: 450, width: '100%', toolbar: { show: true, tools: { download: true, selection: false, zoom: false, zoomin: true, zoomout: true, pan: true, reset: customLensSVG }, autoSelected: 'pan' } },
+            stroke: { curve: 'smooth', width: 3 },
+            colors: ['#0c4a6e', '#38bdf8', '#0ea5e9', '#0284c7', '#10b981', '#f59e0b', '#ef4444'],
+            xaxis: { categories: data.map(r => r[cols[0]]), labels: { show: true, rotate: -45, style: { colors: '#0c4a6e', fontFamily: 'Cairo', fontSize: '11px' } } },
+            yaxis: { labels: { show: true, style: { colors: '#0c4a6e', fontFamily: 'Cairo' } } },
+            legend: { position: 'bottom', fontSize: '13px', labels: { colors: '#0c4a6e', fontFamily: 'Cairo' } },
+            plotOptions: { bar: { horizontal: itemConfig.horizontal, columnWidth: '50%', borderRadius: 4 } },
+            dataLabels: { enabled: false },
+            series: cols.slice(1).map(colName => ({
+                name: colName, type: itemConfig.type === 'bar' && itemConfig.horizontal ? 'bar' : itemConfig.type,
+                data: data.map(r => parseFloat(String(r[colName] || '0').replace(/[^0-9.-]+/g,"")) || 0)
+            }))
+        };
 
         activeDetailChart = new ApexCharts(document.querySelector("#c-detail-view"), cfg);
         activeDetailChart.render();
@@ -291,10 +294,12 @@
         document.getElementById('themeBtn').innerHTML = nm === 'dark' ? '🌙 الوضع الداكن' : '☀️ الوضع الفاتح';
         
         const tc = nm === 'dark' ? '#f0f9ff' : '#0c4a6e';
-        const updateCfg = { theme: { mode: nm }, xaxis: { labels: { style: { colors: tc } } }, yaxis: { labels: { style: { colors: tc } } }, legend: { labels: { colors: tc } } };
+        const updateCfg = { theme: { mode: nm } }; // في الرئيسية أخفينا المحاور، لذا نحدث الثيم فقط
         
         Object.values(chartsObj).forEach(c => c.updateOptions(updateCfg));
-        if(activeDetailChart) activeDetailChart.updateOptions(updateCfg);
+        if(activeDetailChart) {
+            activeDetailChart.updateOptions({ theme: { mode: nm }, xaxis: { labels: { style: { colors: tc } } }, yaxis: { labels: { style: { colors: tc } } }, legend: { labels: { colors: tc } } });
+        }
     }
 
     window.onload = loadData;
