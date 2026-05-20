@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نظام إدارة البيانات الإحصائي | معهد التدريب النفطي - بغداد</title>
+    <title>لوحة البيانات المركزية | معهد التدريب النفطي</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css">
@@ -11,243 +11,95 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
 
     <style>
-        :root { 
-            --bg-body: #f4f9fc;          
-            --bg-card: #ffffff;          
-            --primary-blue: #0c4a6e;     
-            --accent-blue: #38bdf8;      
-            --text-dark: #073b52;
-            --header-green: #e2f0d9;
-            --text-green: #385723;
-        }
+        :root { --bg-body: #f8fafc; --bg-card: #ffffff; --primary-blue: #0c4a6e; --header-green: #e2f0d9; --text-green: #385723; }
+        [data-bs-theme="dark"] { --bg-body: #020617; --bg-card: #0f172a; --header-green: #14532d; --text-green: #dcfce7; }
 
-        [data-bs-theme="dark"] {
-            --bg-body: #021526;          
-            --bg-card: #032541;          
-            --text-dark: #f0f9ff;
-            --primary-blue: #38bdf8;     
-            --header-green: #133321;
-            --text-green: #a2cf95;
-        }
-
-        body { font-family: 'Cairo', sans-serif; background-color: var(--bg-body); color: var(--text-dark); transition: 0.3s; margin: 0; }
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Cairo', sans-serif; background-color: var(--bg-body); color: var(--bs-body-color); }
         
-        .top-navbar { background-color: var(--bg-card); padding: 12px 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.04); border-bottom: 1px solid rgba(0,0,0,0.06); }
+        .navbar-sticky { position: sticky; top: 0; z-index: 1000; background: var(--bg-card); box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .sidebar { position: sticky; top: 80px; height: calc(100vh - 100px); overflow-y: auto; padding: 15px; }
         
-        .sidebar-container {
-            background: var(--bg-card);
-            border-radius: 16px;
-            padding: 15px 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
-            border: 1px solid rgba(0,0,0,0.05);
-            position: sticky;
-            top: 20px;
-            max-height: calc(100vh - 40px);
-            overflow-y: auto;
-            z-index: 100;
-        }
+        .nav-link { font-weight: 600; color: var(--bs-body-color); padding: 10px; border-radius: 8px; margin-bottom: 5px; }
+        .nav-link:hover { background: rgba(56,189,248,0.1); }
+        .nav-link.active { background: var(--primary-blue); color: white; }
+
+        .dashboard-item { background: var(--bg-card); border-radius: 12px; border: 1px solid rgba(0,0,0,0.05); margin-bottom: 25px; transition: 0.3s; }
+        .dashboard-header { background: var(--header-green); padding: 12px 16px; border-radius: 12px 12px 0 0; display: flex; justify-content: space-between; align-items: center; }
+        .dashboard-header h6 { margin: 0; font-weight: bold; color: var(--text-green); }
+        .dashboard-body { padding: 15px; min-height: 350px; }
+
+        .control-btn { border: 1px solid #ccc; background: var(--bg-card); width: 30px; height: 30px; border-radius: 5px; cursor: pointer; }
+        .control-btn:hover { background: var(--primary-blue); color: white; }
         
-        .sidebar-container::-webkit-scrollbar { width: 6px; }
-        .sidebar-container::-webkit-scrollbar-track { background: transparent; }
-        .sidebar-container::-webkit-scrollbar-thumb { background: rgba(12,74,110,0.2); border-radius: 10px; }
-        [data-bs-theme="dark"] .sidebar-container::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); }
-
-        .sidebar-heading { font-size: 0.8rem; font-weight: 700; color: #64748b; margin: 15px 10px 5px 0; opacity: 0.8; }
-        [data-bs-theme="dark"] .sidebar-heading { color: #94a3b8; }
-
-        .sidebar-nav .nav-link {
-            text-align: right;
-            border-radius: 10px;
-            padding: 10px 14px;
-            margin-bottom: 4px;
-            font-weight: 600;
-            color: var(--text-dark);
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            font-size: 0.95rem;
-            border: 1px solid transparent;
-        }
-        
-        .sidebar-nav .nav-link:hover { background-color: rgba(56,189,248,0.1); transform: translateX(-3px); }
-        .sidebar-nav .nav-link.active { background-color: var(--primary-blue); color: white !important; box-shadow: 0 4px 10px rgba(12,74,110,0.2); transform: translateX(0); }
-
-        .dashboard-item { background: var(--bg-card); border-radius: 14px; overflow: hidden; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 4px 10px rgba(0,0,0,0.01); display: flex; flex-direction: column; height: 100%; min-height: 560px; }
-        .dashboard-header { background: var(--header-green); padding: 15px 20px; border-bottom: 1px solid rgba(0,0,0,0.05); display: flex; align-items: center; justify-content: space-between; }
-        .dashboard-header h5 { margin: 0; font-weight: bold; font-size: 1.15rem; color: var(--text-green); }
-        .dashboard-body { padding: 15px; flex-grow: 1; display: flex; flex-direction: column; justify-content: center; }
-
-        /* لوحة الأزرار الموحدة (تكبير، تصغير، يمين، يسار) */
-        .control-btn { 
-            border: 1px solid rgba(0,0,0,0.1); color: var(--primary-blue); background: var(--bg-card); 
-            display: flex; align-items: center; justify-content: center; width: 34px; height: 30px; font-size: 15px; font-weight: bold; 
-            border-radius: 6px; cursor: pointer; transition: 0.2s; padding: 0; line-height: 1; 
-        }
-        .control-btn:hover { background-color: var(--primary-blue); color: white; }
-        [data-bs-theme="dark"] .control-btn { border-color: rgba(255,255,255,0.15); color: #f0f9ff; background: rgba(0,0,0,0.3); }
-
-        /* إخفاء الأيقونات الافتراضية للمكتبة لتجنب التكرار والتشوش */
-        .apexcharts-toolbar { display: flex !important; opacity: 1 !important; visibility: visible !important; top: -10px !important; z-index: 10 !important; }
-        .apexcharts-zoom-icon, .apexcharts-pan-icon, .apexcharts-zoomin-icon, .apexcharts-zoomout-icon { display: none !important; } 
-        
-        .apexcharts-reset-icon svg { display: none !important; } 
-        .apexcharts-reset-icon { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230c4a6e' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'%3E%3C/circle%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'%3E%3C/line%3E%3C/svg%3E") !important; background-size: 18px !important; background-repeat: no-repeat !important; background-position: center !important; width: 24px !important; height: 24px !important; opacity: 1 !important; transition: 0.3s; margin-top: 2px; }
-        [data-bs-theme="dark"] .apexcharts-reset-icon { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f0f9ff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'%3E%3C/circle%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'%3E%3C/line%3E%3C/svg%3E") !important; }
-
-        .loading-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(2,21,38,0.7); z-index: 9999; justify-content: center; align-items: center; color: white; flex-direction: column; backdrop-filter: blur(8px); }
+        .loading-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 9999; justify-content: center; align-items: center; color: white; }
     </style>
 </head>
 <body>
 
-<div id="loader" class="loading-overlay">
-    <div class="spinner-border text-info mb-3" style="width: 3.5rem; height: 3.5rem;" role="status"></div>
-    <h4 id="loadMsg" class="fw-bold">جاري معالجة وربط المنظومة الإحصائية الفعلية...</h4>
-</div>
+<div id="loader" class="loading-overlay"><div class="spinner-border"></div></div>
 
-<div class="top-navbar mb-4">
-    <div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
-        <div class="d-flex align-items-center gap-3 text-center text-md-start flex-column flex-md-row">
-            <img src="boti.png" alt="شعار المعهد" style="height: 65px; width: auto;" onerror="this.style.display='none'">
-            <div>
-                <h4 class="fw-bold mb-1 text-primary-blue">منظومة ذكاء الأعمال والبيانات الإحصائية الرقمية</h4>
-                <h6 class="mb-0 text-secondary" style="font-size: 0.9rem; opacity: 0.8;">معهد التدريب النفطي / بغداد | برمجة وتصميم: م. علي غازي</h6>
-            </div>
-        </div>
-        <button class="btn btn-sm btn-outline-secondary rounded-pill px-4" onclick="toggleDarkMode()" id="themeBtn">🌙 الوضع الداكن</button>
+<nav class="navbar-sticky p-3">
+    <div class="container-fluid d-flex justify-content-between align-items-center">
+        <h5 class="m-0 fw-bold">لوحة البيانات المركزية - معهد التدريب النفطي</h5>
+        <button class="btn btn-sm btn-outline-secondary" onclick="toggleDarkMode()">الوضع الداكن</button>
     </div>
-</div>
+</nav>
 
-<div class="container-fluid px-4 pb-5">
-    <div class="row g-4">
-        
-        <div class="col-12 col-lg-3 col-xl-2">
-            <div class="sidebar-container">
-                <ul class="nav nav-pills flex-column sidebar-nav" id="mainTabs" role="tablist">
+<div class="container-fluid mt-3">
+    <div class="row">
+        <div class="col-lg-3 d-none d-lg-block">
+            <div class="sidebar">
+                <nav class="nav flex-column">
+                    <small class="text-muted p-2 fw-bold">الموارد البشرية</small>
+                    <a class="nav-link" href="#emp-dept">المنتسبين حسب الأقسام</a>
+                    <a class="nav-link" href="#emp-total">إجمالي المنتسبين</a>
+                    <a class="nav-link" href="#emp-degrees">الشهادات العليا</a>
                     
-                    <div class="sidebar-heading">الموارد البشرية</div>
-                    <li class="nav-item" role="presentation"><button class="nav-link active w-100" data-bs-toggle="pill" data-bs-target="#tab-emp-dept" type="button" role="tab"><span style="width: 25px;">📊</span> المنتسبين حسب الأقسام</button></li>
-                    <li class="nav-item" role="presentation"><button class="nav-link w-100" data-bs-toggle="pill" data-bs-target="#tab-emp-total" type="button" role="tab"><span style="width: 25px;">👥</span> إجمالي المنتسبين</button></li>
-                    <li class="nav-item" role="presentation"><button class="nav-link w-100" data-bs-toggle="pill" data-bs-target="#tab-emp-degrees" type="button" role="tab"><span style="width: 25px;">📜</span> حملة الشهادات العليا</button></li>
-
-                    <div class="sidebar-heading mt-3">شؤون الطلبة</div>
-                    <li class="nav-item" role="presentation"><button class="nav-link w-100" data-bs-toggle="pill" data-bs-target="#tab-student-count" type="button" role="tab"><span style="width: 25px;">🎓</span> الطلبة الحاليين</button></li>
-                    <li class="nav-item" role="presentation"><button class="nav-link w-100" data-bs-toggle="pill" data-bs-target="#tab-graduates" type="button" role="tab"><span style="width: 25px;">👨‍🎓</span> الخريجين (10 سنوات)</button></li>
-
-                    <div class="sidebar-heading mt-3">المنظومة التدريبية</div>
-                    <li class="nav-item" role="presentation"><button class="nav-link w-100" data-bs-toggle="pill" data-bs-target="#tab-courses-internal" type="button" role="tab"><span style="width: 25px;">🏢</span> الدورات الحضورية</button></li>
-                    <li class="nav-item" role="presentation"><button class="nav-link w-100" data-bs-toggle="pill" data-bs-target="#tab-participants-internal" type="button" role="tab"><span style="width: 25px;">📝</span> المشاركين (داخلي)</button></li>
-                    <li class="nav-item" role="presentation"><button class="nav-link w-100" data-bs-toggle="pill" data-bs-target="#tab-courses-external" type="button" role="tab"><span style="width: 25px;">✈️</span> الدورات الخارجية</button></li>
-                    <li class="nav-item" role="presentation"><button class="nav-link w-100" data-bs-toggle="pill" data-bs-target="#tab-youth-support" type="button" role="tab"><span style="width: 25px;">🌱</span> دورات دعم الشباب</button></li>
-
-                    <div class="sidebar-heading mt-3">الأنشطة والمراكز</div>
-                    <li class="nav-item" role="presentation"><button class="nav-link w-100" data-bs-toggle="pill" data-bs-target="#tab-specialized-centers" type="button" role="tab"><span style="width: 25px;">🎯</span> المراكز التخصصية</button></li>
-                    <li class="nav-item" role="presentation"><button class="nav-link w-100" data-bs-toggle="pill" data-bs-target="#tab-scientific-activities" type="button" role="tab"><span style="width: 25px;">🔬</span> الأنشطة العلمية</button></li>
-                    <li class="nav-item" role="presentation"><button class="nav-link w-100" data-bs-toggle="pill" data-bs-target="#tab-workshops-seminars" type="button" role="tab"><span style="width: 25px;">🎤</span> الندوات والورش</button></li>
-                    <li class="nav-item" role="presentation"><button class="nav-link w-100" data-bs-toggle="pill" data-bs-target="#tab-scientific-visits" type="button" role="tab"><span style="width: 25px;">🚌</span> الزيارات الميدانية</button></li>
-                    <li class="nav-item" role="presentation"><button class="nav-link w-100" data-bs-toggle="pill" data-bs-target="#tab-institutes-festival" type="button" role="tab"><span style="width: 25px;">🎪</span> مهرجان المعاهد</button></li>
-                </ul>
+                    <small class="text-muted p-2 fw-bold mt-3">شؤون الطلبة</small>
+                    <a class="nav-link" href="#student-count">الطلبة الحاليين</a>
+                    <a class="nav-link" href="#graduates">الخريجين</a>
+                    
+                    <small class="text-muted p-2 fw-bold mt-3">المنظومة التدريبية</small>
+                    <a class="nav-link" href="#courses-internal">الدورات الحضورية</a>
+                    <a class="nav-link" href="#participants-internal">المشاركين (داخلي)</a>
+                    <a class="nav-link" href="#courses-external">الدورات الخارجية</a>
+                    <a class="nav-link" href="#youth-support">دعم الشباب</a>
+                    
+                    <small class="text-muted p-2 fw-bold mt-3">الأنشطة والعلمية</small>
+                    <a class="nav-link" href="#specialized-centers">المراكز التخصصية</a>
+                    <a class="nav-link" href="#scientific-activities">الأنشطة العلمية</a>
+                    <a class="nav-link" href="#workshops-seminars">الندوات والورش</a>
+                    <a class="nav-link" href="#scientific-visits">الزيارات العلمية</a>
+                    <a class="nav-link" href="#institutes-festival">مهرجان المعاهد</a>
+                </nav>
             </div>
         </div>
 
-        <div class="col-12 col-lg-9 col-xl-10">
-            <div class="tab-content h-100">
-                
-                <div class="tab-pane fade show active h-100" id="tab-emp-dept" role="tabpanel">
-                    <div class="dashboard-item"><div class="dashboard-header"><h5>أعداد المنتسبين حسب الأقسام العلمية والإدارية</h5>
-                    <div class="d-flex gap-1" dir="ltr"><button class="control-btn" onclick="zoomCustom('emp_dept', 'in')" title="تكبير">+</button><button class="control-btn" onclick="zoomCustom('emp_dept', 'out')" title="تصغير">-</button><button class="control-btn" onclick="panChart('emp_dept', 'left')" title="تحريك لليسار">◀</button><button class="control-btn" onclick="panChart('emp_dept', 'right')" title="تحريك لليمين">▶</button></div></div>
-                    <div class="dashboard-body"><div id="chart-emp-dept"></div></div></div>
-                </div>
-
-                <div class="tab-pane fade h-100" id="tab-emp-total" role="tabpanel">
-                    <div class="dashboard-item"><div class="dashboard-header"><h5>إجمالي أعداد المنتسبين</h5>
-                    <div class="d-flex gap-1" dir="ltr"><button class="control-btn" onclick="zoomCustom('emp_total', 'in')" title="تكبير">+</button><button class="control-btn" onclick="zoomCustom('emp_total', 'out')" title="تصغير">-</button><button class="control-btn" onclick="panChart('emp_total', 'left')" title="تحريك لليسار">◀</button><button class="control-btn" onclick="panChart('emp_total', 'right')" title="تحريك لليمين">▶</button></div></div>
-                    <div class="dashboard-body"><div id="chart-emp-total"></div></div></div>
-                </div>
-
-                <div class="tab-pane fade h-100" id="tab-emp-degrees" role="tabpanel">
-                    <div class="dashboard-item"><div class="dashboard-header"><h5>حملة الشهادات العليا في المعهد</h5>
-                    <div class="d-flex gap-1" dir="ltr"><button class="control-btn" onclick="zoomCustom('emp_degrees', 'in')" title="تكبير">+</button><button class="control-btn" onclick="zoomCustom('emp_degrees', 'out')" title="تصغير">-</button><button class="control-btn" onclick="panChart('emp_degrees', 'left')" title="تحريك لليسار">◀</button><button class="control-btn" onclick="panChart('emp_degrees', 'right')" title="تحريك لليمين">▶</button></div></div>
-                    <div class="dashboard-body"><div id="chart-emp-degrees"></div></div></div>
-                </div>
-
-                <div class="tab-pane fade h-100" id="tab-student-count" role="tabpanel">
-                    <div class="dashboard-item"><div class="dashboard-header"><h5>أعداد الطلبة الحاليين</h5>
-                    <div class="d-flex gap-1" dir="ltr"><button class="control-btn" onclick="zoomCustom('student_count', 'in')" title="تكبير">+</button><button class="control-btn" onclick="zoomCustom('student_count', 'out')" title="تصغير">-</button><button class="control-btn" onclick="panChart('student_count', 'left')" title="تحريك لليسار">◀</button><button class="control-btn" onclick="panChart('student_count', 'right')" title="تحريك لليمين">▶</button></div></div>
-                    <div class="dashboard-body"><div id="chart-student-count"></div></div></div>
-                </div>
-
-                <div class="tab-pane fade h-100" id="tab-graduates" role="tabpanel">
-                    <div class="dashboard-item"><div class="dashboard-header"><h5>أعداد الخريجين لآخر عشرة أعوام للمعهد</h5>
-                    <div class="d-flex gap-1" dir="ltr"><button class="control-btn" onclick="zoomCustom('graduates', 'in')" title="تكبير">+</button><button class="control-btn" onclick="zoomCustom('graduates', 'out')" title="تصغير">-</button><button class="control-btn" onclick="panChart('graduates', 'left')" title="تحريك لليسار">◀</button><button class="control-btn" onclick="panChart('graduates', 'right')" title="تحريك لليمين">▶</button></div></div>
-                    <div class="dashboard-body"><div id="chart-graduates"></div></div></div>
-                </div>
-
-                <div class="tab-pane fade h-100" id="tab-courses-internal" role="tabpanel">
-                    <div class="dashboard-item"><div class="dashboard-header"><h5>الدورات الحضورية المقامة داخل المعهد</h5>
-                    <div class="d-flex gap-1" dir="ltr"><button class="control-btn" onclick="zoomCustom('courses_internal', 'in')" title="تكبير">+</button><button class="control-btn" onclick="zoomCustom('courses_internal', 'out')" title="تصغير">-</button><button class="control-btn" onclick="panChart('courses_internal', 'left')" title="تحريك لليسار">◀</button><button class="control-btn" onclick="panChart('courses_internal', 'right')" title="تحريك لليمين">▶</button></div></div>
-                    <div class="dashboard-body"><div id="chart-courses-internal"></div></div></div>
-                </div>
-
-                <div class="tab-pane fade h-100" id="tab-participants-internal" role="tabpanel">
-                    <div class="dashboard-item"><div class="dashboard-header"><h5>عدد المشاركين في الدورات الحضورية الداخلية</h5>
-                    <div class="d-flex gap-1" dir="ltr"><button class="control-btn" onclick="zoomCustom('participants_internal', 'in')" title="تكبير">+</button><button class="control-btn" onclick="zoomCustom('participants_internal', 'out')" title="تصغير">-</button><button class="control-btn" onclick="panChart('participants_internal', 'left')" title="تحريك لليسار">◀</button><button class="control-btn" onclick="panChart('participants_internal', 'right')" title="تحريك لليمين">▶</button></div></div>
-                    <div class="dashboard-body"><div id="chart-participants-internal"></div></div></div>
-                </div>
-
-                <div class="tab-pane fade h-100" id="tab-courses-external" role="tabpanel">
-                    <div class="dashboard-item"><div class="dashboard-header"><h5>مشاركة منتسبي المعهد في الدورات الخارجية</h5>
-                    <div class="d-flex gap-1" dir="ltr"><button class="control-btn" onclick="zoomCustom('courses_external', 'in')" title="تكبير">+</button><button class="control-btn" onclick="zoomCustom('courses_external', 'out')" title="تصغير">-</button><button class="control-btn" onclick="panChart('courses_external', 'left')" title="تحريك لليسار">◀</button><button class="control-btn" onclick="panChart('courses_external', 'right')" title="تحريك لليمين">▶</button></div></div>
-                    <div class="dashboard-body"><div id="chart-courses-external"></div></div></div>
-                </div>
-
-                <div class="tab-pane fade h-100" id="tab-youth-support" role="tabpanel">
-                    <div class="dashboard-item"><div class="dashboard-header"><h5>دورات دعم الشباب وتأهيل الخريجين</h5>
-                    <div class="d-flex gap-1" dir="ltr"><button class="control-btn" onclick="zoomCustom('youth_support', 'in')" title="تكبير">+</button><button class="control-btn" onclick="zoomCustom('youth_support', 'out')" title="تصغير">-</button><button class="control-btn" onclick="panChart('youth_support', 'left')" title="تحريك لليسار">◀</button><button class="control-btn" onclick="panChart('youth_support', 'right')" title="تحريك لليمين">▶</button></div></div>
-                    <div class="dashboard-body"><div id="chart-youth-support"></div></div></div>
-                </div>
-
-                <div class="tab-pane fade h-100" id="tab-specialized-centers" role="tabpanel">
-                    <div class="dashboard-item"><div class="dashboard-header"><h5>المراكز التدريبية التخصصية</h5>
-                    <div class="d-flex gap-1" dir="ltr"><button class="control-btn" onclick="zoomCustom('specialized_centers', 'in')" title="تكبير">+</button><button class="control-btn" onclick="zoomCustom('specialized_centers', 'out')" title="تصغير">-</button><button class="control-btn" onclick="panChart('specialized_centers', 'left')" title="تحريك لليسار">◀</button><button class="control-btn" onclick="panChart('specialized_centers', 'right')" title="تحريك لليمين">▶</button></div></div>
-                    <div class="dashboard-body"><div id="chart-specialized-centers"></div></div></div>
-                </div>
-
-                <div class="tab-pane fade h-100" id="tab-scientific-activities" role="tabpanel">
-                    <div class="dashboard-item"><div class="dashboard-header"><h5>الأنشطة العلمية والبحوث</h5>
-                    <div class="d-flex gap-1" dir="ltr"><button class="control-btn" onclick="zoomCustom('scientific_activities', 'in')" title="تكبير">+</button><button class="control-btn" onclick="zoomCustom('scientific_activities', 'out')" title="تصغير">-</button><button class="control-btn" onclick="panChart('scientific_activities', 'left')" title="تحريك لليسار">◀</button><button class="control-btn" onclick="panChart('scientific_activities', 'right')" title="تحريك لليمين">▶</button></div></div>
-                    <div class="dashboard-body"><div id="chart-scientific-activities"></div></div></div>
-                </div>
-
-                <div class="tab-pane fade h-100" id="tab-workshops-seminars" role="tabpanel">
-                    <div class="dashboard-item"><div class="dashboard-header"><h5>الندوات والورش التخصصية</h5>
-                    <div class="d-flex gap-1" dir="ltr"><button class="control-btn" onclick="zoomCustom('workshops_seminars', 'in')" title="تكبير">+</button><button class="control-btn" onclick="zoomCustom('workshops_seminars', 'out')" title="تصغير">-</button><button class="control-btn" onclick="panChart('workshops_seminars', 'left')" title="تحريك لليسار">◀</button><button class="control-btn" onclick="panChart('workshops_seminars', 'right')" title="تحريك لليمين">▶</button></div></div>
-                    <div class="dashboard-body"><div id="chart-workshops-seminars"></div></div></div>
-                </div>
-
-                <div class="tab-pane fade h-100" id="tab-scientific-visits" role="tabpanel">
-                    <div class="dashboard-item"><div class="dashboard-header"><h5>الزيارات العلمية الميدانية للطلبة</h5>
-                    <div class="d-flex gap-1" dir="ltr"><button class="control-btn" onclick="zoomCustom('scientific_visits', 'in')" title="تكبير">+</button><button class="control-btn" onclick="zoomCustom('scientific_visits', 'out')" title="تصغير">-</button><button class="control-btn" onclick="panChart('scientific_visits', 'left')" title="تحريك لليسار">◀</button><button class="control-btn" onclick="panChart('scientific_visits', 'right')" title="تحريك لليمين">▶</button></div></div>
-                    <div class="dashboard-body"><div id="chart-scientific-visits"></div></div></div>
-                </div>
-
-                <div class="tab-pane fade h-100" id="tab-institutes-festival" role="tabpanel">
-                    <div class="dashboard-item"><div class="dashboard-header"><h5>مهرجان المعاهد النفطية السنوي</h5>
-                    <div class="d-flex gap-1" dir="ltr"><button class="control-btn" onclick="zoomCustom('institutes_festival', 'in')" title="تكبير">+</button><button class="control-btn" onclick="zoomCustom('institutes_festival', 'out')" title="تصغير">-</button><button class="control-btn" onclick="panChart('institutes_festival', 'left')" title="تحريك لليسار">◀</button><button class="control-btn" onclick="panChart('institutes_festival', 'right')" title="تحريك لليمين">▶</button></div></div>
-                    <div class="dashboard-body"><div id="chart-institutes-festival"></div></div></div>
-                </div>
-
-            </div>
+        <div class="col-12 col-lg-9">
+            <div id="emp-dept" class="dashboard-item"><div class="dashboard-header"><h6>المنتسبين حسب الأقسام</h6><div class="d-flex gap-1"><button class="control-btn" onclick="panChart('emp_dept', 'left')">◀</button><button class="control-btn" onclick="panChart('emp_dept', 'right')">▶</button></div></div><div class="dashboard-body"><div id="chart-emp-dept"></div></div></div>
+            <div id="emp-total" class="dashboard-item"><div class="dashboard-header"><h6>إجمالي المنتسبين</h6><div class="d-flex gap-1"><button class="control-btn" onclick="panChart('emp_total', 'left')">◀</button><button class="control-btn" onclick="panChart('emp_total', 'right')">▶</button></div></div><div class="dashboard-body"><div id="chart-emp-total"></div></div></div>
+            <div id="emp-degrees" class="dashboard-item"><div class="dashboard-header"><h6>حملة الشهادات العليا</h6><div class="d-flex gap-1"><button class="control-btn" onclick="panChart('emp_degrees', 'left')">◀</button><button class="control-btn" onclick="panChart('emp_degrees', 'right')">▶</button></div></div><div class="dashboard-body"><div id="chart-emp-degrees"></div></div></div>
+            <div id="student-count" class="dashboard-item"><div class="dashboard-header"><h6>أعداد الطلبة الحاليين</h6><div class="d-flex gap-1"><button class="control-btn" onclick="panChart('student_count', 'left')">◀</button><button class="control-btn" onclick="panChart('student_count', 'right')">▶</button></div></div><div class="dashboard-body"><div id="chart-student-count"></div></div></div>
+            <div id="graduates" class="dashboard-item"><div class="dashboard-header"><h6>الخريجين (آخر 10 سنوات)</h6><div class="d-flex gap-1"><button class="control-btn" onclick="panChart('graduates', 'left')">◀</button><button class="control-btn" onclick="panChart('graduates', 'right')">▶</button></div></div><div class="dashboard-body"><div id="chart-graduates"></div></div></div>
+            <div id="courses-internal" class="dashboard-item"><div class="dashboard-header"><h6>الدورات الحضورية</h6><div class="d-flex gap-1"><button class="control-btn" onclick="panChart('courses_internal', 'left')">◀</button><button class="control-btn" onclick="panChart('courses_internal', 'right')">▶</button></div></div><div class="dashboard-body"><div id="chart-courses-internal"></div></div></div>
+            <div id="participants-internal" class="dashboard-item"><div class="dashboard-header"><h6>المشاركين (داخلي)</h6><div class="d-flex gap-1"><button class="control-btn" onclick="panChart('participants_internal', 'left')">◀</button><button class="control-btn" onclick="panChart('participants_internal', 'right')">▶</button></div></div><div class="dashboard-body"><div id="chart-participants-internal"></div></div></div>
+            <div id="courses-external" class="dashboard-item"><div class="dashboard-header"><h6>الدورات الخارجية</h6><div class="d-flex gap-1"><button class="control-btn" onclick="panChart('courses_external', 'left')">◀</button><button class="control-btn" onclick="panChart('courses_external', 'right')">▶</button></div></div><div class="dashboard-body"><div id="chart-courses-external"></div></div></div>
+            <div id="youth-support" class="dashboard-item"><div class="dashboard-header"><h6>دورات دعم الشباب</h6><div class="d-flex gap-1"><button class="control-btn" onclick="panChart('youth_support', 'left')">◀</button><button class="control-btn" onclick="panChart('youth_support', 'right')">▶</button></div></div><div class="dashboard-body"><div id="chart-youth-support"></div></div></div>
+            <div id="specialized-centers" class="dashboard-item"><div class="dashboard-header"><h6>المراكز التخصصية</h6><div class="d-flex gap-1"><button class="control-btn" onclick="panChart('specialized_centers', 'left')">◀</button><button class="control-btn" onclick="panChart('specialized_centers', 'right')">▶</button></div></div><div class="dashboard-body"><div id="chart-specialized-centers"></div></div></div>
+            <div id="scientific-activities" class="dashboard-item"><div class="dashboard-header"><h6>الأنشطة العلمية</h6><div class="d-flex gap-1"><button class="control-btn" onclick="panChart('scientific_activities', 'left')">◀</button><button class="control-btn" onclick="panChart('scientific_activities', 'right')">▶</button></div></div><div class="dashboard-body"><div id="chart-scientific-activities"></div></div></div>
+            <div id="workshops-seminars" class="dashboard-item"><div class="dashboard-header"><h6>الندوات والورش</h6><div class="d-flex gap-1"><button class="control-btn" onclick="panChart('workshops_seminars', 'left')">◀</button><button class="control-btn" onclick="panChart('workshops_seminars', 'right')">▶</button></div></div><div class="dashboard-body"><div id="chart-workshops-seminars"></div></div></div>
+            <div id="scientific-visits" class="dashboard-item"><div class="dashboard-header"><h6>الزيارات العلمية</h6><div class="d-flex gap-1"><button class="control-btn" onclick="panChart('scientific_visits', 'left')">◀</button><button class="control-btn" onclick="panChart('scientific_visits', 'right')">▶</button></div></div><div class="dashboard-body"><div id="chart-scientific-visits"></div></div></div>
+            <div id="institutes-festival" class="dashboard-item"><div class="dashboard-header"><h6>مهرجان المعاهد</h6><div class="d-flex gap-1"><button class="control-btn" onclick="panChart('institutes_festival', 'left')">◀</button><button class="control-btn" onclick="panChart('institutes_festival', 'right')">▶</button></div></div><div class="dashboard-body"><div id="chart-institutes-festival"></div></div></div>
         </div>
     </div>
 </div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
     const SHEETS_DB = {
         emp_total: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=398430626&single=true&output=csv',
         emp_dept: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=255359164&single=true&output=csv',
-        emp_degrees: '<iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pubhtml?gid=1489382222&amp;single=true&amp;widget=true&amp;headers=false"></iframe>',
+        emp_degrees: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=1489382222&single=true&output=csv',
         courses_internal: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=556274616&single=true&output=csv',
         specialized_centers: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=307948542&single=true&output=csv',
         scientific_activities: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=519215277&single=true&output=csv',
@@ -262,208 +114,50 @@
     };
 
     const buildChartConfig = (type) => ({
-        chart: { 
-            type: type, 
-            height: 500, 
-            width: '100%',
-            // تم إخفاء أدوات الزوم والبان الافتراضية لمنع التكرار البصري، والإبقاء فقط على أزرار التنزيل والاستعادة
-            toolbar: { show: true, tools: { download: true, selection: false, zoom: false, zoomin: false, zoomout: false, pan: false, reset: true }, autoSelected: 'pan' }
-        },
-        noData: {
-            text: 'جاري تحميل وعرض البيانات...',
-            align: 'center', verticalAlign: 'middle',
-            style: { color: '#0c4a6e', fontSize: '15px', fontFamily: 'Cairo' }
-        },
+        chart: { type: type, height: 400, toolbar: { show: true, tools: { download: true, reset: true }, autoSelected: 'pan' } },
+        noData: { text: 'جاري تحميل البيانات...' },
         stroke: { curve: 'smooth', width: 3 },
-        colors: ['#0c4a6e', '#0ea5e9', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'],
+        colors: ['#0c4a6e', '#0ea5e9', '#10b981'],
         series: [],
-        xaxis: { type: 'category', categories: [], labels: { show: true, rotate: -45, style: { colors: '#0c4a6e', fontFamily: 'Cairo', fontSize: '13px', fontWeight: 600 } } },
-        yaxis: { labels: { style: { colors: '#0c4a6e', fontFamily: 'Cairo', fontSize: '12px', fontWeight: 600 } } },
-        legend: { position: 'top', horizontalAlign: 'right', fontSize: '14px', labels: { colors: '#0c4a6e', fontFamily: 'Cairo' } },
-        plotOptions: { bar: { columnWidth: '40%', borderRadius: 5 } },
-        dataLabels: { enabled: false }
+        xaxis: { type: 'category', labels: { rotate: -45 } }
     });
 
-    let charts = {
-        emp_total: new ApexCharts(document.querySelector("#chart-emp-total"), buildChartConfig('bar')),
-        emp_dept: new ApexCharts(document.querySelector("#chart-emp-dept"), buildChartConfig('bar')),
-        emp_degrees: new ApexCharts(document.querySelector("#chart-emp-degrees"), buildChartConfig('column')),
-        courses_internal: new ApexCharts(document.querySelector("#chart-courses-internal"), buildChartConfig('area')),
-        specialized_centers: new ApexCharts(document.querySelector("#chart-specialized-centers"), buildChartConfig('column')),
-        scientific_activities: new ApexCharts(document.querySelector("#chart-scientific-activities"), buildChartConfig('bar')),
-        participants_internal: new ApexCharts(document.querySelector("#chart-participants-internal"), buildChartConfig('column')),
-        courses_external: new ApexCharts(document.querySelector("#chart-courses-external"), buildChartConfig('line')),
-        workshops_seminars: new ApexCharts(document.querySelector("#chart-workshops-seminars"), buildChartConfig('column')),
-        student_count: new ApexCharts(document.querySelector("#chart-student-count"), buildChartConfig('bar')),
-        graduates: new ApexCharts(document.querySelector("#chart-graduates"), buildChartConfig('area')),
-        scientific_visits: new ApexCharts(document.querySelector("#chart-scientific-visits"), buildChartConfig('column')),
-        institutes_festival: new ApexCharts(document.querySelector("#chart-institutes-festival"), buildChartConfig('bar')),
-        youth_support: new ApexCharts(document.querySelector("#chart-youth-support"), buildChartConfig('area'))
-    };
+    let charts = {};
+    Object.keys(SHEETS_DB).forEach(key => {
+        charts[key] = new ApexCharts(document.querySelector(`#chart-${key}`), buildChartConfig(key.includes('total') ? 'bar' : 'column'));
+        charts[key].render();
+    });
 
-    Object.values(charts).forEach(c => c.render());
-
-    // دالة التحريك الذكية المخصصة
     function panChart(chartName, direction) {
         let chart = charts[chartName];
         if(!chart) return;
-        let min = chart.w.globals.minX;
-        let max = chart.w.globals.maxX;
-        if(min === undefined || max === undefined) return;
-        let shift = Math.max(1, Math.round((max - min) * 0.25));
-        if (direction === 'right') { chart.zoomX(min + shift, max + shift); } 
-        else { chart.zoomX(min - shift, max - shift); }
-    }
-
-    // دالة التكبير والتصغير الذكية المخصصة للعمل مع أزرارنا
-    function zoomCustom(chartName, action) {
-        let chart = charts[chartName];
-        if(!chart) return;
-        let min = chart.w.globals.minX;
-        let max = chart.w.globals.maxX;
-        if(min === undefined || max === undefined) return;
-        
-        let shift = Math.max(1, Math.round((max - min) * 0.15)); // نسبة تقريب 15%
-        
-        if (action === 'in') {
-            if (max - min <= 2) return; // منع التكبير اللانهائي لتجنب الأخطاء
-            chart.zoomX(min + shift, max - shift);
-        } else {
-            // التصغير للخلف
-            let initialMin = chart.w.globals.initialMinX;
-            let initialMax = chart.w.globals.initialMaxX;
-            let newMin = min - shift;
-            let newMax = max + shift;
-            
-            // التأكد من عدم تجاوز الحدود الأصلية للبيانات
-            if(initialMin !== undefined && newMin < initialMin) newMin = initialMin;
-            if(initialMax !== undefined && newMax > initialMax) newMax = initialMax;
-            
-            chart.zoomX(newMin, newMax);
-        }
-    }
-
-    const delay = ms => new Promise(res => setTimeout(res, ms));
-
-    async function fetchCSVWithRetry(url, retries = 3) {
-        for (let i = 0; i < retries; i++) {
-            try {
-                const bUrl = url + '&nocache=' + new Date().getTime() + Math.random();
-                const response = await fetch(bUrl);
-                const text = await response.text();
-                
-                if(text.toLowerCase().includes("<html")) {
-                    if (i === retries - 1) return null; 
-                    await delay(800 + (i * 500)); 
-                    continue;
-                }
-                return text;
-            } catch (err) {
-                if (i === retries - 1) return null;
-                await delay(800);
-            }
-        }
-        return null;
+        chart.zoomX(chart.w.globals.minX + (direction === 'right' ? 1 : -1), chart.w.globals.maxX + (direction === 'right' ? 1 : -1));
     }
 
     async function startupEngine() {
         document.getElementById('loader').style.display = 'flex';
-        const keys = Object.keys(SHEETS_DB);
-        
-        const fetchPromises = keys.map(async (key, index) => {
-            await delay(index * 150); 
-            
-            const csvData = await fetchCSVWithRetry(SHEETS_DB[key]);
-            if (csvData) {
-                Papa.parse(csvData, {
-                    header: false,
-                    skipEmptyLines: true,
-                    complete: function(results) {
-                        if(results.data && results.data.length > 1) {
-                            processAndPopulate(charts[key], results.data);
-                        } else {
-                            if(charts[key]) charts[key].updateOptions({ noData: { text: '⚠️ الجدول فارغ أو غير منسق' } });
-                        }
-                    }
-                });
-            } else {
-                if(charts[key]) charts[key].updateOptions({ noData: { text: '⚠️ عذراً، لا يمكن الوصول للبيانات' } });
-            }
-        });
-
-        await Promise.allSettled(fetchPromises);
-        document.getElementById('loader').style.display = 'none';
-        
-        setTimeout(() => window.dispatchEvent(new Event('resize')), 300);
-    }
-
-    function processAndPopulate(chartObj, dataMatrix) {
-        if(!chartObj || !dataMatrix || dataMatrix.length < 2) return;
-        
-        const headers = dataMatrix[0];
-        const validCols = [];
-        
-        for(let i = 1; i < headers.length; i++) {
-            if(headers[i] && headers[i].trim() !== '') validCols.push(i);
-        }
-        
-        if(validCols.length === 0) {
-            chartObj.updateOptions({ noData: { text: '⚠️ لم يتم العثور على أعمدة بيانات صالحة' } });
-            return;
-        }
-
-        const xLabels = [];
-        const seriesData = validCols.map(colIndex => ({
-            name: headers[colIndex].trim(),
-            data: []
-        }));
-
-        for(let r = 1; r < dataMatrix.length; r++) {
-            const row = dataMatrix[r];
-            if(!row[0] || String(row[0]).trim() === '') continue;
-            
-            xLabels.push(String(row[0]).trim());
-            
-            validCols.forEach((colIndex, i) => {
-                let valStr = String(row[colIndex] || '0');
-                let cleanVal = valStr.replace(/[^0-9.-]+/g,"");
-                seriesData[i].data.push(parseFloat(cleanVal) || 0);
+        for(let key in SHEETS_DB) {
+            fetch(SHEETS_DB[key] + '&nocache=' + Math.random())
+            .then(res => res.text())
+            .then(csvData => {
+                Papa.parse(csvData, { header: false, skipEmptyLines: true, complete: res => {
+                    const data = res.data;
+                    const headers = data[0];
+                    const xLabels = data.slice(1).map(row => row[0]);
+                    const series = headers.slice(1).map((h, i) => ({ name: h, data: data.slice(1).map(row => parseFloat(row[i+1]) || 0) }));
+                    charts[key].updateOptions({ xaxis: { categories: xLabels } });
+                    charts[key].updateSeries(series);
+                }});
             });
         }
-
-        if(xLabels.length > 0) {
-            chartObj.updateOptions({ xaxis: { categories: xLabels } });
-            chartObj.updateSeries(seriesData);
-        } else {
-            chartObj.updateOptions({ noData: { text: '⚠️ لا توجد صفوف بيانات صالحة' } });
-        }
+        document.getElementById('loader').style.display = 'none';
     }
-
-    function resizeCharts() { 
-        setTimeout(() => window.dispatchEvent(new Event('resize')), 250); 
-    }
-    
-    document.querySelectorAll('#mainTabs button').forEach(btn => {
-        btn.addEventListener('shown.bs.tab', resizeCharts);
-    });
 
     function toggleDarkMode() {
         const html = document.getElementById('mainHtml');
-        const isDark = html.getAttribute('data-bs-theme') === 'dark';
-        const nextTheme = isDark ? 'light' : 'dark';
+        const nextTheme = html.getAttribute('data-bs-theme') === 'dark' ? 'light' : 'dark';
         html.setAttribute('data-bs-theme', nextTheme);
         document.getElementById('themeBtn').innerHTML = nextTheme === 'dark' ? '☀️ الوضع الفاتح' : '🌙 الوضع الداكن';
-        
-        const textColor = nextTheme === 'dark' ? '#f0f9ff' : '#0c4a6e';
-        Object.values(charts).forEach(c => {
-            c.updateOptions({
-                theme: { mode: nextTheme },
-                xaxis: { labels: { style: { colors: textColor } } },
-                yaxis: { labels: { style: { colors: textColor } } },
-                legend: { labels: { colors: textColor } },
-                noData: { style: { color: textColor } }
-            });
-        });
     }
 
     window.onload = startupEngine;
