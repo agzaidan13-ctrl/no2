@@ -34,7 +34,6 @@
         
         .top-navbar { background-color: var(--bg-card); padding: 12px 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.04); border-bottom: 1px solid rgba(0,0,0,0.06); }
         
-        /* تصميم التبويبات الرئيسية العلوية */
         .main-sector-nav { background: var(--bg-card); padding: 10px; border-radius: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.02); }
         .main-sector-nav .nav-link {
             border-radius: 10px; font-weight: bold; color: var(--text-dark); padding: 12px 20px;
@@ -44,23 +43,11 @@
             background-color: var(--primary-blue); color: white !important; box-shadow: 0 4px 12px rgba(12,74,110,0.25);
         }
 
-        /* تصميم التبويبات الفرعية الجانبية/الداخلية */
-        .sub-metric-nav { background: rgba(56,189,248,0.05); padding: 6px; border-radius: 10px; }
-        .sub-metric-nav .nav-link {
-            border-radius: 8px; font-weight: 600; color: var(--text-dark); padding: 8px 16px;
-            font-size: 0.95rem; transition: 0.2s;
-        }
-        .sub-metric-nav .nav-link.active {
-            background-color: var(--accent-blue); color: #0c4a6e !important; font-weight: bold;
-        }
-
-        /* هيكلية الكروت المدمجة غير المتساوية */
         .dashboard-item { background: var(--bg-card); border-radius: 14px; overflow: hidden; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 4px 10px rgba(0,0,0,0.01); display: flex; flex-direction: column; height: 100%; min-height: 340px; }
         .dashboard-header { background: var(--header-green); padding: 12px 16px; border-bottom: 1px solid rgba(0,0,0,0.05); display: flex; align-items: center; justify-content: space-between; }
         .dashboard-header h6 { margin: 0; font-weight: bold; font-size: 1rem; color: var(--text-green); }
         .dashboard-body { padding: 12px; flex-grow: 1; position: relative; display: flex; flex-direction: column; justify-content: center; }
 
-        /* أزرار التحكم الخارجية الصريحة */
         .pan-btn { 
             border: 1px solid rgba(0,0,0,0.1); color: var(--primary-blue); background: var(--bg-card);
             display: flex; align-items: center; justify-content: center; width: 32px; height: 28px; font-size: 14px; 
@@ -72,7 +59,6 @@
         .apexcharts-toolbar { display: flex !important; opacity: 1 !important; visibility: visible !important; top: -10px !important; z-index: 10 !important; }
         .apexcharts-zoom-icon, .apexcharts-pan-icon { display: none !important; } 
         
-        /* تجميل عدسة الاستعادة الافتراضية */
         .apexcharts-reset-icon svg { display: none !important; } 
         .apexcharts-reset-icon {
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230c4a6e' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'%3E%3C/circle%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'%3E%3C/line%3E%3C/svg%3E") !important;
@@ -83,7 +69,7 @@
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f0f9ff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'%3E%3C/circle%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'%3E%3C/line%3E%3C/svg%3E") !important;
         }
 
-        .loading-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(2,21,38,0.7) ; z-index: 9999; justify-content: center; align-items: center; color: white; flex-direction: column; backdrop-filter: blur(8px); }
+        .loading-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(2,21,38,0.7); z-index: 9999; justify-content: center; align-items: center; color: white; flex-direction: column; backdrop-filter: blur(8px); }
     </style>
 </head>
 <body>
@@ -156,7 +142,7 @@
             </div>
         </div>
 
-        <div class="tab-pane fade" id="sector-students" onclick="resizeCharts()">
+        <div class="tab-pane fade" id="sector-students">
             <div class="row g-4">
                 <div class="col-12 col-xl-7">
                     <div class="dashboard-item">
@@ -192,7 +178,7 @@
             </div>
         </div>
 
-        <div class="tab-pane fade" id="sector-training" onclick="resizeCharts()">
+        <div class="tab-pane fade" id="sector-training">
             <div class="row g-4">
                 <div class="col-12 col-xl-6">
                     <div class="dashboard-item">
@@ -233,7 +219,7 @@
             </div>
         </div>
 
-        <div class="tab-pane fade" id="sector-activities" onclick="resizeCharts()">
+        <div class="tab-pane fade" id="sector-activities">
             <div class="row g-4">
                 <div class="col-12 col-xl-4">
                     <div class="dashboard-item">
@@ -286,29 +272,26 @@
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
 <script>
-    // ربط كافة الشيتات الـ 15 الفعلية للمعهد
+    // تم تصحيح الرابط الأساسي واستبدال S22fi بـ S20fi بجميع الروابط الـ 15 بنجاح
     const SHEETS_DB = {
-        emp_total: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS22fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=398430626&single=true&output=csv',
-        emp_dept: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS22fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=255359164&single=true&output=csv',
-        emp_degrees: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS22fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=1489382222&single=true&output=csv',
-        courses_internal: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS22fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=556274616&single=true&output=csv',
-        specialized_centers: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS22fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=307948542&single=true&output=csv',
-        scientific_activities: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS22fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=519215277&single=true&output=csv',
-        participants_internal: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS22fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=845162776&single=true&output=csv',
-        courses_external: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS22fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=1627689816&single=true&output=csv',
-        workshops_seminars: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS22fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=1501097808&single=true&output=csv',
-        student_move: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS22fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=1103326192&single=true&output=csv',
-        student_count: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS22fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=876030086&single=true&output=csv',
-        graduates: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS22fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=325367955&single=true&output=csv',
-        scientific_visits: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS22fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=340829433&single=true&output=csv',
-        institutes_festival: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS22fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=152544274&single=true&output=csv',
-        youth_support: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS22fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=1843138364&single=true&output=csv'
+        emp_total: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=398430626&single=true&output=csv',
+        emp_dept: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=255359164&single=true&output=csv',
+        emp_degrees: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=1489382222&single=true&output=csv',
+        courses_internal: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=556274616&single=true&output=csv',
+        specialized_centers: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=307948542&single=true&output=csv',
+        scientific_activities: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=519215277&single=true&output=csv',
+        participants_internal: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=845162776&single=true&output=csv',
+        courses_external: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=1627689816&single=true&output=csv',
+        workshops_seminars: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=1501097808&single=true&output=csv',
+        student_move: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=1103326192&single=true&output=csv',
+        student_count: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=876030086&single=true&output=csv',
+        graduates: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=325367955&single=true&output=csv',
+        scientific_visits: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=340829433&single=true&output=csv',
+        institutes_festival: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=152544274&single=true&output=csv',
+        youth_support: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=1843138364&single=true&output=csv'
     };
 
-    // تكوين أساسي مرن للمخططات البيانية يمنع التشوه ويتوافق مع الوضع الداكن
     const buildChartConfig = (type) => ({
         chart: { 
             type: type, height: '100%', width: '100%',
@@ -320,11 +303,10 @@
         xaxis: { type: 'category', categories: [], labels: { show: true, rotate: -45, style: { colors: '#0c4a6e', fontFamily: 'Cairo', fontSize: '11px', fontWeight: 600 } } },
         yaxis: { labels: { style: { colors: '#0c4a6e', fontFamily: 'Cairo', fontWeight: 600 } } },
         legend: { position: 'top', horizontalAlign: 'right', labels: { colors: '#0c4a6e', fontFamily: 'Cairo' } },
-        plotOptions: { bar: { columnWidth: '50%', borderRadius: 4, dataLabels: { position: 'top' } } },
+        plotOptions: { bar: { columnWidth: '50%', borderRadius: 4 } },
         dataLabels: { enabled: false }
     });
 
-    // تهيئة كائنات المخططات الـ 15 برمجياً
     let charts = {
         emp_total: new ApexCharts(document.querySelector("#chart-emp-total"), buildChartConfig('bar')),
         emp_dept: new ApexCharts(document.querySelector("#chart-emp-dept"), buildChartConfig('bar')),
@@ -343,24 +325,21 @@
         youth_support: new ApexCharts(document.querySelector("#chart-youth-support"), buildChartConfig('area'))
     };
 
-    // تشغيل وعرض المخططات في الصفحة
     Object.values(charts).forEach(c => c.render());
 
-    // دالة التحريك الذكية للأسهم الخارجية
     function panChart(chartName, direction) {
         let chart = charts[chartName];
         if(!chart) return;
         let min = chart.w.globals.minX;
         let max = chart.w.globals.maxX;
         if(min === undefined || max === undefined) return;
-        let shift = Math.max(1, Math.round((max - min) * 0.25)); // التحرك بربع المساحة المعروضة
+        let shift = Math.max(1, Math.round((max - min) * 0.25));
         if (direction === 'right') { chart.zoomX(min + shift, max + shift); } 
         else { chart.zoomX(min - shift, max - shift); }
     }
 
     const delay = ms => new Promise(res => setTimeout(res, ms));
 
-    // محرك جلب مرن ذو آلية مقاومة الحظر المؤقت
     async function fetchCSVData(url) {
         for (let i = 0; i < 3; i++) {
             try {
@@ -373,11 +352,8 @@
         }
     }
 
-    // المنظومة الرئيسية لجلب ومعالجة البيانات بالكامل
     async function startupEngine() {
         document.getElementById('loader').style.display = 'flex';
-        
-        // جلب البيانات ومعالجتها بشكل تتابعي منظم لتجنب الضغط على الشبكة
         const keys = Object.keys(SHEETS_DB);
         for(let key of keys) {
             try {
@@ -390,7 +366,7 @@
                         }
                     }
                 });
-                await delay(150); // فاصل زمني أمان
+                await delay(150);
             } catch (e) {
                 if(charts[key]) charts[key].updateOptions({ noData: { text: '⚠️ عذراً، تعذر الاتصال بمصدر البيانات' } });
             }
@@ -398,17 +374,15 @@
         document.getElementById('loader').style.display = 'none';
     }
 
-    // دالة المعالجة الديناميكية الشاملة (تتعامل مع أي شيت مهما كانت أعداد أو أسماء أعمدته)
     function processAndPopulate(chartObj, dataRow) {
         if(!chartObj) return;
         const columns = Object.keys(dataRow[0]);
-        const xLabels = dataRow.map(row => row[columns[0]]); // العمود الأول دائماً هو المحور الأفقي
+        const xLabels = dataRow.map(row => row[columns[0]]);
         
-        // تحويل باقي الأعمدة تلقائياً إلى سلاسل بيانية رقمية
         const ySeries = columns.slice(1).map(colName => ({
             name: colName,
             data: dataRow.map(row => {
-                let val = row[colName] ? row[colName].replace(/[\,]/g, '') : '0'; // تنظيف الفواصل الحسابية
+                let val = row[colName] ? row[colName].replace(/[\,]/g, '') : '0';
                 return parseFloat(val) || 0;
             })
         }));
@@ -417,17 +391,14 @@
         chartObj.updateSeries(ySeries);
     }
 
-    // إعادة ضبط الرسوم عند الانتقال بين القطاعات لضمان عدم حدوث تشوه أو انكماش
     function resizeCharts() { 
         setTimeout(() => window.dispatchEvent(new Event('resize')), 250); 
     }
     
-    // ربط تبويبات القطاعات بميزة التحديث التلقائي للقياسات
     document.querySelectorAll('#sectorTabs button').forEach(btn => {
         btn.addEventListener('shown.bs.tab', resizeCharts);
     });
 
-    // ميزة الوضع الداكن المتكاملة مع الألوان الجديدة
     function toggleDarkMode() {
         const html = document.getElementById('mainHtml');
         const isDark = html.getAttribute('data-bs-theme') === 'dark';
