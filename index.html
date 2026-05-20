@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl" data-bs-theme="light" id="mainHtml">
+<html lang="ar" dir="rtl" data-bs-theme="light">
 <head>
     <meta charset="UTF-8">
     <title>إحصائيات معهد التدريب النفطي / بغداد</title>
@@ -9,17 +9,22 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
     <style>
         body { font-family: 'Cairo', sans-serif; background-color: #f0f9ff; }
-        .dashboard-item { background: white; border-radius: 12px; padding: 15px; border: 1px solid #ddd; margin-bottom: 20px; }
+        .dashboard-item { background: white; border-radius: 12px; padding: 15px; border: 1px solid #d1d5db; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .dashboard-header { border-bottom: 1px solid #eee; margin-bottom: 15px; padding-bottom: 10px; color: #0c4a6e; font-weight: bold; }
+        .nav-navbar { background: white; padding: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
     </style>
 </head>
 <body>
 
+<div class="nav-navbar text-center mb-4">
+    <h4 class="fw-bold text-primary">إحصائيات المعهد - لوحة القيادة</h4>
+</div>
+
 <div class="container py-4">
-    <h3 class="text-center mb-4">بيانات الموارد البشرية (اختبار)</h3>
     <div class="row">
-        <div class="col-md-4"><div class="dashboard-item"><h6>أعداد المنتسبين</h6><div id="c1"></div></div></div>
-        <div class="col-md-4"><div class="dashboard-item"><h6>المنتسبين حسب الأقسام</h6><div id="c2"></div></div></div>
-        <div class="col-md-4"><div class="dashboard-item"><h6>الشهادات العليا</h6><div id="c3"></div></div></div>
+        <div class="col-md-4"><div class="dashboard-item"><div class="dashboard-header">أعداد المنتسبين</div><div id="c1"></div></div></div>
+        <div class="col-md-4"><div class="dashboard-item"><div class="dashboard-header">المنتسبين حسب الأقسام</div><div id="c2"></div></div></div>
+        <div class="col-md-4"><div class="dashboard-item"><div class="dashboard-header">الشهادات العليا</div><div id="c3"></div></div></div>
     </div>
 </div>
 
@@ -34,9 +39,10 @@
         const labels = data.slice(1).map(r => r[0]);
         const series = [{ name: 'العدد', data: data.slice(1).map(r => parseFloat(r[1]) || 0) }];
         new ApexCharts(document.querySelector("#"+id), {
-            chart: { type: 'bar', height: 250 },
+            chart: { type: 'bar', height: 250, toolbar: { show: true } },
             series: series,
-            xaxis: { categories: labels }
+            xaxis: { categories: labels },
+            colors: ['#0c4a6e']
         }).render();
     }
 
