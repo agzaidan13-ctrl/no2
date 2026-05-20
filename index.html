@@ -37,8 +37,7 @@
         }
         .nav-pills .nav-link.active { background-color: var(--primary-blue); color: white; box-shadow: 0 4px 10px rgba(12,74,110,0.3); }
 
-        /* التصميم الأصلي الجميل الخاص بك */
-        .dashboard-item { background: var(--bg-card); border-radius: 15px; overflow: hidden; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 4px 6px rgba(0,0,0,0.02); display: flex; flex-direction: column; height: 100%; }
+        .dashboard-item { background: var(--bg-card); border-radius: 15px; overflow: hidden; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 4px 6px rgba(0,0,0,0.02); display: flex; flex-direction: column; height: 100%; margin-bottom: 5px; }
         .dashboard-header { background: rgba(56,189,248,0.05); padding: 15px 20px; border-bottom: 1px solid rgba(0,0,0,0.05); display: flex; flex-direction: column; align-items: center; }
         .dashboard-header h6 { margin: 0 0 10px 0; font-weight: bold; font-size: 1.1rem; color: var(--primary-blue); text-align: center; }
         .dashboard-body { padding: 10px; flex-grow: 1; }
@@ -61,7 +60,7 @@
 
 <div id="loader" class="loading-overlay">
     <div class="spinner-grow text-accent mb-3" style="width: 3rem; height: 3rem; color: var(--accent-blue);"></div>
-    <h5 id="loadMsg" class="fw-bold">جاري تحميل المنظومة...</h5>
+    <h5 id="loadMsg" class="fw-bold">جاري تحميل وتزامن مؤشرات المنظومة الإحصائية...</h5>
 </div>
 
 <div class="top-navbar">
@@ -78,7 +77,6 @@
 </div>
 
 <div class="container-fluid px-4 pb-5">
-    
     <ul class="nav nav-pills my-4" id="mainTabs" role="tablist">
         <li class="nav-item" role="presentation"><button class="nav-link active" data-bs-toggle="pill" data-bs-target="#tab-home" type="button" role="tab">🏠 الرئيسية</button></li>
         <li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-detail" type="button" role="tab">📊 التفاصيل الكاملة</button></li>
@@ -95,12 +93,12 @@
                 <div class="col-md-3">
                     <div class="stat-card" id="detail-stats-container">
                         <h6 style="margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px dashed rgba(0,0,0,0.1); text-align: center;">إجمالي المؤشرات</h6>
-                        </div>
+                    </div>
                 </div>
                 <div class="col-md-9">
                     <div class="chart-wrapper">
                         <div id="c-detail-view" style="min-height: 400px;">
-                            <h5 class="text-center mt-5 text-muted">يرجى اختيار أحد المخططات من الرئيسية لعرض تفاصيله هنا</h5>
+                            <h5 class="text-center mt-5 text-muted">يرجى اختيار أحد المخططات من الواجهة الرئيسية لعرض تفاصيله الكاملة هنا</h5>
                         </div>
                     </div>
                 </div>
@@ -108,8 +106,6 @@
         </div>
     </div>
 </div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
     const CONFIG = [
@@ -133,15 +129,13 @@
     let activeDetailChart = null;
     let rawDataStore = {};
 
-    // 1. حقن الـ HTML بنفس تصميم صورتك الأولى تماماً
     function buildHomeGrid() {
         const container = document.getElementById('home-charts-container');
         let html = '';
         CONFIG.forEach(item => {
-            // استخدام col-xl-6 ليكون هناك مخططين في كل صف (مما يحافظ على مساحة الـ details-box)
             html += `
             <div class="col-12 col-xl-6">
-                <div class="dashboard-item" style="cursor: pointer;" onclick="openDetailView('${item.id}')" title="انقر لعرض التفاصيل الكاملة">
+                <div class="dashboard-item" style="cursor: pointer;" onclick="openDetailView('${item.id}')">
                     <div class="dashboard-header">
                         <h6>${item.title}</h6>
                         <div class="details-grid">
@@ -160,7 +154,6 @@
         container.innerHTML = html;
     }
 
-    // 2. إعدادات المخططات (تدعم الدونات والبيانات العادية)
     const getChartConfig = (type, h) => {
         const isPie = type === 'donut' || type === 'pie';
         return {
@@ -177,33 +170,37 @@
         };
     };
 
-    // 3. جلب ومعالجة البيانات
-    async function loadData() {
+    // نظام الطابور التتابعي الحقيقي لمنع الحظر وضمان التحميل الكامل
+    async function loadDataSequentially() {
         document.getElementById('loader').style.display = 'flex';
         buildHomeGrid();
 
         for (const item of CONFIG) {
             try {
-                const res = await fetch(item.url + '&nocache=' + Math.random());
+                const res = await fetch(item.url + '&nocache=' + new Date().getTime() + Math.random());
                 const csvText = await res.text();
                 
-                Papa.parse(csvText, {
-                    header: true, skipEmptyLines: true,
-                    complete: function(results) {
-                        if(results.data && results.data.length > 0) {
-                            rawDataStore[item.id] = results.data; // تخزين البيانات للاستخدام في نافذة التفاصيل
-                            renderChartData(item, results.data);
-                        }
-                    }
+                // تحويل التفسير إلى Promise لضمان التتابع المطلق
+                await new Promise((resolve) => {
+                    Papa.parse(csvText, {
+                        header: true, skipEmptyLines: true,
+                        complete: function(results) {
+                            if(results.data && results.data.length > 0) {
+                                rawDataStore[item.id] = results.data;
+                                renderChartData(item, results.data);
+                            }
+                            resolve(); // الانتقال للشيت التالي بعد رسم الحالي بنجاح
+                        },
+                        error: () => resolve()
+                    });
                 });
-                await new Promise(r => setTimeout(r, 100)); // تأخير بسيط لمنع الحظر
+                await new Promise(r => setTimeout(r, 250)); // مسافة أمان زمنية بين طلبات جوجل لحماية السيرفر
             } catch (err) {
-                console.error("Error loading", item.title);
+                console.error("خطأ في جلب بيانات شيت:", item.title);
             }
         }
         document.getElementById('loader').style.display = 'none';
         
-        // إصلاح التبويبات المخفية
         document.querySelectorAll('button[data-bs-toggle="pill"]').forEach(btn => {
             btn.addEventListener('shown.bs.tab', () => window.dispatchEvent(new Event('resize')));
         });
@@ -222,42 +219,35 @@
             });
         } else {
             labels = data.map(r => r[cols[0]]);
-            series = cols.slice(1).map(colName => {
-                return {
-                    name: colName,
-                    type: itemConfig.type,
-                    data: data.map(r => {
-                        let val = parseFloat(String(r[colName] || '0').replace(/[^0-9.-]+/g,"")) || 0;
-                        totalSum += val; return val;
-                    })
-                };
-            });
+            series = cols.slice(1).map(colName => ({
+                name: colName,
+                type: itemConfig.type,
+                data: data.map(r => {
+                    let val = parseFloat(String(r[colName] || '0').replace(/[^0-9.-]+/g,"")) || 0;
+                    totalSum += val; return val;
+                })
+            }));
         }
 
-        // رسم المخطط الصغير في الرئيسية (ارتفاع 250 لتناسب التصميم)
-        const cfg = getChartConfig(itemConfig.type, 250);
+        const cfg = getChartConfig(itemConfig.type, 240);
         if(isPie) { cfg.labels = labels; cfg.series = series; } 
         else { cfg.xaxis.categories = labels; cfg.series = series; }
         
         chartsObj[itemConfig.id] = new ApexCharts(document.querySelector(`#c-${itemConfig.id}`), cfg);
         chartsObj[itemConfig.id].render();
 
-        // تحديث صندوق الإجمالي
         const totalEl = document.getElementById(`v-${itemConfig.id}-total`);
         if(totalEl) totalEl.innerText = totalSum.toLocaleString();
     }
 
-    // 4. فتح المخطط بالتفصيل عند النقر عليه
     function openDetailView(id) {
         const itemConfig = CONFIG.find(c => c.id === id);
         const data = rawDataStore[id];
         if(!itemConfig || !data) return;
 
-        // الانتقال للتبويب الثاني
         const detailTabBtn = new bootstrap.Tab(document.querySelector('button[data-bs-target="#tab-detail"]'));
         detailTabBtn.show();
 
-        // تحديث البيانات الجانبية (stat-card)
         const cols = Object.keys(data[0]);
         let statsHtml = `<h6 style="margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px dashed rgba(0,0,0,0.1); text-align: center;">${itemConfig.title}</h6>`;
         
@@ -271,11 +261,10 @@
         statsHtml += `<div class="d-flex justify-content-between p-2 rounded mt-3" style="background: rgba(56,189,248,0.1);"><span>الإجمالي:</span> <strong>${total.toLocaleString()}</strong></div>`;
         document.getElementById('detail-stats-container').innerHTML = statsHtml;
 
-        // تدمير المخطط القديم ورسم الجديد بحجم كبير
         if(activeDetailChart) activeDetailChart.destroy();
         
         const isPie = itemConfig.type === 'donut' || itemConfig.type === 'pie';
-        const cfg = getChartConfig(itemConfig.type, 450); // مخطط كبير
+        const cfg = getChartConfig(itemConfig.type, 450);
         
         if (isPie) {
             cfg.labels = data.map(r => r[cols[0]]);
@@ -305,7 +294,7 @@
         if(activeDetailChart) activeDetailChart.updateOptions(updateCfg);
     }
 
-    window.onload = loadData;
+    window.onload = loadDataSequentially;
 </script>
 </body>
 </html>
