@@ -2,57 +2,71 @@
 <html lang="ar" dir="rtl" data-bs-theme="light">
 <head>
     <meta charset="UTF-8">
-    <title>إحصائيات معهد التدريب النفطي / بغداد</title>
+    <title>منظومة البيانات المركزية | معهد التدريب النفطي</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css">
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
     <style>
-        body { font-family: 'Cairo', sans-serif; background-color: #f0f9ff; }
-        .dashboard-item { background: white; border-radius: 12px; padding: 15px; border: 1px solid #d1d5db; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
-        .dashboard-header { border-bottom: 1px solid #eee; margin-bottom: 15px; padding-bottom: 10px; color: #0c4a6e; font-weight: bold; }
-        .nav-navbar { background: white; padding: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        body { font-family: 'Cairo', sans-serif; background: #f8fafc; }
+        .sidebar { background: white; border-radius: 12px; padding: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); height: calc(100vh - 40px); overflow-y: auto; position: sticky; top: 20px; }
+        .nav-link { font-weight: 600; color: #334155; margin-bottom: 5px; border-radius: 8px; }
+        .nav-link.active { background: #0c4a6e !important; color: white !important; }
+        .card { border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 20px; }
+        .card-header { background: #e2f0d9; color: #385723; font-weight: bold; border-radius: 12px 12px 0 0 !important; }
     </style>
 </head>
 <body>
 
-<div class="nav-navbar text-center mb-4">
-    <h4 class="fw-bold text-primary">إحصائيات المعهد - لوحة القيادة</h4>
-</div>
-
-<div class="container py-4">
+<div class="container-fluid p-4">
     <div class="row">
-        <div class="col-md-4"><div class="dashboard-item"><div class="dashboard-header">أعداد المنتسبين</div><div id="c1"></div></div></div>
-        <div class="col-md-4"><div class="dashboard-item"><div class="dashboard-header">المنتسبين حسب الأقسام</div><div id="c2"></div></div></div>
-        <div class="col-md-4"><div class="dashboard-item"><div class="dashboard-header">الشهادات العليا</div><div id="c3"></div></div></div>
+        <div class="col-md-3">
+            <div class="sidebar">
+                <h5 class="fw-bold mb-4 px-2">التبويبات</h5>
+                <nav class="nav flex-column nav-pills" id="v-pills-tab" role="tablist">
+                    <button class="nav-link active" data-bs-toggle="pill" data-bs-target="#tab1">المنتسبين</button>
+                    <button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab2">الطلبة</button>
+                    </nav>
+            </div>
+        </div>
+        <div class="col-md-9">
+            <div class="tab-content">
+                <div class="tab-pane fade show active" id="tab1">
+                    <div class="card"><div class="card-header">المنتسبين</div><div class="card-body"><div id="chart-emp"></div></div></div>
+                </div>
+                <div class="tab-pane fade" id="tab2">
+                    <div class="card"><div class="card-header">الطلبة</div><div class="card-body"><div id="chart-stu"></div></div></div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
 <script>
-    const urls = {
-        c1: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=398430626&single=true&output=csv',
-        c2: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=255359164&single=true&output=csv',
-        c3: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=1489382222&single=true&output=csv'
+    const sheets = {
+        emp: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=398430626&single=true&output=csv',
+        stu: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=876030086&single=true&output=csv'
     };
 
-    function renderChart(id, data) {
-        const labels = data.slice(1).map(r => r[0]);
-        const series = [{ name: 'العدد', data: data.slice(1).map(r => parseFloat(r[1]) || 0) }];
+    function draw(id, data) {
         new ApexCharts(document.querySelector("#"+id), {
-            chart: { type: 'bar', height: 250, toolbar: { show: true } },
-            series: series,
-            xaxis: { categories: labels },
-            colors: ['#0c4a6e']
+            chart: { type: 'bar', height: 350 },
+            series: [{ name: 'العدد', data: data.slice(1).map(r => parseFloat(r[1]) || 0) }],
+            xaxis: { categories: data.slice(1).map(r => r[0]) }
         }).render();
     }
 
-    Object.keys(urls).forEach(id => {
-        fetch(urls[id] + '&nocache=' + Math.random())
+    Object.keys(sheets).forEach(key => {
+        fetch(sheets[key])
         .then(res => res.text())
-        .then(csv => {
-            Papa.parse(csv, { complete: res => renderChart(id, res.data) });
-        });
+        .then(csv => Papa.parse(csv, { complete: res => draw('chart-'+key, res.data) }));
+    });
+
+    // إصلاح مشكلة الرسم عند التبديل
+    document.querySelectorAll('button[data-bs-toggle="pill"]').forEach(btn => {
+        btn.addEventListener('shown.bs.tab', () => window.dispatchEvent(new Event('resize')));
     });
 </script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
