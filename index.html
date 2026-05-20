@@ -53,7 +53,6 @@
         .details-box strong { font-size: 1.2rem; color: var(--primary-blue); }
 
         .apexcharts-toolbar { display: flex !important; opacity: 1 !important; visibility: visible !important; top: -10px !important; z-index: 10 !important; }
-        .apexcharts-canvas { margin: 0 auto; }
 
         .loading-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 9999; justify-content: center; align-items: center; color: white; flex-direction: column; backdrop-filter: blur(5px); }
     </style>
@@ -61,8 +60,8 @@
 <body>
 
 <div id="loader" class="loading-overlay">
-    <div class="spinner-grow text-accent mb-3" style="width: 3rem; height: 3rem; color: var(--accent-blue);"></div>
-    <h5 id="loadMsg" class="fw-bold">جاري تحميل المنظومة (قد يستغرق بضع ثوانٍ لمنع الحظر)...</h5>
+    <div class="spinner-border text-info mb-3" style="width: 3rem; height: 3rem;"></div>
+    <h5 id="loadMsg" class="fw-bold">جاري تحميل وتحديث المنظومة الإحصائية...</h5>
 </div>
 
 <div class="top-navbar">
@@ -113,21 +112,22 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
+    // تم تحويل المخططات الدائرية السابقة إلى bar (أشرطة أفقية) لمنع أي مشاكل برمجية مع المحافظة على التنوع
     const CONFIG = [
-        { id: 'emp_total', title: 'أعداد المنتسبين', type: 'column', url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=398430626&single=true&output=csv' },
-        { id: 'emp_dept', title: 'المنتسبين حسب الأقسام', type: 'donut', url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=255359164&single=true&output=csv' },
-        { id: 'emp_degrees', title: 'الشهادات العليا', type: 'donut', url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=1489382222&single=true&output=csv' },
-        { id: 'courses_internal', title: 'الدورات الحضورية', type: 'area', url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=556274616&single=true&output=csv' },
-        { id: 'specialized_centers', title: 'المراكز التخصصية', type: 'pie', url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=307948542&single=true&output=csv' },
-        { id: 'scientific_activities', title: 'الأنشطة العلمية', type: 'bar', url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=519215277&single=true&output=csv' },
-        { id: 'participants_internal', title: 'عدد المشاركين', type: 'column', url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=845162776&single=true&output=csv' },
-        { id: 'courses_external', title: 'الدورات الخارجية', type: 'line', url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=1627689816&single=true&output=csv' },
-        { id: 'workshops_seminars', title: 'الندوات والورش', type: 'column', url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=1501097808&single=true&output=csv' },
-        { id: 'youth_support', title: 'دورات دعم الشباب', type: 'area', url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=1843138364&single=true&output=csv' },
-        { id: 'student_count', title: 'أعداد الطلبة', type: 'column', url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=876030086&single=true&output=csv' },
-        { id: 'graduates', title: 'الخريجين', type: 'area', url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=325367955&single=true&output=csv' },
-        { id: 'scientific_visits', title: 'الزيارات العلمية', type: 'column', url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=340829433&single=true&output=csv' },
-        { id: 'institutes_festival', title: 'مهرجان المعاهد', type: 'bar', url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=152544274&single=true&output=csv' }
+        { id: 'emp_total', title: 'أعداد المنتسبين', type: 'column', horizontal: false, url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=398430626&single=true&output=csv' },
+        { id: 'emp_dept', title: 'المنتسبين حسب الأقسام', type: 'bar', horizontal: true, url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=255359164&single=true&output=csv' },
+        { id: 'emp_degrees', title: 'الشهادات العليا', type: 'column', horizontal: false, url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=1489382222&single=true&output=csv' },
+        { id: 'courses_internal', title: 'الدورات الحضورية', type: 'area', horizontal: false, url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=556274616&single=true&output=csv' },
+        { id: 'specialized_centers', title: 'المراكز التخصصية', type: 'bar', horizontal: true, url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=307948542&single=true&output=csv' },
+        { id: 'scientific_activities', title: 'الأنشطة العلمية', type: 'column', horizontal: false, url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=519215277&single=true&output=csv' },
+        { id: 'participants_internal', title: 'عدد المشاركين', type: 'column', horizontal: false, url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=845162776&single=true&output=csv' },
+        { id: 'courses_external', title: 'الدورات الخارجية', type: 'line', horizontal: false, url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=1627689816&single=true&output=csv' },
+        { id: 'workshops_seminars', title: 'الندوات والورش', type: 'column', horizontal: false, url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=1501097808&single=true&output=csv' },
+        { id: 'youth_support', title: 'دورات دعم الشباب', type: 'area', horizontal: false, url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=1843138364&single=true&output=csv' },
+        { id: 'student_count', title: 'أعداد الطلبة', type: 'column', horizontal: false, url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=876030086&single=true&output=csv' },
+        { id: 'graduates', title: 'الخريجين', type: 'area', horizontal: false, url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=325367955&single=true&output=csv' },
+        { id: 'scientific_visits', title: 'الزيارات العلمية', type: 'column', horizontal: false, url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=340829433&single=true&output=csv' },
+        { id: 'institutes_festival', title: 'مهرجان المعاهد', type: 'bar', horizontal: true, url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=152544274&single=true&output=csv' }
     ];
 
     let chartsObj = {};
@@ -159,81 +159,61 @@
         container.innerHTML = html;
     }
 
-    const getChartConfig = (type, h) => {
-        const isPie = type === 'donut' || type === 'pie';
+    const customLensSVG = '<svg class="lens-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>';
+
+    // ضبط المخطط ليكون مقاوماً لأي تباين في الإكسل
+    const getChartConfig = (type, h, horizontal) => {
         return {
-            chart: { type: type, height: h, width: '100%', toolbar: { show: !isPie } },
-            stroke: { curve: 'smooth', width: isPie ? 1 : 2 },
+            chart: { type: type, height: h, width: '100%', toolbar: { show: true, tools: { download: true, selection: false, zoom: false, zoomin: true, zoomout: true, pan: true, reset: customLensSVG }, autoSelected: 'pan' } },
+            stroke: { curve: 'smooth', width: 2 },
             colors: ['#0c4a6e', '#38bdf8', '#0ea5e9', '#0284c7', '#10b981', '#f59e0b', '#ef4444'],
             series: [],
-            labels: isPie ? [] : undefined,
-            xaxis: isPie ? undefined : { type: 'category', categories: [], labels: { style: { colors: '#0c4a6e', fontFamily: 'Cairo', fontSize: '10px' } } },
-            yaxis: isPie ? undefined : { labels: { style: { colors: '#0c4a6e', fontFamily: 'Cairo' } } },
+            xaxis: { type: 'category', categories: [], labels: { style: { colors: '#0c4a6e', fontFamily: 'Cairo', fontSize: '10px' } } },
+            yaxis: { labels: { style: { colors: '#0c4a6e', fontFamily: 'Cairo' } } },
             legend: { position: 'bottom', fontSize: '11px', labels: { colors: '#0c4a6e', fontFamily: 'Cairo' } },
-            plotOptions: isPie ? { pie: { donut: { size: '60%' } } } : { bar: { columnWidth: '50%', borderRadius: 3 } },
-            dataLabels: { enabled: isPie },
-            // إضافة مؤشر مرئي واضح يخبر المستخدم أن هذا المخطط يتم تحميله الآن
-            noData: {
-                text: '⏳ جاري جلب البيانات...',
-                align: 'center',
-                verticalAlign: 'middle',
-                style: { color: '#0c4a6e', fontSize: '14px', fontFamily: 'Cairo', fontWeight: 'bold' }
-            }
+            plotOptions: { bar: { horizontal: horizontal, columnWidth: '50%', borderRadius: 3 } },
+            dataLabels: { enabled: false },
+            noData: { text: '⏳ جاري جلب البيانات...', align: 'center', verticalAlign: 'middle', style: { color: '#0c4a6e', fontSize: '14px', fontFamily: 'Cairo', fontWeight: 'bold' } }
         };
     };
 
-    // نظام الطابور (السر الذي سيحل مشكلة جوجل)
-    async function loadDataSequentially() {
+    async function loadData() {
         document.getElementById('loader').style.display = 'flex';
         buildHomeGrid();
 
-        // 1. نهيئ جميع المخططات الـ 14 بحالة "جاري التحميل" لتظهر فورا
+        // 1. تهيئة جميع المخططات لتعمل بوضع (الأعمدة والخطوط المتوافقة 100%)
         CONFIG.forEach(item => {
-            chartsObj[item.id] = new ApexCharts(document.querySelector(`#c-${item.id}`), getChartConfig(item.type, 240));
+            chartsObj[item.id] = new ApexCharts(document.querySelector(`#c-${item.id}`), getChartConfig(item.type, 240, item.horizontal));
             chartsObj[item.id].render();
         });
 
-        // 2. نقوم بتحميل البيانات واحدة تلو الأخرى لمنع حظر خوادم جوجل
+        // 2. جلب الملفات وتحليلها بسرعة وبشكل آمن
         for (const item of CONFIG) {
             try {
-                let success = false;
-                // محاولة الجلب لـ 3 مرات كحد أقصى لكل ملف
-                for (let retry = 0; retry < 3; retry++) {
-                    const res = await fetch(item.url + '&nocache=' + new Date().getTime() + Math.random());
-                    if (!res.ok) throw new Error("HTTP Status Error");
-                    
-                    const csvText = await res.text();
-                    if (csvText.includes('<html')) throw new Error("Google Blocked (HTML returned)");
-
-                    await new Promise((resolve) => {
-                        Papa.parse(csvText, {
-                            header: true, skipEmptyLines: 'greedy',
-                            complete: function(results) {
-                                if(results.data && results.data.length > 0) {
-                                    rawDataStore[item.id] = results.data;
-                                    renderChartData(item, results.data);
-                                    success = true;
-                                }
-                                resolve();
-                            }
-                        });
-                    });
-
-                    if (success) break; // إذا نجحنا نخرج من حلقة الإعادة
-                    await new Promise(r => setTimeout(r, 1000)); // انتظار ثانية قبل المحاولة مجددا
-                }
+                const res = await fetch(item.url + '&nocache=' + new Date().getTime());
+                const csvText = await res.text();
                 
-                if (!success) {
-                    chartsObj[item.id].updateOptions({ noData: { text: "⚠️ الجدول فارغ أو غير مدعوم" } });
-                }
-
-                // تأخير 600 مللي ثانية بين كل شيت والذي يليه لإرضاء سيرفرات جوجل
-                await new Promise(r => setTimeout(r, 600)); 
-
+                await new Promise((resolve) => {
+                    Papa.parse(csvText, {
+                        header: true, skipEmptyLines: 'greedy',
+                        complete: function(results) {
+                            if(results.data && results.data.length > 0) {
+                                rawDataStore[item.id] = results.data;
+                                renderChartData(item, results.data);
+                            } else {
+                                chartsObj[item.id].updateOptions({ noData: { text: "⚠️ الجدول فارغ" } });
+                            }
+                            resolve();
+                        },
+                        error: () => {
+                            chartsObj[item.id].updateOptions({ noData: { text: "❌ خطأ في الملف" } });
+                            resolve();
+                        }
+                    });
+                });
+                await new Promise(r => setTimeout(r, 50)); // مسافة آمنة وسريعة
             } catch (err) {
-                console.error("فشل الجلب للمخطط:", item.title, err);
-                chartsObj[item.id].updateOptions({ noData: { text: "❌ تم الحظر من سيرفر جوجل" } });
-                document.getElementById(`v-${item.id}-total`).innerText = "خطأ";
+                chartsObj[item.id].updateOptions({ noData: { text: "❌ فشل الاتصال" } });
             }
         }
         document.getElementById('loader').style.display = 'none';
@@ -241,34 +221,25 @@
 
     function renderChartData(itemConfig, data) {
         try {
-            // تصفية الأعمدة لإزالة أي أعمدة فارغة ناتجة عن التنسيق الخاطئ في الإكسل
+            // تصفية الأعمدة لإزالة الفارغة
             const cols = Object.keys(data[0]).filter(k => k && k.trim() !== '');
             if(cols.length < 2) throw new Error("أعمدة غير كافية");
 
-            const isPie = itemConfig.type === 'donut' || itemConfig.type === 'pie';
-            let labels = [], series = [], totalSum = 0;
+            let totalSum = 0;
+            const labels = data.map(r => r[cols[0]]);
+            const series = cols.slice(1).map(colName => ({
+                name: colName,
+                type: itemConfig.type === 'bar' && itemConfig.horizontal ? 'bar' : itemConfig.type,
+                data: data.map(r => {
+                    let val = parseFloat(String(r[colName] || '0').replace(/[^0-9.-]+/g,"")) || 0;
+                    totalSum += val; 
+                    return val;
+                })
+            }));
 
-            if (isPie) {
-                labels = data.map(r => r[cols[0]]);
-                series = data.map(r => {
-                    let val = parseFloat(String(r[cols[1]] || '0').replace(/[^0-9.-]+/g,"")) || 0;
-                    totalSum += val; return val;
-                });
-                chartsObj[itemConfig.id].updateOptions({ labels: labels });
-                chartsObj[itemConfig.id].updateSeries(series);
-            } else {
-                labels = data.map(r => r[cols[0]]);
-                series = cols.slice(1).map(colName => ({
-                    name: colName,
-                    type: itemConfig.type,
-                    data: data.map(r => {
-                        let val = parseFloat(String(r[colName] || '0').replace(/[^0-9.-]+/g,"")) || 0;
-                        totalSum += val; return val;
-                    })
-                }));
-                chartsObj[itemConfig.id].updateOptions({ xaxis: { categories: labels } });
-                chartsObj[itemConfig.id].updateSeries(series);
-            }
+            // تحديث المخطط بالبيانات القياسية المستقرة
+            chartsObj[itemConfig.id].updateOptions({ xaxis: { categories: labels } });
+            chartsObj[itemConfig.id].updateSeries(series);
 
             const totalEl = document.getElementById(`v-${itemConfig.id}-total`);
             if(totalEl) totalEl.innerText = totalSum.toLocaleString();
@@ -300,20 +271,14 @@
 
         if(activeDetailChart) activeDetailChart.destroy();
         
-        const isPie = itemConfig.type === 'donut' || itemConfig.type === 'pie';
-        const cfg = getChartConfig(itemConfig.type, 450);
-        cfg.noData = { text: 'جاري الرسم...' }; // إزالة التوسيط
+        const cfg = getChartConfig(itemConfig.type, 450, itemConfig.horizontal);
+        cfg.noData = { text: 'جاري الرسم...' };
         
-        if (isPie) {
-            cfg.labels = data.map(r => r[cols[0]]);
-            cfg.series = data.map(r => parseFloat(String(r[cols[1]] || '0').replace(/[^0-9.-]+/g,"")) || 0);
-        } else {
-            cfg.xaxis.categories = data.map(r => r[cols[0]]);
-            cfg.series = cols.slice(1).map(colName => ({
-                name: colName, type: itemConfig.type,
-                data: data.map(r => parseFloat(String(r[colName] || '0').replace(/[^0-9.-]+/g,"")) || 0)
-            }));
-        }
+        cfg.xaxis.categories = data.map(r => r[cols[0]]);
+        cfg.series = cols.slice(1).map(colName => ({
+            name: colName, type: itemConfig.type === 'bar' && itemConfig.horizontal ? 'bar' : itemConfig.type,
+            data: data.map(r => parseFloat(String(r[colName] || '0').replace(/[^0-9.-]+/g,"")) || 0)
+        }));
 
         activeDetailChart = new ApexCharts(document.querySelector("#c-detail-view"), cfg);
         activeDetailChart.render();
@@ -332,7 +297,7 @@
         if(activeDetailChart) activeDetailChart.updateOptions(updateCfg);
     }
 
-    window.onload = loadDataSequentially;
+    window.onload = loadData;
 </script>
 </body>
 </html>
