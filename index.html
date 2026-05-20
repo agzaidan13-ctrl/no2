@@ -33,7 +33,7 @@
         .dashboard-item { background: var(--bg-card); border-radius: 15px; overflow: hidden; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 4px 6px rgba(0,0,0,0.02); display: flex; flex-direction: column; height: 100%; }
         .dashboard-header { background: rgba(56,189,248,0.05); padding: 10px 15px; border-bottom: 1px solid rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; }
         .dashboard-header h6 { margin: 0; font-weight: bold; font-size: 0.95rem; color: var(--primary-blue); width: 100%; text-align: center; }
-        .dashboard-body { padding: 5px; flex-grow: 1; }
+        .dashboard-body { padding: 5px; flex-grow: 1; display: flex; align-items: center; justify-content: center; }
 
         .apexcharts-toolbar { display: flex !important; opacity: 1 !important; visibility: visible !important; top: -10px !important; z-index: 10 !important; }
         .lens-icon { stroke: #0c4a6e; transition: 0.3s; }
@@ -41,6 +41,9 @@
         [data-bs-theme="dark"] .lens-icon { stroke: #f0f9ff; }
 
         .loading-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 9999; justify-content: center; align-items: center; color: white; flex-direction: column; backdrop-filter: blur(5px); }
+        
+        /* التنسيق الخاص للمخططات الدائرية لضمان توسطها */
+        .apexcharts-canvas { margin: 0 auto; }
     </style>
 </head>
 <body>
@@ -69,98 +72,98 @@
         <div class="col-12 col-md-6 col-xl-3">
             <div class="dashboard-item">
                 <div class="dashboard-header"><h6>أعداد المنتسبين الكلية</h6></div>
-                <div class="dashboard-body"><div id="c-emp-total"></div></div>
+                <div class="dashboard-body" style="width: 100%;"><div id="c-emp-total"></div></div>
             </div>
         </div>
 
         <div class="col-12 col-md-6 col-xl-3">
             <div class="dashboard-item">
                 <div class="dashboard-header"><h6>المنتسبين حسب الأقسام</h6></div>
-                <div class="dashboard-body"><div id="c-emp-dept"></div></div>
+                <div class="dashboard-body" style="width: 100%;"><div id="c-emp-dept"></div></div>
             </div>
         </div>
 
         <div class="col-12 col-md-6 col-xl-3">
             <div class="dashboard-item">
                 <div class="dashboard-header"><h6>حملة الشهادات العليا</h6></div>
-                <div class="dashboard-body"><div id="c-emp-degrees"></div></div>
+                <div class="dashboard-body" style="width: 100%;"><div id="c-emp-degrees"></div></div>
             </div>
         </div>
 
         <div class="col-12 col-md-6 col-xl-3">
             <div class="dashboard-item">
                 <div class="dashboard-header"><h6>الدورات الحضورية المقامة</h6></div>
-                <div class="dashboard-body"><div id="c-courses-internal"></div></div>
+                <div class="dashboard-body" style="width: 100%;"><div id="c-courses-internal"></div></div>
             </div>
         </div>
 
         <div class="col-12 col-md-6 col-xl-3">
             <div class="dashboard-item">
                 <div class="dashboard-header"><h6>المراكز التدريبية التخصصية</h6></div>
-                <div class="dashboard-body"><div id="c-specialized-centers"></div></div>
+                <div class="dashboard-body" style="width: 100%;"><div id="c-specialized-centers"></div></div>
             </div>
         </div>
 
         <div class="col-12 col-md-6 col-xl-3">
             <div class="dashboard-item">
                 <div class="dashboard-header"><h6>الأنشطة العلمية والبحوث</h6></div>
-                <div class="dashboard-body"><div id="c-scientific-activities"></div></div>
+                <div class="dashboard-body" style="width: 100%;"><div id="c-scientific-activities"></div></div>
             </div>
         </div>
 
         <div class="col-12 col-md-6 col-xl-3">
             <div class="dashboard-item">
                 <div class="dashboard-header"><h6>عدد المشاركين (داخلي)</h6></div>
-                <div class="dashboard-body"><div id="c-participants-internal"></div></div>
+                <div class="dashboard-body" style="width: 100%;"><div id="c-participants-internal"></div></div>
             </div>
         </div>
 
         <div class="col-12 col-md-6 col-xl-3">
             <div class="dashboard-item">
                 <div class="dashboard-header"><h6>الدورات الخارجية والإيفادات</h6></div>
-                <div class="dashboard-body"><div id="c-courses-external"></div></div>
+                <div class="dashboard-body" style="width: 100%;"><div id="c-courses-external"></div></div>
             </div>
         </div>
 
         <div class="col-12 col-md-6 col-xl-3">
             <div class="dashboard-item">
                 <div class="dashboard-header"><h6>الندوات والورش التخصصية</h6></div>
-                <div class="dashboard-body"><div id="c-workshops-seminars"></div></div>
+                <div class="dashboard-body" style="width: 100%;"><div id="c-workshops-seminars"></div></div>
             </div>
         </div>
 
         <div class="col-12 col-md-6 col-xl-3">
             <div class="dashboard-item">
                 <div class="dashboard-header"><h6>دورات دعم الشباب وتأهيل الخريجين</h6></div>
-                <div class="dashboard-body"><div id="c-youth-support"></div></div>
+                <div class="dashboard-body" style="width: 100%;"><div id="c-youth-support"></div></div>
             </div>
         </div>
 
         <div class="col-12 col-md-6 col-xl-3">
             <div class="dashboard-item">
                 <div class="dashboard-header"><h6>أعداد الطلبة الحاليين</h6></div>
-                <div class="dashboard-body"><div id="c-student-count"></div></div>
+                <div class="dashboard-body" style="width: 100%;"><div id="c-student-count"></div></div>
             </div>
         </div>
 
         <div class="col-12 col-md-6 col-xl-3">
             <div class="dashboard-item">
                 <div class="dashboard-header"><h6>أعداد الخريجين (آخر 10 سنوات)</h6></div>
-                <div class="dashboard-body"><div id="c-graduates"></div></div>
+                <div class="dashboard-body" style="width: 100%;"><div id="c-graduates"></div></div>
             </div>
         </div>
 
         <div class="col-12 col-md-6 col-xl-3">
             <div class="dashboard-item">
                 <div class="dashboard-header"><h6>الزيارات العلمية الميدانية</h6></div>
-                <div class="dashboard-body"><div id="c-scientific-visits"></div></div>
+                <div class="dashboard-body" style="width: 100%;"><div id="c-scientific-visits"></div></div>
             </div>
         </div>
 
         <div class="col-12 col-md-6 col-xl-3">
             <div class="dashboard-item">
                 <div class="dashboard-header"><h6>مهرجان المعاهد النفطية السنوي</h6></div>
-                <div class="dashboard-body"><div id="c-institutes-festival"></div></div>
+                <div class="dashboard-body" style="width: 100%;"><div id="c-institutes-festival"></div></div>
             </div>
         </div>
 
@@ -187,36 +190,44 @@
 
     const customLensSVG = '<svg class="lens-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>';
 
-    // ضبط حجم أصغر ومدمج للمخططات (الارتفاع 220px) لتظهر بكفاءة معاً
-    const baseCfg = (s, h) => ({
-        chart: { 
-            type: 'line', height: h, stacked: s,
-            toolbar: { show: true, tools: { download: true, selection: false, zoom: false, zoomin: true, zoomout: true, pan: true, reset: customLensSVG }, autoSelected: 'pan' }
-        },
-        stroke: { curve: 'smooth', width: 2 },
-        colors: ['#0c4a6e', '#38bdf8', '#0ea5e9', '#0284c7', '#10b981', '#f59e0b', '#ef4444'],
-        series: [],
-        xaxis: { type: 'category', categories: [], labels: { show: true, rotate: -45, hideOverlappingLabels: false, style: { colors: '#0c4a6e', fontFamily: 'Cairo', fontSize: '10px' } } },
-        yaxis: { labels: { style: { colors: '#0c4a6e', fontFamily: 'Cairo' } } },
-        legend: { position: 'top', fontSize: '11px', labels: { colors: '#0c4a6e', fontFamily: 'Cairo' } },
-        plotOptions: { bar: { columnWidth: '50%', borderRadius: 3 } }
-    });
+    // الدالة الذكية لتهيئة المخطط، أضفنا دعماً للأشكال الدائرية
+    const baseCfg = (type, h) => {
+        const isPie = type === 'donut' || type === 'pie';
+        return {
+            chart: { 
+                type: type, 
+                height: h, 
+                width: '100%',
+                toolbar: { show: !isPie, tools: { download: true, selection: false, zoom: false, zoomin: true, zoomout: true, pan: true, reset: customLensSVG }, autoSelected: 'pan' }
+            },
+            stroke: { curve: 'smooth', width: isPie ? 1 : 2 },
+            colors: ['#0c4a6e', '#38bdf8', '#0ea5e9', '#0284c7', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#14b8a6'],
+            series: [],
+            labels: isPie ? [] : undefined,
+            xaxis: isPie ? undefined : { type: 'category', categories: [], labels: { show: true, rotate: -45, hideOverlappingLabels: false, style: { colors: '#0c4a6e', fontFamily: 'Cairo', fontSize: '10px' } } },
+            yaxis: isPie ? undefined : { labels: { style: { colors: '#0c4a6e', fontFamily: 'Cairo' } } },
+            legend: { position: 'bottom', fontSize: '11px', labels: { colors: '#0c4a6e', fontFamily: 'Cairo' } },
+            plotOptions: isPie ? { pie: { donut: { size: '60%' } } } : { bar: { columnWidth: '50%', borderRadius: 3 } },
+            dataLabels: { enabled: isPie, style: { fontSize: '11px', fontFamily: 'Cairo', fontWeight: 'bold' } }
+        };
+    };
 
+    // تخصيص الأنواع للمخططات (البعض أعمدة، البعض دائري، البعض خطي)
     let charts = {
-        empTotal: new ApexCharts(document.querySelector("#c-emp-total"), baseCfg(false, 220)),
-        empDept: new ApexCharts(document.querySelector("#c-emp-dept"), baseCfg(false, 220)),
-        empDegrees: new ApexCharts(document.querySelector("#c-emp-degrees"), baseCfg(false, 220)),
-        coursesInternal: new ApexCharts(document.querySelector("#c-courses-internal"), baseCfg(false, 220)),
-        specializedCenters: new ApexCharts(document.querySelector("#c-specialized-centers"), baseCfg(false, 220)),
-        scientificActivities: new ApexCharts(document.querySelector("#c-scientific-activities"), baseCfg(false, 220)),
-        participantsInternal: new ApexCharts(document.querySelector("#c-participants-internal"), baseCfg(false, 220)),
-        coursesExternal: new ApexCharts(document.querySelector("#c-courses-external"), baseCfg(false, 220)),
-        workshopsSeminars: new ApexCharts(document.querySelector("#c-workshops-seminars"), baseCfg(false, 220)),
-        youthSupport: new ApexCharts(document.querySelector("#c-youth-support"), baseCfg(false, 220)),
-        studentCount: new ApexCharts(document.querySelector("#c-student-count"), baseCfg(true, 220)),
-        graduates: new ApexCharts(document.querySelector("#c-graduates"), baseCfg(false, 220)),
-        scientificVisits: new ApexCharts(document.querySelector("#c-scientific-visits"), baseCfg(false, 220)),
-        institutesFestival: new ApexCharts(document.querySelector("#c-institutes-festival"), baseCfg(false, 220))
+        empTotal: new ApexCharts(document.querySelector("#c-emp-total"), baseCfg('column', 220)),
+        empDept: new ApexCharts(document.querySelector("#c-emp-dept"), baseCfg('donut', 220)), // مخطط دونات
+        empDegrees: new ApexCharts(document.querySelector("#c-emp-degrees"), baseCfg('donut', 220)), // مخطط دونات
+        coursesInternal: new ApexCharts(document.querySelector("#c-courses-internal"), baseCfg('area', 220)),
+        specializedCenters: new ApexCharts(document.querySelector("#c-specialized-centers"), baseCfg('pie', 220)), // مخطط دائري
+        scientificActivities: new ApexCharts(document.querySelector("#c-scientific-activities"), baseCfg('bar', 220)),
+        participantsInternal: new ApexCharts(document.querySelector("#c-participants-internal"), baseCfg('column', 220)),
+        coursesExternal: new ApexCharts(document.querySelector("#c-courses-external"), baseCfg('line', 220)),
+        workshopsSeminars: new ApexCharts(document.querySelector("#c-workshops-seminars"), baseCfg('column', 220)),
+        youthSupport: new ApexCharts(document.querySelector("#c-youth-support"), baseCfg('area', 220)),
+        studentCount: new ApexCharts(document.querySelector("#c-student-count"), baseCfg('column', 220)),
+        graduates: new ApexCharts(document.querySelector("#c-graduates"), baseCfg('area', 220)),
+        scientificVisits: new ApexCharts(document.querySelector("#c-scientific-visits"), baseCfg('column', 220)),
+        institutesFestival: new ApexCharts(document.querySelector("#c-institutes-festival"), baseCfg('bar', 220))
     };
 
     Object.values(charts).forEach(c => c.render());
@@ -244,26 +255,26 @@
     async function loadAll() {
         document.getElementById('loader').style.display = 'flex';
         
-        await loadSingle(SHEETS.emp_total, charts.empTotal, 'column'); await delay(200);
-        await loadSingle(SHEETS.emp_dept, charts.empDept, 'bar'); await delay(200);
-        await loadSingle(SHEETS.emp_degrees, charts.empDegrees, 'column'); await delay(200);
-        await loadSingle(SHEETS.courses_internal, charts.coursesInternal, 'area'); await delay(200);
-        await loadSingle(SHEETS.specialized_centers, charts.specializedCenters, 'column'); await delay(200);
-        await loadSingle(SHEETS.scientific_activities, charts.scientificActivities, 'bar'); await delay(200);
-        await loadSingle(SHEETS.participants_internal, charts.participantsInternal, 'column'); await delay(200);
-        await loadSingle(SHEETS.courses_external, charts.coursesExternal, 'line'); await delay(200);
-        await loadSingle(SHEETS.workshops_seminars, charts.workshopsSeminars, 'column'); await delay(200);
-        await loadSingle(SHEETS.youth_support, charts.youthSupport, 'area'); await delay(200);
-        await loadSingle(SHEETS.student_count, charts.studentCount, 'column'); await delay(200);
-        await loadSingle(SHEETS.graduates, charts.graduates, 'area'); await delay(200);
-        await loadSingle(SHEETS.scientific_visits, charts.scientificVisits, 'column'); await delay(200);
+        await loadSingle(SHEETS.emp_total, charts.empTotal, 'column'); await delay(150);
+        await loadSingle(SHEETS.emp_dept, charts.empDept, 'donut'); await delay(150);
+        await loadSingle(SHEETS.emp_degrees, charts.empDegrees, 'donut'); await delay(150);
+        await loadSingle(SHEETS.courses_internal, charts.coursesInternal, 'area'); await delay(150);
+        await loadSingle(SHEETS.specialized_centers, charts.specializedCenters, 'pie'); await delay(150);
+        await loadSingle(SHEETS.scientific_activities, charts.scientificActivities, 'bar'); await delay(150);
+        await loadSingle(SHEETS.participants_internal, charts.participantsInternal, 'column'); await delay(150);
+        await loadSingle(SHEETS.courses_external, charts.coursesExternal, 'line'); await delay(150);
+        await loadSingle(SHEETS.workshops_seminars, charts.workshopsSeminars, 'column'); await delay(150);
+        await loadSingle(SHEETS.youth_support, charts.youthSupport, 'area'); await delay(150);
+        await loadSingle(SHEETS.student_count, charts.studentCount, 'column'); await delay(150);
+        await loadSingle(SHEETS.graduates, charts.graduates, 'area'); await delay(150);
+        await loadSingle(SHEETS.scientific_visits, charts.scientificVisits, 'column'); await delay(150);
         await loadSingle(SHEETS.institutes_festival, charts.institutesFestival, 'bar');
         
         document.getElementById('loader').style.display = 'none';
         setTimeout(() => window.dispatchEvent(new Event('resize')), 500);
     }
 
-    async function loadSingle(url, targetChart, chartTypeSeries) {
+    async function loadSingle(url, targetChart, chartType) {
         try {
             const csvText = await fetchCSVWithRetry(url);
             Papa.parse(csvText, {
@@ -271,14 +282,25 @@
                 complete: function(results) {
                     if(results.data && results.data.length > 0) {
                         const cols = Object.keys(results.data[0]);
-                        const labels = results.data.map(r => r[cols[0]]);
-                        const series = cols.slice(1).map(colName => ({ 
-                            name: colName, 
-                            type: chartTypeSeries, 
-                            data: results.data.map(r => parseFloat(String(r[colName] || '0').replace(/[^0-9.-]+/g,"")) || 0) 
-                        }));
-                        targetChart.updateOptions({ xaxis: { categories: labels } });
-                        targetChart.updateSeries(series);
+                        const isPie = chartType === 'donut' || chartType === 'pie';
+                        
+                        if (isPie) {
+                            // معالجة البيانات للمخططات الدائرية الدونات (تحتاج مصفوفة بيانات أحادية)
+                            const labels = results.data.map(r => r[cols[0]]);
+                            const series = results.data.map(r => parseFloat(String(r[cols[1]] || '0').replace(/[^0-9.-]+/g,"")) || 0);
+                            targetChart.updateOptions({ labels: labels });
+                            targetChart.updateSeries(series);
+                        } else {
+                            // معالجة البيانات لباقي المخططات (أعمدة، خطوط، مساحات)
+                            const labels = results.data.map(r => r[cols[0]]);
+                            const series = cols.slice(1).map(colName => ({ 
+                                name: colName, 
+                                type: chartType, 
+                                data: results.data.map(r => parseFloat(String(r[colName] || '0').replace(/[^0-9.-]+/g,"")) || 0) 
+                            }));
+                            targetChart.updateOptions({ xaxis: { categories: labels } });
+                            targetChart.updateSeries(series);
+                        }
                     }
                 }
             });
