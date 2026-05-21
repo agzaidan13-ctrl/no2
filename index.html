@@ -42,32 +42,26 @@
         @media (min-width: 992px) { .row-cols-8 > * { width: 20%; } }
         @media (min-width: 1400px) { .row-cols-8 > * { width: 12.5%; } }
 
-        /* البطاقات بدون overflow:hidden لحماية القوائم، مع تحديد الارتفاع لمنع التمدد */
-        .dashboard-item { background: var(--bg-card); border-radius: 12px; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 2px 4px rgba(0,0,0,0.02); display: flex; flex-direction: column; transition: 0.2s; position: relative; overflow: visible; height: 100%; }
+        .dashboard-item { background: var(--bg-card); border-radius: 12px; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 2px 4px rgba(0,0,0,0.02); display: flex; flex-direction: column; height: 100%; transition: 0.2s; position: relative; overflow: visible; }
         .dashboard-item:hover { transform: translateY(-3px); box-shadow: 0 6px 12px rgba(0,0,0,0.06); }
         
         .dashboard-header { background: rgba(56,189,248,0.05); padding: 8px 5px; border-bottom: 1px solid rgba(0,0,0,0.05); border-top-left-radius: 12px; border-top-right-radius: 12px; display: flex; flex-direction: column; align-items: center; }
         .dashboard-header h6 { margin: 0 0 5px 0; font-weight: bold; font-size: 0.75rem; color: var(--primary-blue); text-align: center; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
-        
-        /* تثبيت الارتفاع لمنع مشكلة التمدد اللانهائي */
         .dashboard-body { padding: 5px; flex-grow: 1; display: flex; justify-content: center; align-items: center; height: 160px; position: relative; width: 100%; }
 
         .stat-card { background: var(--bg-card); border-radius: 15px; padding: 20px; border: 1px solid rgba(0,0,0,0.05); height: 100%; box-shadow: 0 4px 6px rgba(0,0,0,0.02); display: flex; flex-direction: column; }
-        .chart-wrapper { background: var(--bg-card); border-radius: 20px; padding: 20px; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
+        .chart-wrapper { background: var(--bg-card); border-radius: 20px; padding: 20px; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 4px 6px rgba(0,0,0,0.02); position: relative; }
 
         .details-grid { display: flex; gap: 3px; width: 100%; flex-wrap: wrap; justify-content: center; }
         .details-box { background: var(--bg-card); border: 1px solid rgba(0,0,0,0.08); padding: 3px; border-radius: 6px; flex: 1; min-width: 40px; text-align: center; display: flex; flex-direction: column; justify-content: center;}
         .details-box span { display: block; font-size: 0.55rem; font-weight: bold; opacity: 0.8; margin-bottom: 1px; }
         .details-box strong { font-size: 0.85rem; color: var(--primary-blue); }
 
-        /* شريط الأدوات العائم */
-        .apexcharts-toolbar { position: absolute !important; top: 0px !important; right: 5px !important; z-index: 100 !important; display: flex !important; visibility: visible !important; }
-        .dashboard-item .apexcharts-toolbar { opacity: 0 !important; transition: 0.3s; }
-        .dashboard-item:hover .apexcharts-toolbar { opacity: 1 !important; }
-        
-        .apexcharts-menu { z-index: 999 !important; background-color: var(--bg-card) !important; border: 1px solid rgba(0,0,0,0.1) !important; color: var(--text-dark) !important; }
+        /* شريط أدوات قوي ومرئي دائماً لتجنب أي إخفاء غير مقصود */
+        .apexcharts-toolbar { position: absolute !important; top: -5px !important; right: 5px !important; z-index: 999 !important; display: flex !important; visibility: visible !important; opacity: 1 !important; }
+        .apexcharts-menu { z-index: 9999 !important; background-color: var(--bg-card) !important; border: 1px solid rgba(0,0,0,0.1) !important; color: var(--text-dark) !important; }
 
-        .loading-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 9999; justify-content: center; align-items: center; color: white; flex-direction: column; backdrop-filter: blur(5px); }
+        .loading-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 99999; justify-content: center; align-items: center; color: white; flex-direction: column; backdrop-filter: blur(5px); }
     </style>
 </head>
 <body>
@@ -112,7 +106,7 @@
                 </div>
                 <div class="col-md-9">
                     <div class="chart-wrapper">
-                        <div id="c-detail-view" style="min-height: 400px;">
+                        <div id="c-detail-view" style="min-height: 400px; position: relative;">
                             <h5 class="text-center mt-5 text-muted">يرجى اختيار أحد المخططات من الواجهة الرئيسية لعرض تفاصيله هنا</h5>
                         </div>
                     </div>
@@ -144,7 +138,6 @@
     let chartsObj = {};
     let activeDetailChart = null;
     let rawDataStore = {};
-    const customLensSVG = '<svg class="lens-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>';
 
     function buildHomeGrid() {
         const container = document.getElementById('home-charts-container');
@@ -152,7 +145,7 @@
         CONFIG.forEach(item => {
             html += `
             <div class="col">
-                <div class="dashboard-item" onclick="openDetailView('${item.id}')" title="انقر للتفاصيل المتقدمة">
+                <div class="dashboard-item" onclick="openDetailView('${item.id}')" title="انقر لعرض التفاصيل المتقدمة">
                     <div class="dashboard-header">
                         <h6>${item.title}</h6>
                         <div class="details-grid">
@@ -174,19 +167,20 @@
         container.innerHTML = html;
     }
 
+    // دالة إجبارية تضمن ظهور شريط الأدوات دائماً
     const getToolbarConfig = (isPie) => {
         return {
-            show: true,
+            show: true, // الظهور إجباري
             tools: {
-                download: true,
+                download: true, // الحفظ موجود دائماً
                 selection: false,
-                zoom: !isPie,
+                zoom: !isPie, // تكبير متاح للمخططات غير الدائرية
                 zoomin: !isPie,
                 zoomout: !isPie,
                 pan: !isPie,
-                reset: !isPie ? customLensSVG : false
+                reset: !isPie
             },
-            autoSelected: !isPie ? 'pan' : undefined
+            autoSelected: !isPie ? 'zoom' : undefined
         };
     };
 
@@ -273,10 +267,10 @@
             const cfg = {
                 chart: { 
                     type: itemConfig.type, 
-                    height: 160, /* تم تحديد الارتفاع بالبكسل بدلا من 100% لمنع حلقة التمدد اللانهائية */
+                    height: 160, 
                     width: '100%', 
-                    zoom: { enabled: !isPie },
-                    toolbar: getToolbarConfig(isPie),
+                    zoom: { enabled: !isPie }, // التفعيل الإجباري للتكبير
+                    toolbar: getToolbarConfig(isPie), // جلب أدوات التحكم
                     animations: { enabled: true },
                     parentHeightOffset: 0
                 },
@@ -348,8 +342,8 @@
                 type: itemConfig.type, 
                 height: 450, 
                 width: '100%', 
-                zoom: { enabled: !isPie },
-                toolbar: getToolbarConfig(isPie)
+                zoom: { enabled: !isPie }, // التفعيل الإجباري في التفاصيل
+                toolbar: getToolbarConfig(isPie) // جلب أدوات التحكم
             },
             stroke: { curve: 'smooth', width: isPie ? 1 : 2 },
             colors: colorMapping,
