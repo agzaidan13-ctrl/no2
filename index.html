@@ -42,12 +42,14 @@
         @media (min-width: 992px) { .row-cols-8 > * { width: 20%; } }
         @media (min-width: 1400px) { .row-cols-8 > * { width: 12.5%; } }
 
-        .dashboard-item { background: var(--bg-card); border-radius: 12px; overflow: hidden; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 2px 4px rgba(0,0,0,0.02); display: flex; flex-direction: column; height: 100%; transition: 0.2s; position: relative; }
+        /* تم إزالة overflow: hidden لكي لا يتم قص قائمة الحفظ المنسدلة */
+        .dashboard-item { background: var(--bg-card); border-radius: 12px; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 2px 4px rgba(0,0,0,0.02); display: flex; flex-direction: column; height: 100%; transition: 0.2s; position: relative; }
         .dashboard-item:hover { transform: translateY(-3px); box-shadow: 0 6px 12px rgba(0,0,0,0.06); }
         
-        .dashboard-header { background: rgba(56,189,248,0.05); padding: 8px 5px; border-bottom: 1px solid rgba(0,0,0,0.05); display: flex; flex-direction: column; align-items: center; }
+        /* تعويض حواف الزوايا العلوية بعد إزالة overflow */
+        .dashboard-header { background: rgba(56,189,248,0.05); padding: 8px 5px; border-bottom: 1px solid rgba(0,0,0,0.05); border-top-left-radius: 12px; border-top-right-radius: 12px; display: flex; flex-direction: column; align-items: center; }
         .dashboard-header h6 { margin: 0 0 5px 0; font-weight: bold; font-size: 0.75rem; color: var(--primary-blue); text-align: center; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
-        .dashboard-body { padding: 3px; flex-grow: 1; display: flex; justify-content: center; align-items: center; min-height: 150px; }
+        .dashboard-body { padding: 3px; flex-grow: 1; display: flex; justify-content: center; align-items: center; min-height: 250px; position: relative; }
 
         .stat-card { background: var(--bg-card); border-radius: 15px; padding: 20px; border: 1px solid rgba(0,0,0,0.05); height: 100%; box-shadow: 0 4px 6px rgba(0,0,0,0.02); display: flex; flex-direction: column; }
         .chart-wrapper { background: var(--bg-card); border-radius: 20px; padding: 20px; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
@@ -57,12 +59,14 @@
         .details-box span { display: block; font-size: 0.55rem; font-weight: bold; opacity: 0.8; margin-bottom: 1px; }
         .details-box strong { font-size: 0.85rem; color: var(--primary-blue); }
 
-        /* تعديلات شريط الأدوات: مخفي في الرئيسية ويظهر عند تمرير الماوس */
-        .dashboard-item .apexcharts-toolbar { opacity: 0 !important; transition: 0.3s; top: -5px !important; right: 0px !important; z-index: 10 !important; display: flex !important; visibility: visible !important; }
+        /* شريط الأدوات: شفافيته 0.4 في الرئيسية ليظل واضحاً ولا يزعج العين، ويصبح 1 عند التأشير */
+        .dashboard-item .apexcharts-toolbar { opacity: 0.4 !important; transition: 0.3s; top: -10px !important; right: 0px !important; z-index: 100 !important; display: flex !important; visibility: visible !important; }
         .dashboard-item:hover .apexcharts-toolbar { opacity: 1 !important; }
         
-        /* شريط الأدوات مرئي دائماً في نافذة التفاصيل */
-        .chart-wrapper .apexcharts-toolbar { opacity: 1 !important; top: -10px !important; right: 5px !important; z-index: 10 !important; display: flex !important; visibility: visible !important; }
+        .chart-wrapper .apexcharts-toolbar { opacity: 1 !important; top: -10px !important; right: 5px !important; z-index: 100 !important; display: flex !important; visibility: visible !important; }
+
+        /* تعديل القائمة المنسدلة للحفظ لتظهر بشكل صحيح فوق العناصر الأخرى */
+        .apexcharts-menu { z-index: 999 !important; background-color: var(--bg-card) !important; border: 1px solid rgba(0,0,0,0.1) !important; color: var(--text-dark) !important; }
 
         .loading-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 9999; justify-content: center; align-items: center; color: white; flex-direction: column; backdrop-filter: blur(5px); }
     </style>
@@ -149,7 +153,7 @@
         CONFIG.forEach(item => {
             html += `
             <div class="col">
-                <div class="dashboard-item" style="cursor: pointer;" onclick="openDetailView('${item.id}')" title="انقر للتفاصيل المتقدمة">
+                <div class="dashboard-item" onclick="openDetailView('${item.id}')" title="انقر لعرض التفاصيل المتقدمة">
                     <div class="dashboard-header">
                         <h6>${item.title}</h6>
                         <div class="details-grid">
@@ -170,6 +174,23 @@
         });
         container.innerHTML = html;
     }
+
+    // دالة إنشاء الإعدادات الموحدة لشريط الأدوات (يظهر لجميع المخططات بقواعد ذكية)
+    const getToolbarConfig = (isPie) => {
+        return {
+            show: true,
+            tools: {
+                download: true, // الحفظ مفعل للجميع دائماً
+                selection: false,
+                zoom: !isPie,    // التكبير مفعل فقط لغير الدائري
+                zoomin: !isPie,
+                zoomout: !isPie,
+                pan: !isPie,     // التحريك مفعل فقط لغير الدائري
+                reset: !isPie ? customLensSVG : false
+            },
+            autoSelected: !isPie ? 'pan' : undefined
+        };
+    };
 
     async function loadData() {
         document.getElementById('loader').style.display = 'flex';
@@ -256,9 +277,8 @@
                     type: itemConfig.type, 
                     height: 230, 
                     width: '100%', 
-                    // تفعيل الزوم والأدوات بالكامل في الشاشة الرئيسية أيضاً
-                    zoom: { enabled: true },
-                    toolbar: { show: !isPie, tools: { download: true, selection: false, zoom: true, zoomin: true, zoomout: true, pan: true, reset: customLensSVG }, autoSelected: 'pan' },
+                    zoom: { enabled: !isPie }, // التفعيل الصريح لزوم المخططات
+                    toolbar: getToolbarConfig(isPie), // دمج الإعداد الذكي لشريط الأدوات
                     animations: { enabled: true } 
                 },
                 stroke: { curve: 'smooth', width: isPie ? 1 : 1.5 },
@@ -346,8 +366,8 @@
                 type: itemConfig.type, 
                 height: 450, 
                 width: '100%', 
-                zoom: { enabled: true },
-                toolbar: { show: !isPie, tools: { download: true, selection: false, zoom: true, zoomin: true, zoomout: true, pan: true, reset: customLensSVG }, autoSelected: 'pan' } 
+                zoom: { enabled: !isPie }, // تفعيل الزوم لغير الدائري
+                toolbar: getToolbarConfig(isPie) // دمج نفس الإعداد الذكي
             },
             stroke: { curve: 'smooth', width: isPie ? 1 : 2 },
             colors: colorMapping,
