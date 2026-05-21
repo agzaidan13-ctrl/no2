@@ -42,12 +42,12 @@
         @media (min-width: 992px) { .row-cols-8 > * { width: 20%; } }
         @media (min-width: 1400px) { .row-cols-8 > * { width: 12.5%; } }
 
-        .dashboard-item { background: var(--bg-card); border-radius: 12px; overflow: hidden; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 2px 4px rgba(0,0,0,0.02); display: flex; flex-direction: column; height: 100%; transition: 0.2s; }
+        .dashboard-item { background: var(--bg-card); border-radius: 12px; overflow: hidden; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 2px 4px rgba(0,0,0,0.02); display: flex; flex-direction: column; height: 100%; transition: 0.2s; position: relative; }
         .dashboard-item:hover { transform: translateY(-3px); box-shadow: 0 6px 12px rgba(0,0,0,0.06); }
         
         .dashboard-header { background: rgba(56,189,248,0.05); padding: 8px 5px; border-bottom: 1px solid rgba(0,0,0,0.05); display: flex; flex-direction: column; align-items: center; }
         .dashboard-header h6 { margin: 0 0 5px 0; font-weight: bold; font-size: 0.75rem; color: var(--primary-blue); text-align: center; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
-        .dashboard-body { padding: 3px; flex-grow: 1; display: flex; justify-content: center; align-items: center; min-height: 250px; }
+        .dashboard-body { padding: 3px; flex-grow: 1; display: flex; justify-content: center; align-items: center; min-height: 150px; }
 
         .stat-card { background: var(--bg-card); border-radius: 15px; padding: 20px; border: 1px solid rgba(0,0,0,0.05); height: 100%; box-shadow: 0 4px 6px rgba(0,0,0,0.02); display: flex; flex-direction: column; }
         .chart-wrapper { background: var(--bg-card); border-radius: 20px; padding: 20px; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
@@ -57,8 +57,12 @@
         .details-box span { display: block; font-size: 0.55rem; font-weight: bold; opacity: 0.8; margin-bottom: 1px; }
         .details-box strong { font-size: 0.85rem; color: var(--primary-blue); }
 
-        /* تعديلات شريط أدوات المخططات ليكون مرئياً ومناسباً */
-        .apexcharts-toolbar { display: flex !important; opacity: 1 !important; visibility: visible !important; top: -10px !important; right: 5px !important; z-index: 10 !important; }
+        /* تعديلات شريط الأدوات: مخفي في الرئيسية ويظهر عند تمرير الماوس */
+        .dashboard-item .apexcharts-toolbar { opacity: 0 !important; transition: 0.3s; top: -5px !important; right: 0px !important; z-index: 10 !important; display: flex !important; visibility: visible !important; }
+        .dashboard-item:hover .apexcharts-toolbar { opacity: 1 !important; }
+        
+        /* شريط الأدوات مرئي دائماً في نافذة التفاصيل */
+        .chart-wrapper .apexcharts-toolbar { opacity: 1 !important; top: -10px !important; right: 5px !important; z-index: 10 !important; display: flex !important; visibility: visible !important; }
 
         .loading-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 9999; justify-content: center; align-items: center; color: white; flex-direction: column; backdrop-filter: blur(5px); }
     </style>
@@ -118,7 +122,6 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-    // تم تعديل emp_dept ليكون horizontal: false (رأسي طولية)
     const CONFIG = [
         { id: 'emp_total', title: 'أعداد المنتسبين', type: 'pie', horizontal: false, url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=398430626&single=true&output=csv' },
         { id: 'emp_dept', title: 'المنتسبين للأقسام', type: 'bar', horizontal: false, url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=255359164&single=true&output=csv' },
@@ -206,7 +209,7 @@
             if(cols.length < 2) throw new Error("أعمدة غير كافية");
 
             const isPie = itemConfig.type === 'pie' || itemConfig.type === 'donut';
-            const isEmpDept = itemConfig.id === 'emp_dept'; // اكتشاف مخطط الأقسام
+            const isEmpDept = itemConfig.id === 'emp_dept';
             let totalSum = 0;
             let labels = [];
             let series = [];
@@ -236,33 +239,32 @@
 
             document.getElementById(`c-${itemConfig.id}`).innerHTML = '';
 
-            // برمجة تدرج الألوان الذكي بناءً على الكثافة (خاص بمخطط الأقسام)
             let colorMapping = ['#0c4a6e', '#38bdf8', '#0ea5e9', '#0284c7', '#10b981', '#f59e0b', '#ef4444'];
             if (isEmpDept) {
                 colorMapping = [function({ value }) {
                     let ratio = value / totalSum;
-                    if (ratio > 0.20) return '#082f49'; // كثافة عالية (داكن جداً)
-                    if (ratio > 0.10) return '#0c4a6e'; // كثافة متوسطة
-                    if (ratio > 0.05) return '#0284c7'; // كثافة عادية
-                    if (ratio > 0.02) return '#0ea5e9'; // كثافة قليلة
-                    return '#7dd3fc'; // كثافة نادرة (فاتح جداً)
+                    if (ratio > 0.20) return '#082f49'; 
+                    if (ratio > 0.10) return '#0c4a6e'; 
+                    if (ratio > 0.05) return '#0284c7'; 
+                    if (ratio > 0.02) return '#0ea5e9'; 
+                    return '#7dd3fc'; 
                 }];
             }
 
             const cfg = {
                 chart: { 
                     type: itemConfig.type, 
-                    height: 230, // تم زيادة الارتفاع ليتسع لشريط الأدوات والأسماء المائلة
+                    height: 230, 
                     width: '100%', 
-                    // إعادة شريط الأدوات بالكامل بناءً على طلبك
-                    toolbar: { show: true, tools: { download: true, selection: false, zoom: true, zoomin: true, zoomout: true, pan: true, reset: customLensSVG }, autoSelected: 'pan' },
+                    // تفعيل الزوم والأدوات بالكامل في الشاشة الرئيسية أيضاً
+                    zoom: { enabled: true },
+                    toolbar: { show: !isPie, tools: { download: true, selection: false, zoom: true, zoomin: true, zoomout: true, pan: true, reset: customLensSVG }, autoSelected: 'pan' },
                     animations: { enabled: true } 
                 },
                 stroke: { curve: 'smooth', width: isPie ? 1 : 1.5 },
                 colors: colorMapping,
                 grid: isPie ? { padding: { top: 0, bottom: 0, left: 0, right: 0 } } : { padding: { left: 5, right: 5, top: 0, bottom: isEmpDept ? 10 : 0 } },
                 legend: { show: false },
-                // برمجة النسب المئوية فوق الأعمدة
                 dataLabels: { 
                     enabled: isEmpDept, 
                     formatter: function (val) {
@@ -282,7 +284,7 @@
                 cfg.xaxis = { 
                     categories: labels, 
                     labels: { 
-                        show: isEmpDept, // إظهار الأسماء المائلة للأقسام
+                        show: isEmpDept, 
                         rotate: -45, 
                         style: { fontSize: '9px', fontFamily: 'Cairo' } 
                     }, 
@@ -340,7 +342,13 @@
         }
 
         const cfg = {
-            chart: { type: itemConfig.type, height: 450, width: '100%', toolbar: { show: true, tools: { download: true, selection: false, zoom: true, zoomin: true, zoomout: true, pan: true, reset: customLensSVG }, autoSelected: 'pan' } },
+            chart: { 
+                type: itemConfig.type, 
+                height: 450, 
+                width: '100%', 
+                zoom: { enabled: true },
+                toolbar: { show: !isPie, tools: { download: true, selection: false, zoom: true, zoomin: true, zoomout: true, pan: true, reset: customLensSVG }, autoSelected: 'pan' } 
+            },
             stroke: { curve: 'smooth', width: isPie ? 1 : 2 },
             colors: colorMapping,
             legend: { position: isPie ? 'right' : 'bottom', fontSize: '13px', labels: { colors: '#0c4a6e', fontFamily: 'Cairo' } },
