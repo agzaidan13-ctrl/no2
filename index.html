@@ -42,7 +42,7 @@
         
         .dashboard-header { background: rgba(56,189,248,0.05); padding: 12px 10px; border-bottom: 1px solid rgba(0,0,0,0.05); display: flex; flex-direction: column; align-items: center; }
         .dashboard-header h6 { margin: 0 0 8px 0; font-weight: bold; font-size: 0.9rem; color: var(--primary-blue); text-align: center; line-height: 1.3; }
-        .dashboard-body { padding: 5px; flex-grow: 1; }
+        .dashboard-body { padding: 5px; flex-grow: 1; display: flex; justify-content: center; align-items: center; min-height: 160px; }
 
         .stat-card { background: var(--bg-card); border-radius: 15px; padding: 20px; border: 1px solid rgba(0,0,0,0.05); height: 100%; box-shadow: 0 4px 6px rgba(0,0,0,0.02); display: flex; flex-direction: column; }
         .chart-wrapper { background: var(--bg-card); border-radius: 20px; padding: 20px; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
@@ -132,6 +132,7 @@
     let chartsObj = {};
     let activeDetailChart = null;
     let rawDataStore = {};
+    const customLensSVG = '<svg class="lens-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>';
 
     function buildHomeGrid() {
         const container = document.getElementById('home-charts-container');
@@ -149,8 +150,11 @@
                             </div>
                         </div>
                     </div>
-                    <div class="dashboard-body">
-                        <div id="c-${item.id}"></div>
+                    <div class="dashboard-body" id="c-${item.id}">
+                        <div class="w-100 h-100 d-flex justify-content-center align-items-center flex-column">
+                            <div class="spinner-border spinner-border-sm text-info mb-2" role="status"></div>
+                            <span class="text-muted" style="font-size: 11px;">جاري التحميل...</span>
+                        </div>
                     </div>
                 </div>
             </div>`;
@@ -158,34 +162,9 @@
         container.innerHTML = html;
     }
 
-    const customLensSVG = '<svg class="lens-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>';
-
-    const getChartConfig = (type, h, horizontal) => {
-        const isPie = type === 'pie' || type === 'donut';
-        return {
-            chart: { type: type, height: h, width: '100%', toolbar: { show: false }, animations: { enabled: true } },
-            stroke: { curve: 'smooth', width: isPie ? 1 : 2 },
-            colors: ['#0c4a6e', '#38bdf8', '#0ea5e9', '#0284c7', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#14b8a6'],
-            series: [],
-            labels: isPie ? [] : undefined,
-            xaxis: isPie ? undefined : { type: 'category', categories: [], labels: { show: false } }, 
-            yaxis: isPie ? undefined : { labels: { show: false } }, 
-            grid: { padding: { left: 0, right: 0, top: 0, bottom: 0 } },
-            legend: { show: false },
-            plotOptions: isPie ? {} : { bar: { horizontal: horizontal, columnWidth: '70%', borderRadius: 2 } },
-            dataLabels: { enabled: false },
-            noData: { text: '⏳ جاري جلب البيانات...', align: 'center', verticalAlign: 'middle', style: { color: '#0c4a6e', fontSize: '12px', fontFamily: 'Cairo', fontWeight: 'bold' } }
-        };
-    };
-
     async function loadData() {
         document.getElementById('loader').style.display = 'flex';
         buildHomeGrid();
-
-        CONFIG.forEach(item => {
-            chartsObj[item.id] = new ApexCharts(document.querySelector(`#c-${item.id}`), getChartConfig(item.type, 160, item.horizontal));
-            chartsObj[item.id].render();
-        });
 
         for (const item of CONFIG) {
             try {
@@ -198,21 +177,21 @@
                         complete: function(results) {
                             if(results.data && results.data.length > 0) {
                                 rawDataStore[item.id] = results.data;
-                                renderChartData(item, results.data);
+                                renderChartData(item, results.data); // الرسم يتم هنا فقط بعد توفر البيانات
                             } else {
-                                chartsObj[item.id].updateOptions({ noData: { text: "⚠️ الجدول فارغ" } });
+                                document.getElementById(`c-${item.id}`).innerHTML = '<span class="text-warning" style="font-size: 12px;">⚠️ الجدول فارغ</span>';
                             }
                             resolve();
                         },
                         error: () => {
-                            chartsObj[item.id].updateOptions({ noData: { text: "❌ خطأ في الملف" } });
+                            document.getElementById(`c-${item.id}`).innerHTML = '<span class="text-danger" style="font-size: 12px;">❌ خطأ بالملف</span>';
                             resolve();
                         }
                     });
                 });
                 await new Promise(r => setTimeout(r, 50)); 
             } catch (err) {
-                chartsObj[item.id].updateOptions({ noData: { text: "❌ فشل الاتصال" } });
+                document.getElementById(`c-${item.id}`).innerHTML = '<span class="text-danger" style="font-size: 12px;">❌ فشل الاتصال</span>';
             }
         }
         document.getElementById('loader').style.display = 'none';
@@ -225,44 +204,61 @@
 
             const isPie = itemConfig.type === 'pie' || itemConfig.type === 'donut';
             let totalSum = 0;
+            let labels = [];
+            let series = [];
 
             if (isPie) {
-                const labels = data.map(r => r[cols[0]]);
-                const seriesData = data.map(r => {
+                labels = data.map(r => r[cols[0]]);
+                series = data.map(r => {
                     let val = parseFloat(String(r[cols[1]] || '0').replace(/[^0-9.-]+/g,"")) || 0;
                     totalSum += val;
                     return val;
                 });
-                
-                // دمج التحديث لمنع الأعطال
-                chartsObj[itemConfig.id].updateOptions({ 
-                    labels: labels,
-                    series: seriesData
-                });
-
             } else {
-                const labels = data.map(r => r[cols[0]]);
-                // إزالة تمرير type من هنا لكي لا يتسبب في تحويلها لمخطط مدمج يكسر الخطوط
-                const seriesData = cols.slice(1).map(colName => ({
+                labels = data.map(r => r[cols[0]]);
+                series = cols.slice(1).map(colName => ({
                     name: colName,
+                    type: itemConfig.type,
                     data: data.map(r => {
                         let val = parseFloat(String(r[colName] || '0').replace(/[^0-9.-]+/g,"")) || 0;
                         totalSum += val; 
                         return val;
                     })
                 }));
-
-                // دمج التحديث لحماية مسارات الخطوط والمساحات
-                chartsObj[itemConfig.id].updateOptions({ 
-                    xaxis: { categories: labels },
-                    series: seriesData
-                });
             }
 
             const totalEl = document.getElementById(`v-${itemConfig.id}-total`);
             if(totalEl) totalEl.innerText = totalSum.toLocaleString();
+
+            // مسح علامة التحميل
+            document.getElementById(`c-${itemConfig.id}`).innerHTML = '';
+
+            // بناء الإعدادات المتكاملة والمناسبة لنوع المخطط
+            const cfg = {
+                chart: { type: itemConfig.type, height: 160, width: '100%', toolbar: { show: false }, animations: { enabled: true } },
+                stroke: { curve: 'smooth', width: isPie ? 1 : 2 },
+                colors: ['#0c4a6e', '#38bdf8', '#0ea5e9', '#0284c7', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#14b8a6'],
+                grid: { padding: { left: 0, right: 0, top: 0, bottom: 0 } },
+                legend: { show: false },
+                dataLabels: { enabled: false },
+                plotOptions: isPie ? {} : { bar: { horizontal: itemConfig.horizontal, columnWidth: '70%', borderRadius: 2 } }
+            };
+
+            if (isPie) {
+                cfg.labels = labels;
+                cfg.series = series;
+            } else {
+                cfg.xaxis = { categories: labels, labels: { show: false } };
+                cfg.yaxis = { labels: { show: false } };
+                cfg.series = series;
+            }
+
+            // رسم المخطط مباشرة ببياناته الأصلية
+            chartsObj[itemConfig.id] = new ApexCharts(document.querySelector(`#c-${itemConfig.id}`), cfg);
+            chartsObj[itemConfig.id].render();
+
         } catch (e) {
-            chartsObj[itemConfig.id].updateOptions({ noData: { text: "⚠️ خطأ في القراءة" } });
+            document.getElementById(`c-${itemConfig.id}`).innerHTML = '<span class="text-danger" style="font-size: 12px;">⚠️ خطأ بالقراءة</span>';
         }
     }
 
@@ -306,10 +302,8 @@
         } else {
             cfg.xaxis = { categories: data.map(r => r[cols[0]]), labels: { show: true, rotate: -45, style: { colors: '#0c4a6e', fontFamily: 'Cairo', fontSize: '11px' } } };
             cfg.yaxis = { labels: { show: true, style: { colors: '#0c4a6e', fontFamily: 'Cairo' } } };
-            
-            // إزالة تمرير type من هنا أيضاً
             cfg.series = cols.slice(1).map(colName => ({
-                name: colName,
+                name: colName, type: itemConfig.type,
                 data: data.map(r => parseFloat(String(r[colName] || '0').replace(/[^0-9.-]+/g,"")) || 0)
             }));
         }
