@@ -47,7 +47,7 @@
         
         .dashboard-header { background: rgba(56,189,248,0.05); padding: 8px 5px; border-bottom: 1px solid rgba(0,0,0,0.05); display: flex; flex-direction: column; align-items: center; }
         .dashboard-header h6 { margin: 0 0 5px 0; font-weight: bold; font-size: 0.75rem; color: var(--primary-blue); text-align: center; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
-        .dashboard-body { padding: 3px; flex-grow: 1; display: flex; justify-content: center; align-items: center; min-height: 120px; }
+        .dashboard-body { padding: 3px; flex-grow: 1; display: flex; justify-content: center; align-items: center; min-height: 250px; }
 
         .stat-card { background: var(--bg-card); border-radius: 15px; padding: 20px; border: 1px solid rgba(0,0,0,0.05); height: 100%; box-shadow: 0 4px 6px rgba(0,0,0,0.02); display: flex; flex-direction: column; }
         .chart-wrapper { background: var(--bg-card); border-radius: 20px; padding: 20px; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
@@ -57,7 +57,8 @@
         .details-box span { display: block; font-size: 0.55rem; font-weight: bold; opacity: 0.8; margin-bottom: 1px; }
         .details-box strong { font-size: 0.85rem; color: var(--primary-blue); }
 
-        .apexcharts-toolbar { display: flex !important; opacity: 1 !important; visibility: visible !important; top: -10px !important; z-index: 10 !important; }
+        /* تعديلات شريط أدوات المخططات ليكون مرئياً ومناسباً */
+        .apexcharts-toolbar { display: flex !important; opacity: 1 !important; visibility: visible !important; top: -10px !important; right: 5px !important; z-index: 10 !important; }
 
         .loading-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 9999; justify-content: center; align-items: center; color: white; flex-direction: column; backdrop-filter: blur(5px); }
     </style>
@@ -117,10 +118,10 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-    // تم حذف الدورات الحضورية بالكامل ليصبح العدد 13
+    // تم تعديل emp_dept ليكون horizontal: false (رأسي طولية)
     const CONFIG = [
         { id: 'emp_total', title: 'أعداد المنتسبين', type: 'pie', horizontal: false, url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=398430626&single=true&output=csv' },
-        { id: 'emp_dept', title: 'المنتسبين للأقسام', type: 'bar', horizontal: true, url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=255359164&single=true&output=csv' },
+        { id: 'emp_dept', title: 'المنتسبين للأقسام', type: 'bar', horizontal: false, url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=255359164&single=true&output=csv' },
         { id: 'emp_degrees', title: 'الشهادات العليا', type: 'bar', horizontal: false, url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=1489382222&single=true&output=csv' },
         { id: 'specialized_centers', title: 'المراكز التخصصية', type: 'bar', horizontal: true, url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=307948542&single=true&output=csv' },
         { id: 'scientific_activities', title: 'الأنشطة العلمية', type: 'bar', horizontal: false, url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=519215277&single=true&output=csv' },
@@ -137,6 +138,7 @@
     let chartsObj = {};
     let activeDetailChart = null;
     let rawDataStore = {};
+    const customLensSVG = '<svg class="lens-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>';
 
     function buildHomeGrid() {
         const container = document.getElementById('home-charts-container');
@@ -144,7 +146,7 @@
         CONFIG.forEach(item => {
             html += `
             <div class="col">
-                <div class="dashboard-item" style="cursor: pointer;" onclick="openDetailView('${item.id}')" title="انقر للتفاصيل">
+                <div class="dashboard-item" style="cursor: pointer;" onclick="openDetailView('${item.id}')" title="انقر للتفاصيل المتقدمة">
                     <div class="dashboard-header">
                         <h6>${item.title}</h6>
                         <div class="details-grid">
@@ -165,20 +167,6 @@
         });
         container.innerHTML = html;
     }
-
-    const getChartConfig = (type, h, horizontal) => {
-        const isPie = type === 'pie' || type === 'donut';
-        return {
-            chart: { type: type, height: h, width: '100%', toolbar: { show: false }, animations: { enabled: true } },
-            stroke: { curve: 'smooth', width: isPie ? 1 : 1.5 },
-            colors: ['#0c4a6e', '#38bdf8', '#0ea5e9', '#0284c7', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#14b8a6'],
-            // تصفير الهوامش للدوائر حتى لا تنقص، مع إضافة customScale لتصغيرها بنسبة 15%
-            grid: isPie ? { padding: { top: 0, bottom: 0, left: 0, right: 0 } } : { padding: { left: -10, right: -10, top: -15, bottom: -15 } },
-            legend: { show: false },
-            dataLabels: { enabled: false },
-            plotOptions: isPie ? { pie: { expandOnClick: false, customScale: 0.85 } } : { bar: { horizontal: horizontal, columnWidth: '75%', borderRadius: 2 } }
-        };
-    };
 
     async function loadData() {
         document.getElementById('loader').style.display = 'flex';
@@ -201,10 +189,7 @@
                             }
                             resolve();
                         },
-                        error: () => {
-                            document.getElementById(`c-${item.id}`).innerHTML = '<span class="text-danger" style="font-size: 10px;">خطأ بالملف</span>';
-                            resolve();
-                        }
+                        error: () => resolve()
                     });
                 });
                 await new Promise(r => setTimeout(r, 40)); 
@@ -221,6 +206,7 @@
             if(cols.length < 2) throw new Error("أعمدة غير كافية");
 
             const isPie = itemConfig.type === 'pie' || itemConfig.type === 'donut';
+            const isEmpDept = itemConfig.id === 'emp_dept'; // اكتشاف مخطط الأقسام
             let totalSum = 0;
             let labels = [];
             let series = [];
@@ -250,13 +236,59 @@
 
             document.getElementById(`c-${itemConfig.id}`).innerHTML = '';
 
-            const cfg = getChartConfig(itemConfig.type, 120, itemConfig.horizontal);
+            // برمجة تدرج الألوان الذكي بناءً على الكثافة (خاص بمخطط الأقسام)
+            let colorMapping = ['#0c4a6e', '#38bdf8', '#0ea5e9', '#0284c7', '#10b981', '#f59e0b', '#ef4444'];
+            if (isEmpDept) {
+                colorMapping = [function({ value }) {
+                    let ratio = value / totalSum;
+                    if (ratio > 0.20) return '#082f49'; // كثافة عالية (داكن جداً)
+                    if (ratio > 0.10) return '#0c4a6e'; // كثافة متوسطة
+                    if (ratio > 0.05) return '#0284c7'; // كثافة عادية
+                    if (ratio > 0.02) return '#0ea5e9'; // كثافة قليلة
+                    return '#7dd3fc'; // كثافة نادرة (فاتح جداً)
+                }];
+            }
+
+            const cfg = {
+                chart: { 
+                    type: itemConfig.type, 
+                    height: 230, // تم زيادة الارتفاع ليتسع لشريط الأدوات والأسماء المائلة
+                    width: '100%', 
+                    // إعادة شريط الأدوات بالكامل بناءً على طلبك
+                    toolbar: { show: true, tools: { download: true, selection: false, zoom: true, zoomin: true, zoomout: true, pan: true, reset: customLensSVG }, autoSelected: 'pan' },
+                    animations: { enabled: true } 
+                },
+                stroke: { curve: 'smooth', width: isPie ? 1 : 1.5 },
+                colors: colorMapping,
+                grid: isPie ? { padding: { top: 0, bottom: 0, left: 0, right: 0 } } : { padding: { left: 5, right: 5, top: 0, bottom: isEmpDept ? 10 : 0 } },
+                legend: { show: false },
+                // برمجة النسب المئوية فوق الأعمدة
+                dataLabels: { 
+                    enabled: isEmpDept, 
+                    formatter: function (val) {
+                        if (isEmpDept) return ((val / totalSum) * 100).toFixed(1) + '%';
+                        return val;
+                    },
+                    offsetY: -5,
+                    style: { fontSize: '8px', fontFamily: 'Cairo', colors: ['#073b52'] }
+                },
+                plotOptions: isPie ? { pie: { expandOnClick: false, customScale: 0.85 } } : { bar: { horizontal: itemConfig.horizontal, columnWidth: '70%', borderRadius: 2, distributed: isEmpDept, dataLabels: { position: 'top' } } }
+            };
 
             if (isPie) {
                 cfg.labels = labels;
                 cfg.series = series;
             } else {
-                cfg.xaxis = { categories: labels, labels: { show: false }, axisBorder: { show: false }, axisTicks: { show: false } };
+                cfg.xaxis = { 
+                    categories: labels, 
+                    labels: { 
+                        show: isEmpDept, // إظهار الأسماء المائلة للأقسام
+                        rotate: -45, 
+                        style: { fontSize: '9px', fontFamily: 'Cairo' } 
+                    }, 
+                    axisBorder: { show: isEmpDept }, 
+                    axisTicks: { show: isEmpDept } 
+                };
                 cfg.yaxis = { labels: { show: false } };
                 cfg.series = series;
             }
@@ -268,8 +300,6 @@
             document.getElementById(`c-${itemConfig.id}`).innerHTML = '<span class="text-danger" style="font-size: 10px;">خطأ</span>';
         }
     }
-
-    const customLensSVG = '<svg class="lens-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>';
 
     function openDetailView(id) {
         const itemConfig = CONFIG.find(c => c.id === id);
@@ -295,14 +325,36 @@
         if(activeDetailChart) activeDetailChart.destroy();
         
         const isPie = itemConfig.type === 'pie' || itemConfig.type === 'donut';
-        
+        const isEmpDept = itemConfig.id === 'emp_dept';
+
+        let colorMapping = ['#0c4a6e', '#38bdf8', '#0ea5e9', '#0284c7', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#14b8a6'];
+        if (isEmpDept) {
+            colorMapping = [function({ value }) {
+                let ratio = value / total;
+                if (ratio > 0.20) return '#082f49';
+                if (ratio > 0.10) return '#0c4a6e';
+                if (ratio > 0.05) return '#0284c7';
+                if (ratio > 0.02) return '#0ea5e9';
+                return '#7dd3fc';
+            }];
+        }
+
         const cfg = {
-            chart: { type: itemConfig.type, height: 450, width: '100%', toolbar: { show: !isPie, tools: { download: true, selection: false, zoom: false, zoomin: true, zoomout: true, pan: true, reset: customLensSVG }, autoSelected: 'pan' } },
-            stroke: { curve: 'smooth', width: isPie ? 1 : 3 },
-            colors: ['#0c4a6e', '#38bdf8', '#0ea5e9', '#0284c7', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#14b8a6'],
+            chart: { type: itemConfig.type, height: 450, width: '100%', toolbar: { show: true, tools: { download: true, selection: false, zoom: true, zoomin: true, zoomout: true, pan: true, reset: customLensSVG }, autoSelected: 'pan' } },
+            stroke: { curve: 'smooth', width: isPie ? 1 : 2 },
+            colors: colorMapping,
             legend: { position: isPie ? 'right' : 'bottom', fontSize: '13px', labels: { colors: '#0c4a6e', fontFamily: 'Cairo' } },
-            dataLabels: { enabled: isPie, formatter: function (val) { return Math.round(val) + "%" } },
-            plotOptions: isPie ? {} : { bar: { horizontal: itemConfig.horizontal, columnWidth: '50%', borderRadius: 4 } }
+            dataLabels: { 
+                enabled: isPie || isEmpDept, 
+                formatter: function (val) { 
+                    if (isEmpDept) return ((val / total) * 100).toFixed(1) + '%';
+                    if (isPie) return Math.round(val) + "%";
+                    return val;
+                },
+                offsetY: isEmpDept ? -20 : 0,
+                style: { colors: isEmpDept ? ['#073b52'] : undefined }
+            },
+            plotOptions: isPie ? {} : { bar: { horizontal: itemConfig.horizontal, columnWidth: '50%', borderRadius: 4, distributed: isEmpDept, dataLabels: { position: 'top' } } }
         };
 
         if (isPie) {
