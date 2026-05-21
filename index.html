@@ -33,24 +33,31 @@
         .nav-pills { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
         .nav-pills .nav-link { 
             border-radius: 12px; font-weight: bold; color: var(--primary-blue); 
-            padding: 10px 20px; font-size: 1rem; transition: 0.3s; border: 1px solid transparent; 
+            padding: 8px 15px; font-size: 0.95rem; transition: 0.3s; border: 1px solid transparent; 
         }
         .nav-pills .nav-link.active { background-color: var(--primary-blue); color: white; box-shadow: 0 4px 10px rgba(12,74,110,0.3); }
 
-        .dashboard-item { background: var(--bg-card); border-radius: 15px; overflow: hidden; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 4px 6px rgba(0,0,0,0.02); display: flex; flex-direction: column; height: 100%; transition: 0.2s; }
+        /* نظام التقسيم المخصص 8 أعمدة للشاشات الكبيرة */
+        .row-cols-8 > * { flex: 0 0 auto; width: 100%; }
+        @media (min-width: 768px) { .row-cols-8 > * { width: 33.333%; } }
+        @media (min-width: 992px) { .row-cols-8 > * { width: 20%; } }
+        @media (min-width: 1400px) { .row-cols-8 > * { width: 12.5%; } } /* 8 أعمدة هنا */
+
+        .dashboard-item { background: var(--bg-card); border-radius: 12px; overflow: hidden; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 2px 4px rgba(0,0,0,0.02); display: flex; flex-direction: column; height: 100%; transition: 0.2s; }
         .dashboard-item:hover { transform: translateY(-3px); box-shadow: 0 6px 12px rgba(0,0,0,0.06); }
         
-        .dashboard-header { background: rgba(56,189,248,0.05); padding: 12px 10px; border-bottom: 1px solid rgba(0,0,0,0.05); display: flex; flex-direction: column; align-items: center; }
-        .dashboard-header h6 { margin: 0 0 8px 0; font-weight: bold; font-size: 0.9rem; color: var(--primary-blue); text-align: center; line-height: 1.3; }
-        .dashboard-body { padding: 5px; flex-grow: 1; display: flex; justify-content: center; align-items: center; min-height: 160px; }
+        /* تقليل الهوامش والخطوط لتناسب العرض الصغير */
+        .dashboard-header { background: rgba(56,189,248,0.05); padding: 8px 5px; border-bottom: 1px solid rgba(0,0,0,0.05); display: flex; flex-direction: column; align-items: center; }
+        .dashboard-header h6 { margin: 0 0 5px 0; font-weight: bold; font-size: 0.75rem; color: var(--primary-blue); text-align: center; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+        .dashboard-body { padding: 3px; flex-grow: 1; display: flex; justify-content: center; align-items: center; min-height: 120px; }
 
         .stat-card { background: var(--bg-card); border-radius: 15px; padding: 20px; border: 1px solid rgba(0,0,0,0.05); height: 100%; box-shadow: 0 4px 6px rgba(0,0,0,0.02); display: flex; flex-direction: column; }
         .chart-wrapper { background: var(--bg-card); border-radius: 20px; padding: 20px; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
 
-        .details-grid { display: flex; gap: 5px; width: 100%; flex-wrap: wrap; justify-content: center; }
-        .details-box { background: var(--bg-card); border: 1px solid rgba(0,0,0,0.08); padding: 5px; border-radius: 8px; flex: 1; min-width: 60px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.02); display: flex; flex-direction: column; justify-content: center;}
-        .details-box span { display: block; font-size: 0.65rem; font-weight: bold; opacity: 0.8; margin-bottom: 2px; }
-        .details-box strong { font-size: 1rem; color: var(--primary-blue); }
+        .details-grid { display: flex; gap: 3px; width: 100%; flex-wrap: wrap; justify-content: center; }
+        .details-box { background: var(--bg-card); border: 1px solid rgba(0,0,0,0.08); padding: 3px; border-radius: 6px; flex: 1; min-width: 40px; text-align: center; display: flex; flex-direction: column; justify-content: center;}
+        .details-box span { display: block; font-size: 0.55rem; font-weight: bold; opacity: 0.8; margin-bottom: 1px; }
+        .details-box strong { font-size: 0.85rem; color: var(--primary-blue); }
 
         .apexcharts-toolbar { display: flex !important; opacity: 1 !important; visibility: visible !important; top: -10px !important; z-index: 10 !important; }
 
@@ -77,16 +84,16 @@
     </div>
 </div>
 
-<div class="container-fluid px-3 pb-5">
+<div class="container-fluid px-2 pb-5">
     
-    <ul class="nav nav-pills my-4" id="mainTabs" role="tablist">
+    <ul class="nav nav-pills my-3" id="mainTabs" role="tablist">
         <li class="nav-item" role="presentation"><button class="nav-link active" data-bs-toggle="pill" data-bs-target="#tab-home" type="button" role="tab">🏠 الرئيسية</button></li>
         <li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-detail" type="button" role="tab">📊 التفاصيل الكاملة</button></li>
     </ul>
 
     <div class="tab-content">
         <div class="tab-pane fade show active" id="tab-home" role="tabpanel">
-            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-5 g-3" id="home-charts-container">
+            <div class="row row-cols-8 g-2" id="home-charts-container">
             </div>
         </div>
 
@@ -114,15 +121,15 @@
 <script>
     const CONFIG = [
         { id: 'emp_total', title: 'أعداد المنتسبين', type: 'pie', horizontal: false, url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=398430626&single=true&output=csv' },
-        { id: 'emp_dept', title: 'المنتسبين حسب الأقسام', type: 'bar', horizontal: true, url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=255359164&single=true&output=csv' },
+        { id: 'emp_dept', title: 'المنتسبين للأقسام', type: 'bar', horizontal: true, url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=255359164&single=true&output=csv' },
         { id: 'emp_degrees', title: 'الشهادات العليا', type: 'bar', horizontal: false, url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=1489382222&single=true&output=csv' },
         { id: 'courses_internal', title: 'الدورات الحضورية', type: 'area', horizontal: false, url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=556274616&single=true&output=csv' },
         { id: 'specialized_centers', title: 'المراكز التخصصية', type: 'bar', horizontal: true, url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=307948542&single=true&output=csv' },
         { id: 'scientific_activities', title: 'الأنشطة العلمية', type: 'bar', horizontal: false, url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=519215277&single=true&output=csv' },
-        { id: 'participants_internal', title: 'عدد المشاركين', type: 'bar', horizontal: false, url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=845162776&single=true&output=csv' },
+        { id: 'participants_internal', title: 'المشاركين داخلياً', type: 'bar', horizontal: false, url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=845162776&single=true&output=csv' },
         { id: 'courses_external', title: 'الدورات الخارجية', type: 'line', horizontal: false, url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=1627689816&single=true&output=csv' },
         { id: 'workshops_seminars', title: 'الندوات والورش', type: 'bar', horizontal: false, url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=1501097808&single=true&output=csv' },
-        { id: 'youth_support', title: 'دورات دعم الشباب', type: 'area', horizontal: false, url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=1843138364&single=true&output=csv' },
+        { id: 'youth_support', title: 'دعم الشباب', type: 'area', horizontal: false, url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=1843138364&single=true&output=csv' },
         { id: 'student_count', title: 'أعداد الطلبة', type: 'bar', horizontal: false, url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=876030086&single=true&output=csv' },
         { id: 'graduates', title: 'الخريجين', type: 'area', horizontal: false, url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=325367955&single=true&output=csv' },
         { id: 'scientific_visits', title: 'الزيارات العلمية', type: 'bar', horizontal: false, url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=340829433&single=true&output=csv' },
@@ -140,7 +147,7 @@
         CONFIG.forEach(item => {
             html += `
             <div class="col">
-                <div class="dashboard-item" style="cursor: pointer;" onclick="openDetailView('${item.id}')" title="انقر لعرض التفاصيل المتقدمة">
+                <div class="dashboard-item" style="cursor: pointer;" onclick="openDetailView('${item.id}')" title="انقر للتفاصيل">
                     <div class="dashboard-header">
                         <h6>${item.title}</h6>
                         <div class="details-grid">
@@ -152,8 +159,8 @@
                     </div>
                     <div class="dashboard-body" id="c-${item.id}">
                         <div class="w-100 h-100 d-flex justify-content-center align-items-center flex-column">
-                            <div class="spinner-border spinner-border-sm text-info mb-2" role="status"></div>
-                            <span class="text-muted" style="font-size: 11px;">جاري التحميل...</span>
+                            <div class="spinner-border spinner-border-sm text-info mb-1" style="width: 1rem; height: 1rem;" role="status"></div>
+                            <span class="text-muted" style="font-size: 9px;">جاري التحميل...</span>
                         </div>
                     </div>
                 </div>
@@ -177,21 +184,21 @@
                         complete: function(results) {
                             if(results.data && results.data.length > 0) {
                                 rawDataStore[item.id] = results.data;
-                                renderChartData(item, results.data); // الرسم يتم هنا فقط بعد توفر البيانات
+                                renderChartData(item, results.data);
                             } else {
-                                document.getElementById(`c-${item.id}`).innerHTML = '<span class="text-warning" style="font-size: 12px;">⚠️ الجدول فارغ</span>';
+                                document.getElementById(`c-${item.id}`).innerHTML = '<span class="text-warning" style="font-size: 10px;">فارغ</span>';
                             }
                             resolve();
                         },
                         error: () => {
-                            document.getElementById(`c-${item.id}`).innerHTML = '<span class="text-danger" style="font-size: 12px;">❌ خطأ بالملف</span>';
+                            document.getElementById(`c-${item.id}`).innerHTML = '<span class="text-danger" style="font-size: 10px;">خطأ بالملف</span>';
                             resolve();
                         }
                     });
                 });
-                await new Promise(r => setTimeout(r, 50)); 
+                await new Promise(r => setTimeout(r, 40)); 
             } catch (err) {
-                document.getElementById(`c-${item.id}`).innerHTML = '<span class="text-danger" style="font-size: 12px;">❌ فشل الاتصال</span>';
+                document.getElementById(`c-${item.id}`).innerHTML = '<span class="text-danger" style="font-size: 10px;">فشل الاتصال</span>';
             }
         }
         document.getElementById('loader').style.display = 'none';
@@ -230,35 +237,33 @@
             const totalEl = document.getElementById(`v-${itemConfig.id}-total`);
             if(totalEl) totalEl.innerText = totalSum.toLocaleString();
 
-            // مسح علامة التحميل
             document.getElementById(`c-${itemConfig.id}`).innerHTML = '';
 
-            // بناء الإعدادات المتكاملة والمناسبة لنوع المخطط
+            // ارتفاع 120 ليناسب المربعات الصغيرة في الـ 8 أعمدة
             const cfg = {
-                chart: { type: itemConfig.type, height: 160, width: '100%', toolbar: { show: false }, animations: { enabled: true } },
-                stroke: { curve: 'smooth', width: isPie ? 1 : 2 },
+                chart: { type: itemConfig.type, height: 120, width: '100%', toolbar: { show: false }, animations: { enabled: true } },
+                stroke: { curve: 'smooth', width: isPie ? 1 : 1.5 },
                 colors: ['#0c4a6e', '#38bdf8', '#0ea5e9', '#0284c7', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#14b8a6'],
-                grid: { padding: { left: 0, right: 0, top: 0, bottom: 0 } },
+                grid: { padding: { left: -10, right: -10, top: -15, bottom: -15 } },
                 legend: { show: false },
                 dataLabels: { enabled: false },
-                plotOptions: isPie ? {} : { bar: { horizontal: itemConfig.horizontal, columnWidth: '70%', borderRadius: 2 } }
+                plotOptions: isPie ? { pie: { expandOnClick: false } } : { bar: { horizontal: itemConfig.horizontal, columnWidth: '75%', borderRadius: 2 } }
             };
 
             if (isPie) {
                 cfg.labels = labels;
                 cfg.series = series;
             } else {
-                cfg.xaxis = { categories: labels, labels: { show: false } };
+                cfg.xaxis = { categories: labels, labels: { show: false }, axisBorder: { show: false }, axisTicks: { show: false } };
                 cfg.yaxis = { labels: { show: false } };
                 cfg.series = series;
             }
 
-            // رسم المخطط مباشرة ببياناته الأصلية
             chartsObj[itemConfig.id] = new ApexCharts(document.querySelector(`#c-${itemConfig.id}`), cfg);
             chartsObj[itemConfig.id].render();
 
         } catch (e) {
-            document.getElementById(`c-${itemConfig.id}`).innerHTML = '<span class="text-danger" style="font-size: 12px;">⚠️ خطأ بالقراءة</span>';
+            document.getElementById(`c-${itemConfig.id}`).innerHTML = '<span class="text-danger" style="font-size: 10px;">خطأ</span>';
         }
     }
 
