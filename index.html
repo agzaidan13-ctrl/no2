@@ -37,16 +37,14 @@
         }
         .nav-pills .nav-link.active { background-color: var(--primary-blue); color: white; box-shadow: 0 4px 10px rgba(12,74,110,0.3); }
 
-        /* نظام التقسيم المخصص 8 أعمدة للشاشات الكبيرة */
         .row-cols-8 > * { flex: 0 0 auto; width: 100%; }
         @media (min-width: 768px) { .row-cols-8 > * { width: 33.333%; } }
         @media (min-width: 992px) { .row-cols-8 > * { width: 20%; } }
-        @media (min-width: 1400px) { .row-cols-8 > * { width: 12.5%; } } /* 8 أعمدة هنا */
+        @media (min-width: 1400px) { .row-cols-8 > * { width: 12.5%; } }
 
         .dashboard-item { background: var(--bg-card); border-radius: 12px; overflow: hidden; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 2px 4px rgba(0,0,0,0.02); display: flex; flex-direction: column; height: 100%; transition: 0.2s; }
         .dashboard-item:hover { transform: translateY(-3px); box-shadow: 0 6px 12px rgba(0,0,0,0.06); }
         
-        /* تقليل الهوامش والخطوط لتناسب العرض الصغير */
         .dashboard-header { background: rgba(56,189,248,0.05); padding: 8px 5px; border-bottom: 1px solid rgba(0,0,0,0.05); display: flex; flex-direction: column; align-items: center; }
         .dashboard-header h6 { margin: 0 0 5px 0; font-weight: bold; font-size: 0.75rem; color: var(--primary-blue); text-align: center; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
         .dashboard-body { padding: 3px; flex-grow: 1; display: flex; justify-content: center; align-items: center; min-height: 120px; }
@@ -119,11 +117,11 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
+    // تم حذف الدورات الحضورية بالكامل ليصبح العدد 13
     const CONFIG = [
         { id: 'emp_total', title: 'أعداد المنتسبين', type: 'pie', horizontal: false, url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=398430626&single=true&output=csv' },
         { id: 'emp_dept', title: 'المنتسبين للأقسام', type: 'bar', horizontal: true, url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=255359164&single=true&output=csv' },
         { id: 'emp_degrees', title: 'الشهادات العليا', type: 'bar', horizontal: false, url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=1489382222&single=true&output=csv' },
-        { id: 'courses_internal', title: 'الدورات الحضورية', type: 'area', horizontal: false, url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=556274616&single=true&output=csv' },
         { id: 'specialized_centers', title: 'المراكز التخصصية', type: 'bar', horizontal: true, url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=307948542&single=true&output=csv' },
         { id: 'scientific_activities', title: 'الأنشطة العلمية', type: 'bar', horizontal: false, url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=519215277&single=true&output=csv' },
         { id: 'participants_internal', title: 'المشاركين داخلياً', type: 'bar', horizontal: false, url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=845162776&single=true&output=csv' },
@@ -139,7 +137,6 @@
     let chartsObj = {};
     let activeDetailChart = null;
     let rawDataStore = {};
-    const customLensSVG = '<svg class="lens-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>';
 
     function buildHomeGrid() {
         const container = document.getElementById('home-charts-container');
@@ -168,6 +165,20 @@
         });
         container.innerHTML = html;
     }
+
+    const getChartConfig = (type, h, horizontal) => {
+        const isPie = type === 'pie' || type === 'donut';
+        return {
+            chart: { type: type, height: h, width: '100%', toolbar: { show: false }, animations: { enabled: true } },
+            stroke: { curve: 'smooth', width: isPie ? 1 : 1.5 },
+            colors: ['#0c4a6e', '#38bdf8', '#0ea5e9', '#0284c7', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#14b8a6'],
+            // تصفير الهوامش للدوائر حتى لا تنقص، مع إضافة customScale لتصغيرها بنسبة 15%
+            grid: isPie ? { padding: { top: 0, bottom: 0, left: 0, right: 0 } } : { padding: { left: -10, right: -10, top: -15, bottom: -15 } },
+            legend: { show: false },
+            dataLabels: { enabled: false },
+            plotOptions: isPie ? { pie: { expandOnClick: false, customScale: 0.85 } } : { bar: { horizontal: horizontal, columnWidth: '75%', borderRadius: 2 } }
+        };
+    };
 
     async function loadData() {
         document.getElementById('loader').style.display = 'flex';
@@ -239,16 +250,7 @@
 
             document.getElementById(`c-${itemConfig.id}`).innerHTML = '';
 
-            // ارتفاع 120 ليناسب المربعات الصغيرة في الـ 8 أعمدة
-            const cfg = {
-                chart: { type: itemConfig.type, height: 120, width: '100%', toolbar: { show: false }, animations: { enabled: true } },
-                stroke: { curve: 'smooth', width: isPie ? 1 : 1.5 },
-                colors: ['#0c4a6e', '#38bdf8', '#0ea5e9', '#0284c7', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#14b8a6'],
-                grid: { padding: { left: -10, right: -10, top: -15, bottom: -15 } },
-                legend: { show: false },
-                dataLabels: { enabled: false },
-                plotOptions: isPie ? { pie: { expandOnClick: false } } : { bar: { horizontal: itemConfig.horizontal, columnWidth: '75%', borderRadius: 2 } }
-            };
+            const cfg = getChartConfig(itemConfig.type, 120, itemConfig.horizontal);
 
             if (isPie) {
                 cfg.labels = labels;
@@ -266,6 +268,8 @@
             document.getElementById(`c-${itemConfig.id}`).innerHTML = '<span class="text-danger" style="font-size: 10px;">خطأ</span>';
         }
     }
+
+    const customLensSVG = '<svg class="lens-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>';
 
     function openDetailView(id) {
         const itemConfig = CONFIG.find(c => c.id === id);
