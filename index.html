@@ -112,9 +112,9 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-    // تم تصحيح نوع 'column' الوهمي إلى 'bar' مع تحديد الـ horizontal: false للأعمدة الرأسية
+    // 1. تغيير نوع أعداد المنتسبين إلى 'pie'
     const CONFIG = [
-        { id: 'emp_total', title: 'أعداد المنتسبين', type: 'bar', horizontal: false, url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=398430626&single=true&output=csv' },
+        { id: 'emp_total', title: 'أعداد المنتسبين', type: 'pie', horizontal: false, url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=398430626&single=true&output=csv' },
         { id: 'emp_dept', title: 'المنتسبين حسب الأقسام', type: 'bar', horizontal: true, url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=255359164&single=true&output=csv' },
         { id: 'emp_degrees', title: 'الشهادات العليا', type: 'bar', horizontal: false, url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=1489382222&single=true&output=csv' },
         { id: 'courses_internal', title: 'الدورات الحضورية', type: 'area', horizontal: false, url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=556274616&single=true&output=csv' },
@@ -162,17 +162,19 @@
     const customLensSVG = '<svg class="lens-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>';
 
     const getChartConfig = (type, h, horizontal) => {
+        const isPie = type === 'pie' || type === 'donut';
         return {
             chart: { type: type, height: h, width: '100%', toolbar: { show: false } },
-            stroke: { curve: 'smooth', width: 2 },
-            colors: ['#0c4a6e', '#38bdf8', '#0ea5e9', '#0284c7', '#10b981', '#f59e0b', '#ef4444'],
+            stroke: { curve: 'smooth', width: isPie ? 1 : 2 }, // الدائرة تحتاج خط أنحف للفاصل
+            colors: ['#0c4a6e', '#38bdf8', '#0ea5e9', '#0284c7', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#14b8a6'],
             series: [],
-            xaxis: { type: 'category', categories: [], labels: { show: false } }, 
-            yaxis: { labels: { show: false } }, 
+            labels: isPie ? [] : undefined, // ضروري لمخططات الدائرة
+            xaxis: isPie ? undefined : { type: 'category', categories: [], labels: { show: false } }, 
+            yaxis: isPie ? undefined : { labels: { show: false } }, 
             grid: { padding: { left: 0, right: 0, top: 0, bottom: 0 } },
             legend: { show: false },
-            plotOptions: { bar: { horizontal: horizontal, columnWidth: '70%', borderRadius: 2 } },
-            dataLabels: { enabled: false },
+            plotOptions: isPie ? {} : { bar: { horizontal: horizontal, columnWidth: '70%', borderRadius: 2 } },
+            dataLabels: { enabled: false }, // إخفاء الأرقام من المصغرات للترتيب
             noData: { text: '⏳ جاري جلب البيانات...', align: 'center', verticalAlign: 'middle', style: { color: '#0c4a6e', fontSize: '12px', fontFamily: 'Cairo', fontWeight: 'bold' } }
         };
     };
@@ -222,21 +224,34 @@
             const cols = Object.keys(data[0]).filter(k => k && k.trim() !== '');
             if(cols.length < 2) throw new Error("أعمدة غير كافية");
 
+            const isPie = itemConfig.type === 'pie' || itemConfig.type === 'donut';
             let totalSum = 0;
-            const labels = data.map(r => r[cols[0]]);
-            const series = cols.slice(1).map(colName => ({
-                name: colName,
-                // نستخدم نوع المخطط مباشرة الآن لأنه تم تصحيحه في إعدادات CONFIG
-                type: itemConfig.type,
-                data: data.map(r => {
-                    let val = parseFloat(String(r[colName] || '0').replace(/[^0-9.-]+/g,"")) || 0;
-                    totalSum += val; 
-                    return val;
-                })
-            }));
 
-            chartsObj[itemConfig.id].updateOptions({ xaxis: { categories: labels } });
-            chartsObj[itemConfig.id].updateSeries(series);
+            if (isPie) {
+                // معالجة بيانات المخطط الدائري (تأخذ العمود الأول للأسماء والثاني للقيم)
+                const labels = data.map(r => r[cols[0]]);
+                const series = data.map(r => {
+                    let val = parseFloat(String(r[cols[1]] || '0').replace(/[^0-9.-]+/g,"")) || 0;
+                    totalSum += val;
+                    return val;
+                });
+                chartsObj[itemConfig.id].updateOptions({ labels: labels });
+                chartsObj[itemConfig.id].updateSeries(series);
+            } else {
+                // معالجة البيانات لبقية المخططات
+                const labels = data.map(r => r[cols[0]]);
+                const series = cols.slice(1).map(colName => ({
+                    name: colName,
+                    type: itemConfig.type === 'bar' && itemConfig.horizontal ? 'bar' : itemConfig.type,
+                    data: data.map(r => {
+                        let val = parseFloat(String(r[colName] || '0').replace(/[^0-9.-]+/g,"")) || 0;
+                        totalSum += val; 
+                        return val;
+                    })
+                }));
+                chartsObj[itemConfig.id].updateOptions({ xaxis: { categories: labels } });
+                chartsObj[itemConfig.id].updateSeries(series);
+            }
 
             const totalEl = document.getElementById(`v-${itemConfig.id}-total`);
             if(totalEl) totalEl.innerText = totalSum.toLocaleString();
@@ -268,20 +283,28 @@
 
         if(activeDetailChart) activeDetailChart.destroy();
         
+        const isPie = itemConfig.type === 'pie' || itemConfig.type === 'donut';
+        
         const cfg = {
-            chart: { type: itemConfig.type, height: 450, width: '100%', toolbar: { show: true, tools: { download: true, selection: false, zoom: false, zoomin: true, zoomout: true, pan: true, reset: customLensSVG }, autoSelected: 'pan' } },
-            stroke: { curve: 'smooth', width: 3 },
-            colors: ['#0c4a6e', '#38bdf8', '#0ea5e9', '#0284c7', '#10b981', '#f59e0b', '#ef4444'],
-            xaxis: { categories: data.map(r => r[cols[0]]), labels: { show: true, rotate: -45, style: { colors: '#0c4a6e', fontFamily: 'Cairo', fontSize: '11px' } } },
-            yaxis: { labels: { show: true, style: { colors: '#0c4a6e', fontFamily: 'Cairo' } } },
-            legend: { position: 'bottom', fontSize: '13px', labels: { colors: '#0c4a6e', fontFamily: 'Cairo' } },
-            plotOptions: { bar: { horizontal: itemConfig.horizontal, columnWidth: '50%', borderRadius: 4 } },
-            dataLabels: { enabled: false },
-            series: cols.slice(1).map(colName => ({
+            chart: { type: itemConfig.type, height: 450, width: '100%', toolbar: { show: !isPie, tools: { download: true, selection: false, zoom: false, zoomin: true, zoomout: true, pan: true, reset: customLensSVG }, autoSelected: 'pan' } },
+            stroke: { curve: 'smooth', width: isPie ? 1 : 3 },
+            colors: ['#0c4a6e', '#38bdf8', '#0ea5e9', '#0284c7', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#14b8a6'],
+            legend: { position: isPie ? 'right' : 'bottom', fontSize: '13px', labels: { colors: '#0c4a6e', fontFamily: 'Cairo' } },
+            dataLabels: { enabled: isPie, formatter: function (val) { return Math.round(val) + "%" } },
+            plotOptions: isPie ? {} : { bar: { horizontal: itemConfig.horizontal, columnWidth: '50%', borderRadius: 4 } }
+        };
+
+        if (isPie) {
+            cfg.labels = data.map(r => r[cols[0]]);
+            cfg.series = data.map(r => parseFloat(String(r[cols[1]] || '0').replace(/[^0-9.-]+/g,"")) || 0);
+        } else {
+            cfg.xaxis = { categories: data.map(r => r[cols[0]]), labels: { show: true, rotate: -45, style: { colors: '#0c4a6e', fontFamily: 'Cairo', fontSize: '11px' } } };
+            cfg.yaxis = { labels: { show: true, style: { colors: '#0c4a6e', fontFamily: 'Cairo' } } };
+            cfg.series = cols.slice(1).map(colName => ({
                 name: colName, type: itemConfig.type,
                 data: data.map(r => parseFloat(String(r[colName] || '0').replace(/[^0-9.-]+/g,"")) || 0)
-            }))
-        };
+            }));
+        }
 
         activeDetailChart = new ApexCharts(document.querySelector("#c-detail-view"), cfg);
         activeDetailChart.render();
@@ -298,7 +321,12 @@
         
         Object.values(chartsObj).forEach(c => c.updateOptions(updateCfg));
         if(activeDetailChart) {
-            activeDetailChart.updateOptions({ theme: { mode: nm }, xaxis: { labels: { style: { colors: tc } } }, yaxis: { labels: { style: { colors: tc } } }, legend: { labels: { colors: tc } } });
+            const isPie = activeDetailChart.w.config.chart.type === 'pie';
+            if (isPie) {
+                 activeDetailChart.updateOptions({ theme: { mode: nm }, legend: { labels: { colors: tc } } });
+            } else {
+                 activeDetailChart.updateOptions({ theme: { mode: nm }, xaxis: { labels: { style: { colors: tc } } }, yaxis: { labels: { style: { colors: tc } } }, legend: { labels: { colors: tc } } });
+            }
         }
     }
 
