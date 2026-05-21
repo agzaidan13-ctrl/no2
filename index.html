@@ -119,13 +119,12 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-    // تم تحويل 'emp_degrees' (الشهادات العليا) إلى 'pie'
     const CONFIG = [
         { id: 'emp_total', title: 'أعداد المنتسبين', type: 'pie', horizontal: false, url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=398430626&single=true&output=csv' },
         { id: 'emp_dept', title: 'المنتسبين للأقسام', type: 'bar', horizontal: false, url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=255359164&single=true&output=csv' },
         { id: 'emp_degrees', title: 'الشهادات العليا', type: 'pie', horizontal: false, url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=1489382222&single=true&output=csv' },
-        { id: 'specialized_centers', title: 'المراكز التخصصية', type: 'bar', horizontal: false, url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=307948542&single=true&output=csv' },
-        { id: 'scientific_activities', title: 'الأنشطة العلمية', type: 'bar', horizontal: false, url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=519215277&single=true&output=csv' },
+        { id: 'specialized_centers', title: 'المراكز التخصصية', type: 'donut', horizontal: false, url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=307948542&single=true&output=csv' },
+        { id: 'scientific_activities', title: 'الأنشطة العلمية', type: 'donut', horizontal: false, url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=519215277&single=true&output=csv' },
         { id: 'participants_internal', title: 'المشاركين داخلياً', type: 'bar', horizontal: false, url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=845162776&single=true&output=csv' },
         { id: 'courses_external', title: 'الدورات الخارجية', type: 'line', horizontal: false, url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=1627689816&single=true&output=csv' },
         { id: 'workshops_seminars', title: 'الندوات والورش', type: 'bar', horizontal: false, url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=1501097808&single=true&output=csv' },
@@ -139,7 +138,6 @@
     let chartsObj = {};
     let activeDetailChart = null;
     let rawDataStore = {};
-    const customLensSVG = '<svg class="lens-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>';
 
     function buildHomeGrid() {
         const container = document.getElementById('home-charts-container');
@@ -169,21 +167,19 @@
         container.innerHTML = html;
     }
 
-    const getToolbarConfig = (isPie) => {
-        return {
-            show: true,
-            tools: {
-                download: true,
-                selection: false,
-                zoom: !isPie,
-                zoomin: !isPie,
-                zoomout: !isPie,
-                pan: !isPie,
-                reset: !isPie ? customLensSVG : false
-            },
-            autoSelected: !isPie ? 'zoom' : undefined
-        };
-    };
+    const getToolbarConfig = (isPie) => ({
+        show: true,
+        tools: {
+            download: true,
+            selection: false,
+            zoom: !isPie,
+            zoomin: !isPie,
+            zoomout: !isPie,
+            pan: !isPie,
+            reset: !isPie ? customLensSVG : false
+        },
+        autoSelected: !isPie ? 'zoom' : undefined
+    });
 
     async function loadData() {
         document.getElementById('loader').style.display = 'flex';
@@ -228,7 +224,7 @@
             let labels = [];
             let series = [];
 
-            if (isPie) {
+            if (isPie || itemConfig.type === 'donut') {
                 labels = data.map(r => r[cols[0]]);
                 series = data.map(r => {
                     let val = parseFloat(String(r[cols[1]] || '0').replace(/[^0-9.-]+/g,"")) || 0;
@@ -266,39 +262,22 @@
             }
 
             const cfg = {
-                chart: { 
-                    type: itemConfig.type, 
-                    height: 160, 
-                    width: '100%', 
-                    zoom: { enabled: !isPie },
-                    toolbar: getToolbarConfig(isPie),
-                    animations: { enabled: true },
-                    parentHeightOffset: 0
-                },
-                stroke: { curve: 'smooth', width: isPie ? 1 : 1.5 },
+                chart: { type: itemConfig.type, height: 160, width: '100%', zoom: { enabled: !isPie }, toolbar: getToolbarConfig(isPie), animations: { enabled: true } },
                 colors: colorMapping,
-                grid: { padding: { left: 0, right: 0, top: 0, bottom: 0 } },
                 legend: { show: false },
-                // تفعيل النسب المئوية للمخططات الدائرية (Pie) ومخطط الأقسام
                 dataLabels: { 
-                    enabled: isPie || isEmpDept, 
-                    formatter: function (val) {
-                        if (isEmpDept) return ((val / totalSum) * 100).toFixed(1) + '%';
-                        if (isPie) return val.toFixed(1) + '%'; // عرض النسبة الدقيقة للدوائر
-                        return val;
-                    },
-                    offsetY: isEmpDept ? -5 : 0,
-                    style: { fontSize: '8px', fontFamily: 'Cairo', colors: isEmpDept ? ['#073b52'] : undefined }
+                    enabled: isPie || itemConfig.type === 'donut', 
+                    formatter: function (val) { return val.toFixed(0) + '%'; },
+                    style: { fontSize: '8px', fontFamily: 'Cairo' }
                 },
-                plotOptions: isPie ? { pie: { expandOnClick: false, customScale: 0.9 } } : { bar: { horizontal: false, columnWidth: '70%', borderRadius: 2, distributed: isEmpDept, dataLabels: { position: 'top' } } }
+                plotOptions: isPie || itemConfig.type === 'donut' ? { pie: { expandOnClick: false, customScale: 0.9 } } : { bar: { horizontal: false, columnWidth: '70%', borderRadius: 2, distributed: isEmpDept } }
             };
 
-            if (isPie) {
+            if (isPie || itemConfig.type === 'donut') {
                 cfg.labels = labels;
                 cfg.series = series;
             } else {
-                cfg.xaxis = { categories: labels, labels: { show: false }, axisBorder: { show: false }, axisTicks: { show: false }, tooltip: { enabled: false } };
-                cfg.yaxis = { labels: { show: false } };
+                cfg.xaxis = { categories: labels, labels: { show: false } };
                 cfg.series = series;
             }
 
@@ -334,51 +313,19 @@
         if(activeDetailChart) activeDetailChart.destroy();
         
         const isPie = itemConfig.type === 'pie' || itemConfig.type === 'donut';
-        const isEmpDept = itemConfig.id === 'emp_dept';
-
-        let colorMapping = ['#0c4a6e', '#38bdf8', '#0ea5e9', '#0284c7', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#14b8a6'];
-        if (isEmpDept) {
-            colorMapping = [function({ value }) {
-                let ratio = value / total;
-                if (ratio > 0.20) return '#082f49';
-                if (ratio > 0.10) return '#0c4a6e';
-                if (ratio > 0.05) return '#0284c7';
-                if (ratio > 0.02) return '#0ea5e9';
-                return '#7dd3fc';
-            }];
-        }
-
+        
         const cfg = {
-            chart: { 
-                type: itemConfig.type, 
-                height: 450, 
-                width: '100%', 
-                zoom: { enabled: !isPie },
-                toolbar: getToolbarConfig(isPie)
-            },
-            stroke: { curve: 'smooth', width: isPie ? 1 : 2 },
-            colors: colorMapping,
+            chart: { type: itemConfig.type, height: 450, width: '100%', zoom: { enabled: !isPie }, toolbar: getToolbarConfig(isPie) },
+            colors: ['#0c4a6e', '#38bdf8', '#0ea5e9', '#0284c7', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#14b8a6'],
             legend: { position: isPie ? 'right' : 'bottom', fontSize: '13px', labels: { colors: '#0c4a6e', fontFamily: 'Cairo' } },
-            // تفعيل وتنسيق النسب المئوية في نافذة التفاصيل أيضاً
-            dataLabels: { 
-                enabled: isPie || isEmpDept, 
-                formatter: function (val) { 
-                    if (isEmpDept) return ((val / total) * 100).toFixed(1) + '%';
-                    if (isPie) return val.toFixed(1) + "%";
-                    return val;
-                },
-                offsetY: isEmpDept ? -20 : 0,
-                style: { colors: isEmpDept ? ['#073b52'] : undefined }
-            },
-            plotOptions: isPie ? {} : { bar: { horizontal: false, columnWidth: '50%', borderRadius: 4, distributed: isEmpDept, dataLabels: { position: 'top' } } }
+            dataLabels: { enabled: true, formatter: function (val) { return val.toFixed(1) + "%"; } }
         };
 
-        if (isPie) {
+        if (isPie || itemConfig.type === 'donut') {
             cfg.labels = data.map(r => r[cols[0]]);
             cfg.series = data.map(r => parseFloat(String(r[cols[1]] || '0').replace(/[^0-9.-]+/g,"")) || 0);
         } else {
-            cfg.xaxis = { categories: data.map(r => r[cols[0]]), labels: { show: true, rotate: -45, style: { colors: '#0c4a6e', fontFamily: 'Cairo', fontSize: '11px' } } };
-            cfg.yaxis = { labels: { show: true, style: { colors: '#0c4a6e', fontFamily: 'Cairo' } } };
+            cfg.xaxis = { categories: data.map(r => r[cols[0]]), labels: { show: true, rotate: -45, style: { fontSize: '11px', fontFamily: 'Cairo' } } };
             cfg.series = cols.slice(1).map(colName => ({
                 name: colName, type: itemConfig.type,
                 data: data.map(r => parseFloat(String(r[colName] || '0').replace(/[^0-9.-]+/g,"")) || 0)
@@ -400,12 +347,7 @@
         
         Object.values(chartsObj).forEach(c => c.updateOptions(updateCfg));
         if(activeDetailChart) {
-            const isPie = activeDetailChart.w.config.chart.type === 'pie' || activeDetailChart.w.config.chart.type === 'donut';
-            if (isPie) {
-                 activeDetailChart.updateOptions({ theme: { mode: nm }, legend: { labels: { colors: tc } } });
-            } else {
-                 activeDetailChart.updateOptions({ theme: { mode: nm }, xaxis: { labels: { style: { colors: tc } } }, yaxis: { labels: { style: { colors: tc } } }, legend: { labels: { colors: tc } } });
-            }
+            activeDetailChart.updateOptions({ theme: { mode: nm } });
         }
     }
 
