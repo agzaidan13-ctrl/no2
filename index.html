@@ -37,10 +37,21 @@
         }
         .nav-pills .nav-link.active { background-color: var(--primary-blue); color: white; box-shadow: 0 4px 10px rgba(12,74,110,0.3); }
 
-        .row-cols-8 > * { flex: 0 0 auto; width: 100%; }
-        @media (min-width: 768px) { .row-cols-8 > * { width: 33.333%; } }
-        @media (min-width: 992px) { .row-cols-8 > * { width: 20%; } }
-        @media (min-width: 1400px) { .row-cols-8 > * { width: 12.5%; } }
+        /* الانتقال إلى نظام CSS Grid المعماري للسماح بالدمج 4x4 */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 12px;
+            grid-auto-flow: dense;
+        }
+        @media (max-width: 1400px) { .dashboard-grid { grid-template-columns: repeat(5, 1fr); } }
+        @media (max-width: 992px) { .dashboard-grid { grid-template-columns: repeat(3, 1fr); } }
+        @media (max-width: 768px) { .dashboard-grid { grid-template-columns: repeat(1, 1fr); } }
+
+        /* استجابة المربعات الكبيرة للشاشات الصغيرة */
+        @media (max-width: 1400px) { .span-large { grid-column: span 3 !important; } }
+        @media (max-width: 992px) { .span-large { grid-column: span 3 !important; } }
+        @media (max-width: 768px) { .span-large { grid-column: span 1 !important; grid-row: span 1 !important; } }
 
         .dashboard-item { background: var(--bg-card); border-radius: 12px; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 2px 4px rgba(0,0,0,0.02); display: flex; flex-direction: column; height: 100%; transition: 0.2s; position: relative; overflow: visible; }
         .dashboard-item:hover { transform: translateY(-3px); box-shadow: 0 6px 12px rgba(0,0,0,0.06); }
@@ -48,7 +59,8 @@
         .dashboard-header { background: rgba(56,189,248,0.05); padding: 8px 5px; border-bottom: 1px solid rgba(0,0,0,0.05); border-top-left-radius: 12px; border-top-right-radius: 12px; display: flex; flex-direction: column; align-items: center; }
         .dashboard-header h6 { margin: 0 0 5px 0; font-weight: bold; font-size: 0.75rem; color: var(--primary-blue); text-align: center; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
         
-        .dashboard-body { padding: 5px; flex-grow: 1; display: flex; justify-content: center; align-items: center; height: 160px; position: relative; width: 100%; }
+        /* تمت إزالة الارتفاع الثابت من هنا ليتم التحكم به برمجياً حسب حجم المخطط */
+        .dashboard-body { padding: 5px; flex-grow: 1; display: flex; justify-content: center; align-items: center; position: relative; width: 100%; }
 
         .stat-card { background: var(--bg-card); border-radius: 15px; padding: 20px; border: 1px solid rgba(0,0,0,0.05); height: 100%; box-shadow: 0 4px 6px rgba(0,0,0,0.02); display: flex; flex-direction: column; }
         .chart-wrapper { background: var(--bg-card); border-radius: 20px; padding: 20px; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
@@ -68,7 +80,7 @@
 
 <div id="loader" class="loading-overlay">
     <div class="spinner-border text-info mb-3" style="width: 3rem; height: 3rem;"></div>
-    <h5 id="loadMsg" class="fw-bold">جاري تحميل وتحديث المنظومة الإحصائية...</h5>
+    <h5 id="loadMsg" class="fw-bold">جاري تحميل وتحديث المنظومة الإحصائية بسرعة فائقة...</h5>
 </div>
 
 <div class="top-navbar">
@@ -84,16 +96,16 @@
     </div>
 </div>
 
-<div class="container-fluid px-2 pb-5">
+<div class="container-fluid px-2 pb-5 mt-3">
     
-    <ul class="nav nav-pills my-3" id="mainTabs" role="tablist">
+    <ul class="nav nav-pills mb-4" id="mainTabs" role="tablist">
         <li class="nav-item" role="presentation"><button class="nav-link active" data-bs-toggle="pill" data-bs-target="#tab-home" type="button" role="tab">🏠 الرئيسية</button></li>
         <li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-detail" type="button" role="tab">📊 التفاصيل الكاملة</button></li>
     </ul>
 
     <div class="tab-content">
         <div class="tab-pane fade show active" id="tab-home" role="tabpanel">
-            <div class="row row-cols-8 g-2" id="home-charts-container">
+            <div class="dashboard-grid" id="home-charts-container">
             </div>
         </div>
 
@@ -119,10 +131,11 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
+    // تم إضافة colSpan و rowSpan لمخطط الشهادات العليا ليكون 4x4
     const CONFIG = [
         { id: 'emp_total', title: 'أعداد المنتسبين', type: 'pie', horizontal: false, url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=398430626&single=true&output=csv' },
         { id: 'emp_dept', title: 'المنتسبين للأقسام', type: 'bar', horizontal: false, url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=255359164&single=true&output=csv' },
-        { id: 'emp_degrees', title: 'الشهادات العليا', type: 'pie', horizontal: false, url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=1489382222&single=true&output=csv' },
+        { id: 'emp_degrees', title: 'الشهادات العليا', type: 'pie', horizontal: false, colSpan: 4, rowSpan: 2, url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=1489382222&single=true&output=csv' },
         { id: 'specialized_centers', title: 'المراكز التخصصية', type: 'pie', horizontal: false, url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=307948542&single=true&output=csv' },
         { id: 'scientific_activities', title: 'الأنشطة العلمية', type: 'pie', horizontal: false, url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=519215277&single=true&output=csv' },
         { id: 'participants_internal', title: 'المشاركين داخلياً', type: 'bar', horizontal: false, url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=845162776&single=true&output=csv' },
@@ -143,8 +156,13 @@
         const container = document.getElementById('home-charts-container');
         let html = '';
         CONFIG.forEach(item => {
+            // توليد ستايل Grid ديناميكي حسب إعدادات كل مخطط
+            const gridStyle = (item.colSpan ? `grid-column: span ${item.colSpan}; ` : '') + (item.rowSpan ? `grid-row: span ${item.rowSpan}; ` : '');
+            const spanClass = item.colSpan > 1 ? 'span-large' : '';
+            const bodyHeight = item.rowSpan === 2 ? 380 : 160;
+
             html += `
-            <div class="col">
+            <div class="dashboard-cell ${spanClass}" style="${gridStyle}">
                 <div class="dashboard-item" onclick="openDetailView('${item.id}')" title="انقر لعرض التفاصيل المتقدمة">
                     <div class="dashboard-header">
                         <h6>${item.title}</h6>
@@ -155,7 +173,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="dashboard-body" id="c-${item.id}">
+                    <div class="dashboard-body" id="c-${item.id}" style="height: ${bodyHeight}px;">
                         <div class="w-100 h-100 d-flex justify-content-center align-items-center flex-column">
                             <div class="spinner-border spinner-border-sm text-info mb-1" style="width: 1rem; height: 1rem;" role="status"></div>
                             <span class="text-muted" style="font-size: 9px;">جاري التحميل...</span>
@@ -183,35 +201,38 @@
         };
     };
 
+    // تمت ترقية الدالة لتعمل بالتوازي (Parallel) لسرعة خرافية
     async function loadData() {
         document.getElementById('loader').style.display = 'flex';
         buildHomeGrid();
 
-        for (const item of CONFIG) {
-            try {
-                const res = await fetch(item.url + '&nocache=' + new Date().getTime());
-                const csvText = await res.text();
-                
-                await new Promise((resolve) => {
-                    Papa.parse(csvText, {
-                        header: true, skipEmptyLines: 'greedy',
-                        complete: function(results) {
-                            if(results.data && results.data.length > 0) {
-                                rawDataStore[item.id] = results.data;
-                                renderChartData(item, results.data);
-                            } else {
-                                document.getElementById(`c-${item.id}`).innerHTML = '<span class="text-warning" style="font-size: 10px;">فارغ</span>';
-                            }
-                            resolve();
-                        },
-                        error: () => resolve()
+        const fetchPromises = CONFIG.map(item => {
+            return fetch(item.url + '&nocache=' + new Date().getTime())
+                .then(res => res.text())
+                .then(csvText => {
+                    return new Promise((resolve) => {
+                        Papa.parse(csvText, {
+                            header: true, skipEmptyLines: 'greedy',
+                            complete: function(results) {
+                                if(results.data && results.data.length > 0) {
+                                    rawDataStore[item.id] = results.data;
+                                    renderChartData(item, results.data);
+                                } else {
+                                    document.getElementById(`c-${item.id}`).innerHTML = '<span class="text-warning" style="font-size: 10px;">فارغ</span>';
+                                }
+                                resolve();
+                            },
+                            error: () => resolve()
+                        });
                     });
+                })
+                .catch(err => {
+                    document.getElementById(`c-${item.id}`).innerHTML = '<span class="text-danger" style="font-size: 10px;">فشل الاتصال</span>';
                 });
-                await new Promise(r => setTimeout(r, 40)); 
-            } catch (err) {
-                document.getElementById(`c-${item.id}`).innerHTML = '<span class="text-danger" style="font-size: 10px;">فشل الاتصال</span>';
-            }
-        }
+        });
+
+        // انتظار تحميل جميع المخططات في نفس اللحظة
+        await Promise.all(fetchPromises);
         document.getElementById('loader').style.display = 'none';
     }
 
@@ -220,7 +241,7 @@
             const cols = Object.keys(data[0]).filter(k => k && k.trim() !== '');
             if(cols.length < 2) throw new Error("أعمدة غير كافية");
 
-            const isPie = itemConfig.type === 'pie' || itemConfig.type === 'donut';
+            const isPie = itemConfig.type === 'pie';
             const isEmpDept = itemConfig.id === 'emp_dept';
             let totalSum = 0;
             let labels = [];
@@ -263,26 +284,28 @@
                 }];
             }
 
+            // ضبط الارتفاع بناءً على الصفوف
+            const chartHeight = itemConfig.rowSpan === 2 ? 380 : 160;
+
             const cfg = {
                 chart: { 
                     type: itemConfig.type, 
-                    height: 160, 
+                    height: chartHeight, 
                     width: '100%', 
                     zoom: { enabled: !isPie },
                     toolbar: getToolbarConfig(isPie),
                     animations: { enabled: true },
                     parentHeightOffset: 0,
-                    stacked: itemConfig.type === 'bar' // تفعيل التكديس للأعمدة المتعددة
+                    stacked: itemConfig.type === 'bar'
                 },
                 stroke: { curve: 'smooth', width: isPie ? 1 : 1.5 },
                 colors: colorMapping,
                 grid: { padding: { left: 0, right: 0, top: 0, bottom: 0 } },
                 legend: { show: false },
-                // ضبط التول تيب ليظهر المجموع الكلي
                 tooltip: {
                     y: {
                         formatter: function(val, opts) {
-                            if (isPie || itemConfig.type === 'donut') return val;
+                            if (isPie) return val;
                             if (opts.w.globals.series.length > 1) {
                                 let total = 0;
                                 opts.w.globals.series.forEach(s => {
@@ -302,14 +325,18 @@
                         return val;
                     },
                     offsetY: isEmpDept ? -5 : 0,
-                    style: { fontSize: '8px', fontFamily: 'Cairo', colors: isEmpDept ? ['#073b52'] : undefined }
+                    style: { fontSize: itemConfig.rowSpan === 2 ? '12px' : '8px', fontFamily: 'Cairo', colors: isEmpDept ? ['#073b52'] : undefined }
                 },
-                plotOptions: isPie ? { pie: { expandOnClick: false, customScale: 0.9 } } : { bar: { horizontal: itemConfig.horizontal, columnWidth: '70%', borderRadius: 2, distributed: isEmpDept, dataLabels: { position: 'top' } } }
+                plotOptions: isPie ? { pie: { expandOnClick: true, customScale: itemConfig.rowSpan === 2 ? 1 : 0.9 } } : { bar: { horizontal: itemConfig.horizontal, columnWidth: '70%', borderRadius: 2, distributed: isEmpDept, dataLabels: { position: 'top' } } }
             };
 
             if (isPie) {
                 cfg.labels = labels;
                 cfg.series = series;
+                // إظهار المفاتيح (Legend) للمخطط الكبير فقط لتوضيح أسماء الشهادات
+                if (itemConfig.rowSpan === 2) {
+                    cfg.legend = { show: true, position: 'bottom', fontSize: '11px', fontFamily: 'Cairo' };
+                }
             } else {
                 cfg.xaxis = { categories: labels, labels: { show: false }, axisBorder: { show: false }, axisTicks: { show: false }, tooltip: { enabled: false } };
                 cfg.yaxis = { labels: { show: false } };
@@ -347,7 +374,7 @@
 
         if(activeDetailChart) activeDetailChart.destroy();
         
-        const isPie = itemConfig.type === 'pie' || itemConfig.type === 'donut';
+        const isPie = itemConfig.type === 'pie';
         const isEmpDept = itemConfig.id === 'emp_dept';
 
         let colorMapping = ['#0c4a6e', '#38bdf8', '#0ea5e9', '#0284c7', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#14b8a6'];
@@ -369,16 +396,15 @@
                 width: '100%', 
                 zoom: { enabled: !isPie },
                 toolbar: getToolbarConfig(isPie),
-                stacked: itemConfig.type === 'bar' // تفعيل التكديس هنا أيضاً
+                stacked: itemConfig.type === 'bar'
             },
             stroke: { curve: 'smooth', width: isPie ? 1 : 2 },
             colors: colorMapping,
             legend: { position: isPie ? 'right' : 'bottom', fontSize: '13px', labels: { colors: '#0c4a6e', fontFamily: 'Cairo' } },
-            // برمجة التول تيب لنافذة التفاصيل بنفس الطريقة
             tooltip: {
                 y: {
                     formatter: function(val, opts) {
-                        if (isPie || itemConfig.type === 'donut') return val;
+                        if (isPie) return val;
                         if (opts.w.globals.series.length > 1) {
                             let total = 0;
                             opts.w.globals.series.forEach(s => {
