@@ -272,12 +272,28 @@
                     toolbar: getToolbarConfig(isPie),
                     animations: { enabled: true },
                     parentHeightOffset: 0,
-                    stacked: itemConfig.type === 'bar' // تم تفعيل التكديس هنا لجميع مخططات الأعمدة
+                    stacked: itemConfig.type === 'bar' // تفعيل التكديس للأعمدة المتعددة
                 },
                 stroke: { curve: 'smooth', width: isPie ? 1 : 1.5 },
                 colors: colorMapping,
                 grid: { padding: { left: 0, right: 0, top: 0, bottom: 0 } },
                 legend: { show: false },
+                // ضبط التول تيب ليظهر المجموع الكلي
+                tooltip: {
+                    y: {
+                        formatter: function(val, opts) {
+                            if (isPie || itemConfig.type === 'donut') return val;
+                            if (opts.w.globals.series.length > 1) {
+                                let total = 0;
+                                opts.w.globals.series.forEach(s => {
+                                    total += (parseFloat(s[opts.dataPointIndex]) || 0);
+                                });
+                                return val + ' (المجموع: ' + total + ')';
+                            }
+                            return val;
+                        }
+                    }
+                },
                 dataLabels: { 
                     enabled: isPie || isEmpDept, 
                     formatter: function (val) {
@@ -353,11 +369,27 @@
                 width: '100%', 
                 zoom: { enabled: !isPie },
                 toolbar: getToolbarConfig(isPie),
-                stacked: itemConfig.type === 'bar' // تم تفعيل التكديس هنا أيضاً لنافذة التفاصيل
+                stacked: itemConfig.type === 'bar' // تفعيل التكديس هنا أيضاً
             },
             stroke: { curve: 'smooth', width: isPie ? 1 : 2 },
             colors: colorMapping,
             legend: { position: isPie ? 'right' : 'bottom', fontSize: '13px', labels: { colors: '#0c4a6e', fontFamily: 'Cairo' } },
+            // برمجة التول تيب لنافذة التفاصيل بنفس الطريقة
+            tooltip: {
+                y: {
+                    formatter: function(val, opts) {
+                        if (isPie || itemConfig.type === 'donut') return val;
+                        if (opts.w.globals.series.length > 1) {
+                            let total = 0;
+                            opts.w.globals.series.forEach(s => {
+                                total += (parseFloat(s[opts.dataPointIndex]) || 0);
+                            });
+                            return val + ' (المجموع: ' + total + ')';
+                        }
+                        return val;
+                    }
+                }
+            },
             dataLabels: { 
                 enabled: isPie || isEmpDept, 
                 formatter: function (val) { 
