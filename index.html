@@ -164,7 +164,7 @@
             const spanClass = item.colSpan > 1 ? 'span-large' : '';
             const tallClass = item.rowSpan > 1 ? 'span-tall' : '';
             // ارتفاع مضغوط بدقة: 130px للعادي، و 295px للمزدوج
-            const bodyHeight = item.rowSpan === 2 ? 170 : 130;
+            const bodyHeight = item.rowSpan === 2 ? 295 : 130;
 
             html += `
             <div class="dashboard-cell ${spanClass} ${tallClass}" style="${gridStyle}">
@@ -287,7 +287,7 @@
                 }];
             }
 
-            const chartHeight = itemConfig.rowSpan === 2 ? 295 : 130;
+            const chartHeight = itemConfig.rowSpan === 2 ? 200 : 130;
 
             const cfg = {
                 chart: { 
