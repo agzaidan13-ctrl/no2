@@ -41,10 +41,10 @@
         }
         .nav-pills .nav-link.active { background-color: var(--primary-blue); color: white; box-shadow: 0 4px 10px rgba(12,74,110,0.3); }
 
-        /* شبكة 6 أعمدة مع فراغات مضغوطة 10 بكسل */
+        /* شبكة 5 أعمدة مع فراغات مضغوطة 10 بكسل */
         .dashboard-grid {
             display: grid;
-            grid-template-columns: repeat(6, 1fr);
+            grid-template-columns: repeat(5, 1fr);
             gap: 10px; 
             grid-auto-flow: dense;
         }
@@ -55,7 +55,7 @@
 
         @media (max-width: 1400px) { .span-large { grid-column: span 2 !important; } }
         @media (max-width: 992px) { .span-large { grid-column: span 2 !important; } }
-        @media (max-width: 768px) { .span-large { grid-column: span 1 !important; grid-row: span 1 !important; } }
+        @media (max-width: 768px) { .span-large { grid-column: span 1 !important; grid-row: span 1 !important; } .span-tall { grid-row: span 1 !important; } }
 
         .dashboard-item { background: var(--bg-card); border-radius: 12px; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 2px 4px rgba(0,0,0,0.02); display: flex; flex-direction: column; height: 100%; transition: 0.2s; position: relative; overflow: visible; }
         .dashboard-item:hover { transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.06); }
@@ -135,10 +135,10 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-    // تم إعادة colSpan إلى 2 لمخطط الشهادات العليا
+    // تم إضافة rowSpan: 2 لمخطط المنتسبين للأقسام (emp_dept)
     const CONFIG = [
         { id: 'emp_total', title: 'أعداد المنتسبين', type: 'pie', horizontal: false, url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=398430626&single=true&output=csv' },
-        { id: 'emp_dept', title: 'المنتسبين للأقسام', type: 'bar', horizontal: false, url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=255359164&single=true&output=csv' },
+        { id: 'emp_dept', title: 'المنتسبين للأقسام', type: 'bar', horizontal: false, rowSpan: 2, url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=255359164&single=true&output=csv' },
         { id: 'emp_degrees', title: 'الشهادات العليا', type: 'pie', horizontal: false, colSpan: 2, rowSpan: 2, url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=1489382222&single=true&output=csv' },
         { id: 'specialized_centers', title: 'المراكز التخصصية', type: 'pie', horizontal: false, url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=307948542&single=true&output=csv' },
         { id: 'scientific_activities', title: 'الأنشطة العلمية', type: 'pie', horizontal: false, url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=519215277&single=true&output=csv' },
@@ -162,11 +162,12 @@
         CONFIG.forEach(item => {
             const gridStyle = (item.colSpan ? `grid-column: span ${item.colSpan}; ` : '') + (item.rowSpan ? `grid-row: span ${item.rowSpan}; ` : '');
             const spanClass = item.colSpan > 1 ? 'span-large' : '';
+            const tallClass = item.rowSpan > 1 ? 'span-tall' : '';
             // ارتفاع مضغوط بدقة: 130px للعادي، و 295px للمزدوج
             const bodyHeight = item.rowSpan === 2 ? 295 : 130;
 
             html += `
-            <div class="dashboard-cell ${spanClass}" style="${gridStyle}">
+            <div class="dashboard-cell ${spanClass} ${tallClass}" style="${gridStyle}">
                 <div class="dashboard-item" onclick="openDetailView('${item.id}')" title="انقر لعرض التفاصيل المتقدمة">
                     <div class="dashboard-header">
                         <h6>${item.title}</h6>
@@ -326,6 +327,7 @@
                         return val;
                     },
                     offsetY: isEmpDept ? -5 : 0,
+                    // تكبير خط نسب الأقسام قليلاً لأن ارتفاع المخطط أصبح مضاعفاً ومريحاً
                     style: { fontSize: itemConfig.rowSpan === 2 ? '10px' : '7px', fontFamily: 'Cairo', colors: isEmpDept ? ['#073b52'] : undefined }
                 },
                 plotOptions: isPie ? { pie: { expandOnClick: true, customScale: itemConfig.rowSpan === 2 ? 1 : 0.9 } } : { bar: { horizontal: itemConfig.horizontal, columnWidth: '70%', borderRadius: 2, distributed: isEmpDept, dataLabels: { position: 'top' } } }
@@ -334,7 +336,7 @@
             if (isPie) {
                 cfg.labels = labels;
                 cfg.series = series;
-                if (itemConfig.rowSpan === 2) {
+                if (itemConfig.colSpan > 1) {
                     cfg.legend = { show: true, position: 'bottom', fontSize: '10px', fontFamily: 'Cairo' };
                 }
             } else {
