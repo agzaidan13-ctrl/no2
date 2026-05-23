@@ -26,58 +26,57 @@
             --primary-blue: #38bdf8;     
         }
 
-        body { font-family: 'Cairo', sans-serif; background-color: var(--bg-body); color: var(--text-dark); transition: 0.3s; margin: 0; }
+        body { font-family: 'Cairo', sans-serif; background-color: var(--bg-body); color: var(--text-dark); transition: 0.3s; margin: 0; overflow-x: hidden; }
         
-        /* شريط علوي مضغوط */
-        .top-navbar { background-color: var(--bg-card); padding: 5px 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); border-bottom: 1px solid rgba(0,0,0,0.05); }
-        .top-navbar img { height: 50px !important; width: auto; }
-        .top-navbar h4 { font-size: 1.2rem; }
-        .top-navbar h6 { font-size: 0.8rem; }
+        /* شريط علوي شديد الانضغاط لتوفير المساحة العمودية */
+        .top-navbar { background-color: var(--bg-card); padding: 5px 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .top-navbar img { height: 40px !important; width: auto; }
+        .top-navbar h4 { font-size: 1.1rem; }
+        .top-navbar h6 { font-size: 0.75rem; }
         
-        .nav-pills { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 10px !important; }
+        .nav-pills { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin-bottom: 8px !important; }
         .nav-pills .nav-link { 
-            border-radius: 12px; font-weight: bold; color: var(--primary-blue); 
-            padding: 6px 15px; font-size: 0.9rem; transition: 0.3s; border: 1px solid transparent; 
+            border-radius: 10px; font-weight: bold; color: var(--primary-blue); 
+            padding: 4px 12px; font-size: 0.85rem; transition: 0.3s; border: 1px solid transparent; 
         }
         .nav-pills .nav-link.active { background-color: var(--primary-blue); color: white; box-shadow: 0 4px 10px rgba(12,74,110,0.3); }
 
-        /* شبكة 5 أعمدة مع فراغات 12 بكسل */
+        /* شبكة 6 أعمدة بعرض 100% مع فراغات 8 بكسل فقط */
         .dashboard-grid {
             display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 12px; 
+            grid-template-columns: repeat(6, 1fr);
+            gap: 8px; 
             grid-auto-flow: dense;
-            /* إضافة عرض أقصى لضغط المخططات أفقياً على الشاشات الكبيرة */
-            max-width: 1400px;
-            margin: 0 auto;
+            width: 100%;
         }
         
-        @media (max-width: 1200px) { .dashboard-grid { grid-template-columns: repeat(4, 1fr); max-width: 100%; } }
+        @media (max-width: 1400px) { .dashboard-grid { grid-template-columns: repeat(4, 1fr); } }
         @media (max-width: 992px) { .dashboard-grid { grid-template-columns: repeat(2, 1fr); } }
         @media (max-width: 768px) { .dashboard-grid { grid-template-columns: repeat(1, 1fr); } }
 
-        @media (max-width: 1200px) { .span-large { grid-column: span 2 !important; } }
+        @media (max-width: 1400px) { .span-large { grid-column: span 2 !important; } }
         @media (max-width: 992px) { .span-large { grid-column: span 2 !important; } }
         @media (max-width: 768px) { .span-large { grid-column: span 1 !important; grid-row: span 1 !important; } .span-tall { grid-row: span 1 !important; } }
 
-        .dashboard-item { background: var(--bg-card); border-radius: 12px; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 2px 4px rgba(0,0,0,0.02); display: flex; flex-direction: column; height: 100%; transition: 0.2s; position: relative; overflow: visible; }
+        .dashboard-item { background: var(--bg-card); border-radius: 10px; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 2px 4px rgba(0,0,0,0.02); display: flex; flex-direction: column; height: 100%; transition: 0.2s; position: relative; overflow: visible; }
         .dashboard-item:hover { transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.06); }
         
-        .dashboard-header { background: rgba(56,189,248,0.05); padding: 5px; border-bottom: 1px solid rgba(0,0,0,0.05); border-top-left-radius: 12px; border-top-right-radius: 12px; display: flex; flex-direction: column; align-items: center; }
-        .dashboard-header h6 { margin: 0 0 3px 0; font-weight: bold; font-size: 0.7rem; color: var(--primary-blue); text-align: center; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+        /* عناوين مصغرة جداً */
+        .dashboard-header { background: rgba(56,189,248,0.05); padding: 4px; border-bottom: 1px solid rgba(0,0,0,0.05); border-top-left-radius: 10px; border-top-right-radius: 10px; display: flex; flex-direction: column; align-items: center; }
+        .dashboard-header h6 { margin: 0 0 2px 0; font-weight: bold; font-size: 0.65rem; color: var(--primary-blue); text-align: center; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
         
-        .dashboard-body { padding: 3px; flex-grow: 1; display: flex; justify-content: center; align-items: center; position: relative; width: 100%; }
+        .dashboard-body { padding: 2px; flex-grow: 1; display: flex; justify-content: center; align-items: center; position: relative; width: 100%; }
 
-        .stat-card { background: var(--bg-card); border-radius: 15px; padding: 20px; border: 1px solid rgba(0,0,0,0.05); height: 100%; box-shadow: 0 4px 6px rgba(0,0,0,0.02); display: flex; flex-direction: column; }
-        .chart-wrapper { background: var(--bg-card); border-radius: 20px; padding: 20px; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
+        .stat-card { background: var(--bg-card); border-radius: 12px; padding: 15px; border: 1px solid rgba(0,0,0,0.05); height: 100%; box-shadow: 0 4px 6px rgba(0,0,0,0.02); display: flex; flex-direction: column; }
+        .chart-wrapper { background: var(--bg-card); border-radius: 15px; padding: 15px; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
 
-        .details-grid { display: flex; gap: 3px; width: 100%; flex-wrap: wrap; justify-content: center; }
-        .details-box { background: var(--bg-card); border: 1px solid rgba(0,0,0,0.08); padding: 2px; border-radius: 6px; flex: 1; min-width: 40px; text-align: center; display: flex; flex-direction: column; justify-content: center;}
-        .details-box span { display: block; font-size: 0.5rem; font-weight: bold; opacity: 0.8; margin-bottom: 1px; }
-        .details-box strong { font-size: 0.75rem; color: var(--primary-blue); line-height: 1; }
+        .details-grid { display: flex; gap: 2px; width: 100%; flex-wrap: wrap; justify-content: center; }
+        .details-box { background: var(--bg-card); border: 1px solid rgba(0,0,0,0.08); padding: 2px; border-radius: 4px; flex: 1; min-width: 35px; text-align: center; display: flex; flex-direction: column; justify-content: center;}
+        .details-box span { display: block; font-size: 0.45rem; font-weight: bold; opacity: 0.8; margin-bottom: 0px; }
+        .details-box strong { font-size: 0.7rem; color: var(--primary-blue); line-height: 1; }
 
-        .apexcharts-toolbar { position: absolute !important; top: -5px !important; right: 5px !important; z-index: 100 !important; display: flex !important; visibility: visible !important; opacity: 1 !important; }
-        .apexcharts-menu { z-index: 999 !important; background-color: var(--bg-card) !important; border: 1px solid rgba(0,0,0,0.1) !important; color: var(--text-dark) !important; font-size: 0.75rem !important; }
+        .apexcharts-toolbar { position: absolute !important; top: -5px !important; right: 2px !important; z-index: 100 !important; display: flex !important; visibility: visible !important; opacity: 1 !important; }
+        .apexcharts-menu { z-index: 999 !important; background-color: var(--bg-card) !important; border: 1px solid rgba(0,0,0,0.1) !important; color: var(--text-dark) !important; font-size: 0.7rem !important; }
 
         .loading-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 9999; justify-content: center; align-items: center; color: white; flex-direction: column; backdrop-filter: blur(5px); }
     </style>
@@ -86,7 +85,7 @@
 
 <div id="loader" class="loading-overlay">
     <div class="spinner-border text-info mb-3" style="width: 3rem; height: 3rem;"></div>
-    <h5 id="loadMsg" class="fw-bold">جاري تحميل وتحديث المنظومة الإحصائية بسرعة فائقة...</h5>
+    <h5 id="loadMsg" class="fw-bold" style="font-size: 1rem;">جاري تحميل المنظومة الإحصائية...</h5>
 </div>
 
 <div class="top-navbar">
@@ -98,11 +97,11 @@
                 <h6 class="mb-0 text-secondary" style="opacity: 0.8;">برمجة وتصميم: م. علي غازي</h6>
             </div>
         </div>
-        <button class="btn btn-sm btn-outline-secondary rounded-pill px-3" onclick="toggleDarkMode()" id="themeBtn">🌙 الوضع الداكن</button>
+        <button class="btn btn-sm btn-outline-secondary rounded-pill px-3 py-1" onclick="toggleDarkMode()" id="themeBtn" style="font-size: 0.8rem;">🌙 الوضع الداكن</button>
     </div>
 </div>
 
-<div class="container-fluid px-3 px-xl-5 pb-3 mt-2">
+<div class="container-fluid px-2 pb-2 mt-2">
     
     <ul class="nav nav-pills" id="mainTabs" role="tablist">
         <li class="nav-item" role="presentation"><button class="nav-link active" data-bs-toggle="pill" data-bs-target="#tab-home" type="button" role="tab">🏠 الرئيسية</button></li>
@@ -137,6 +136,7 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
+    // الشبكة 6 أعمدة: الشهادات العليا أصبحت (colSpan: 2, rowSpan: 2)
     const CONFIG = [
         { id: 'emp_total', title: 'أعداد المنتسبين', type: 'pie', horizontal: false, url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=398430626&single=true&output=csv' },
         { id: 'emp_dept', title: 'المنتسبين للأقسام', type: 'bar', horizontal: false, rowSpan: 2, url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=255359164&single=true&output=csv' },
@@ -165,8 +165,8 @@
             const spanClass = item.colSpan > 1 ? 'span-large' : '';
             const tallClass = item.rowSpan > 1 ? 'span-tall' : '';
             
-            // الحسبة الدقيقة: 130 بكسل للعادي. للمزدوج: 130 + 130 + 12 (الفراغ) = 272 بكسل
-            const bodyHeight = item.rowSpan === 2 ? 202 : 100;
+            // حساب رياضي دقيق للارتفاع: المخطط العادي 110px. المزدوج (110+110+8)=228px
+            const bodyHeight = item.rowSpan === 2 ? 228 : 110;
 
             html += `
             <div class="dashboard-cell ${spanClass} ${tallClass}" style="${gridStyle}">
@@ -202,7 +202,7 @@
                 zoomin: !isPie,
                 zoomout: !isPie,
                 pan: !isPie,
-                reset: !isPie ? '<svg class="lens-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>' : false
+                reset: !isPie ? '<svg class="lens-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>' : false
             },
             autoSelected: !isPie ? 'zoom' : undefined
         };
@@ -224,7 +224,7 @@
                                     rawDataStore[item.id] = results.data;
                                     renderChartData(item, results.data);
                                 } else {
-                                    document.getElementById(`c-${item.id}`).innerHTML = '<span class="text-warning" style="font-size: 10px;">فارغ</span>';
+                                    document.getElementById(`c-${item.id}`).innerHTML = '<span class="text-warning" style="font-size: 9px;">فارغ</span>';
                                 }
                                 resolve();
                             },
@@ -233,7 +233,7 @@
                     });
                 })
                 .catch(err => {
-                    document.getElementById(`c-${item.id}`).innerHTML = '<span class="text-danger" style="font-size: 10px;">فشل الاتصال</span>';
+                    document.getElementById(`c-${item.id}`).innerHTML = '<span class="text-danger" style="font-size: 9px;">فشل الاتصال</span>';
                 });
         });
 
@@ -289,7 +289,7 @@
                 }];
             }
 
-            const chartHeight = itemConfig.rowSpan === 2 ? 202 : 100;
+            const chartHeight = itemConfig.rowSpan === 2 ? 228 : 110;
 
             const cfg = {
                 chart: { 
@@ -302,7 +302,7 @@
                     parentHeightOffset: 0,
                     stacked: itemConfig.type === 'bar'
                 },
-                stroke: { curve: 'smooth', width: isPie ? 1 : 1 },
+                stroke: { curve: 'smooth', width: isPie ? 1 : 1.5 },
                 colors: colorMapping,
                 grid: { padding: { left: 0, right: 0, top: 0, bottom: 0 } },
                 legend: { show: false },
@@ -329,15 +329,17 @@
                         return val;
                     },
                     offsetY: isEmpDept ? -5 : 0,
-                    style: { fontSize: itemConfig.rowSpan === 2 ? '9px' : '7px', fontFamily: 'Cairo', colors: isEmpDept ? ['#073b52'] : undefined }
+                    // تصغير حجم الخط ليتناسب مع الارتفاع الجديد (110px)
+                    style: { fontSize: itemConfig.rowSpan === 2 ? '9px' : '6px', fontFamily: 'Cairo', colors: isEmpDept ? ['#073b52'] : undefined }
                 },
-                /* تصغير حجم الدوائر الداخلي (0.8) والأعمدة لتناسب العرض الجديد */
-                plotOptions: isPie ? { pie: { expandOnClick: true, customScale: itemConfig.rowSpan === 2 ? 0.9 : 0.8 } } : { bar: { horizontal: itemConfig.horizontal, columnWidth: '50%', borderRadius: 2, distributed: isEmpDept, dataLabels: { position: 'top' } } }
+                // تصغير حجم الدوائر (0.7 للعادي، 0.9 للكبير) لكي لا تنقص أطرافها
+                plotOptions: isPie ? { pie: { expandOnClick: true, customScale: itemConfig.rowSpan === 2 ? 0.9 : 0.75 } } : { bar: { horizontal: itemConfig.horizontal, columnWidth: '60%', borderRadius: 2, distributed: isEmpDept, dataLabels: { position: 'top' } } }
             };
 
             if (isPie) {
                 cfg.labels = labels;
                 cfg.series = series;
+                // إظهار المفاتيح للمخططات المزدوجة فقط لضيق المساحة
                 if (itemConfig.colSpan > 1) {
                     cfg.legend = { show: true, position: 'bottom', fontSize: '9px', fontFamily: 'Cairo' };
                 }
