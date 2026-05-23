@@ -28,7 +28,6 @@
 
         body { font-family: 'Cairo', sans-serif; background-color: var(--bg-body); color: var(--text-dark); transition: 0.3s; margin: 0; }
         
-        /* شريط علوي مضغوط */
         .top-navbar { background-color: var(--bg-card); padding: 5px 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); border-bottom: 1px solid rgba(0,0,0,0.05); }
         .top-navbar img { height: 50px !important; width: auto; }
         .top-navbar h4 { font-size: 1.2rem; }
@@ -41,7 +40,6 @@
         }
         .nav-pills .nav-link.active { background-color: var(--primary-blue); color: white; box-shadow: 0 4px 10px rgba(12,74,110,0.3); }
 
-        /* شبكة 5 أعمدة مع فراغات مضغوطة 10 بكسل */
         .dashboard-grid {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
@@ -60,7 +58,6 @@
         .dashboard-item { background: var(--bg-card); border-radius: 12px; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 2px 4px rgba(0,0,0,0.02); display: flex; flex-direction: column; height: 100%; transition: 0.2s; position: relative; overflow: visible; }
         .dashboard-item:hover { transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.06); }
         
-        /* عناوين مصغرة */
         .dashboard-header { background: rgba(56,189,248,0.05); padding: 5px; border-bottom: 1px solid rgba(0,0,0,0.05); border-top-left-radius: 12px; border-top-right-radius: 12px; display: flex; flex-direction: column; align-items: center; }
         .dashboard-header h6 { margin: 0 0 3px 0; font-weight: bold; font-size: 0.7rem; color: var(--primary-blue); text-align: center; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
         
@@ -78,6 +75,18 @@
         .apexcharts-menu { z-index: 999 !important; background-color: var(--bg-card) !important; border: 1px solid rgba(0,0,0,0.1) !important; color: var(--text-dark) !important; font-size: 0.75rem !important; }
 
         .loading-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 9999; justify-content: center; align-items: center; color: white; flex-direction: column; backdrop-filter: blur(5px); }
+
+        /* تنسيق جدول البيانات التفصيلي */
+        .custom-table { font-size: 0.85rem; }
+        .custom-table thead { background-color: rgba(56,189,248,0.1); color: var(--primary-blue); }
+        .custom-table th, .custom-table td { border-color: rgba(0,0,0,0.05); vertical-align: middle; }
+
+        /* إعدادات الطباعة: إخفاء الأزرار والتبويبات عند طباعة التقرير */
+        @media print {
+            .btn, .nav-pills, .apexcharts-toolbar { display: none !important; }
+            body { background-color: white !important; color: black !important; }
+            .dashboard-item, .chart-wrapper, .stat-card { border: 1px solid #ccc !important; box-shadow: none !important; }
+        }
     </style>
 </head>
 <body>
@@ -96,7 +105,12 @@
                 <h6 class="mb-0 text-secondary" style="opacity: 0.8;">برمجة وتصميم: م. علي غازي</h6>
             </div>
         </div>
-        <button class="btn btn-sm btn-outline-secondary rounded-pill px-3" onclick="toggleDarkMode()" id="themeBtn">🌙 الوضع الداكن</button>
+        <div class="d-flex gap-2 align-items-center mt-2 mt-md-0">
+            <span id="lastUpdateBadge" class="badge bg-light text-dark border d-none d-md-block" style="font-size: 0.75rem;">آخر تحديث: --</span>
+            <button class="btn btn-sm btn-outline-info rounded-pill px-3" onclick="loadData()" title="جلب أحدث البيانات">🔄 تحديث</button>
+            <button class="btn btn-sm btn-outline-primary rounded-pill px-3" onclick="window.print()" title="طباعة الصفحة كتقرير">🖨️ طباعة</button>
+            <button class="btn btn-sm btn-outline-secondary rounded-pill px-3" onclick="toggleDarkMode()" id="themeBtn">🌙 الوضع الداكن</button>
+        </div>
     </div>
 </div>
 
@@ -125,6 +139,7 @@
                         <div id="c-detail-view" style="min-height: 400px;">
                             <h5 class="text-center mt-5 text-muted">يرجى اختيار أحد المخططات من الواجهة الرئيسية لعرض تفاصيله هنا</h5>
                         </div>
+                        <div id="detail-table-container" class="mt-4"></div>
                     </div>
                 </div>
             </div>
@@ -135,7 +150,6 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-    // تم إرجاع الشهادات العليا للوضع القياسي، وإضافة rowSpan: 2 لأعداد الطلبة
     const CONFIG = [
         { id: 'emp_total', title: 'أعداد المنتسبين', type: 'pie', horizontal: false, url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=398430626&single=true&output=csv' },
         { id: 'emp_dept', title: 'المنتسبين للأقسام', type: 'bar', horizontal: false, rowSpan: 2, url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=255359164&single=true&output=csv' },
@@ -163,9 +177,7 @@
             const gridStyle = (item.colSpan ? `grid-column: span ${item.colSpan}; ` : '') + (item.rowSpan ? `grid-row: span ${item.rowSpan}; ` : '');
             const spanClass = item.colSpan > 1 ? 'span-large' : '';
             const tallClass = item.rowSpan > 1 ? 'span-tall' : '';
-            
-            // الحسبة الدقيقة: 130px للعادي، و 272px للمزدوج
-            const bodyHeight = item.rowSpan === 2 ? 272 : 130;
+            const bodyHeight = item.rowSpan === 2 ? 295 : 130;
 
             html += `
             <div class="dashboard-cell ${spanClass} ${tallClass}" style="${gridStyle}">
@@ -238,6 +250,11 @@
 
         await Promise.all(fetchPromises);
         document.getElementById('loader').style.display = 'none';
+        
+        // تحديث شارة الوقت لتدل على التحديث الحي
+        const now = new Date();
+        const timeString = now.toLocaleTimeString('ar-IQ', { hour: '2-digit', minute: '2-digit' });
+        document.getElementById('lastUpdateBadge').innerText = `آخر تحديث: اليوم، ${timeString}`;
     }
 
     function renderChartData(itemConfig, data) {
@@ -288,7 +305,7 @@
                 }];
             }
 
-            const chartHeight = itemConfig.rowSpan === 2 ? 272 : 130;
+            const chartHeight = itemConfig.rowSpan === 2 ? 295 : 130;
 
             const cfg = {
                 chart: { 
@@ -328,16 +345,16 @@
                         return val;
                     },
                     offsetY: isEmpDept ? -5 : 0,
-                    style: { fontSize: itemConfig.rowSpan === 2 ? '9px' : '7px', fontFamily: 'Cairo', colors: isEmpDept ? ['#073b52'] : undefined }
+                    style: { fontSize: itemConfig.rowSpan === 2 ? '10px' : '7px', fontFamily: 'Cairo', colors: isEmpDept ? ['#073b52'] : undefined }
                 },
-                plotOptions: isPie ? { pie: { expandOnClick: true, customScale: itemConfig.rowSpan === 2 ? 0.9 : 0.8 } } : { bar: { horizontal: itemConfig.horizontal, columnWidth: '50%', borderRadius: 2, distributed: isEmpDept, dataLabels: { position: 'top' } } }
+                plotOptions: isPie ? { pie: { expandOnClick: true, customScale: itemConfig.rowSpan === 2 ? 1 : 0.9 } } : { bar: { horizontal: itemConfig.horizontal, columnWidth: '70%', borderRadius: 2, distributed: isEmpDept, dataLabels: { position: 'top' } } }
             };
 
             if (isPie) {
                 cfg.labels = labels;
                 cfg.series = series;
                 if (itemConfig.colSpan > 1) {
-                    cfg.legend = { show: true, position: 'bottom', fontSize: '9px', fontFamily: 'Cairo' };
+                    cfg.legend = { show: true, position: 'bottom', fontSize: '10px', fontFamily: 'Cairo' };
                 }
             } else {
                 cfg.xaxis = { categories: labels, labels: { show: false }, axisBorder: { show: false }, axisTicks: { show: false }, tooltip: { enabled: false } };
@@ -362,8 +379,9 @@
         detailTabBtn.show();
 
         const cols = Object.keys(data[0]).filter(k => k && k.trim() !== '');
-        let statsHtml = `<h6 style="margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px dashed rgba(0,0,0,0.1); text-align: center;">${itemConfig.title}</h6>`;
         
+        // بناء ملخص الأرقام الجانبي
+        let statsHtml = `<h6 style="margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px dashed rgba(0,0,0,0.1); text-align: center;">${itemConfig.title}</h6>`;
         let total = 0;
         cols.slice(1).forEach(col => {
             let colSum = 0;
@@ -374,6 +392,7 @@
         statsHtml += `<div class="d-flex justify-content-between p-2 rounded mt-3" style="background: rgba(56,189,248,0.1);"><span>الإجمالي الكلي:</span> <strong>${total.toLocaleString()}</strong></div>`;
         document.getElementById('detail-stats-container').innerHTML = statsHtml;
 
+        // بناء المخطط البياني الكبير
         if(activeDetailChart) activeDetailChart.destroy();
         
         const isPie = itemConfig.type === 'pie' || itemConfig.type === 'donut';
@@ -392,14 +411,7 @@
         }
 
         const cfg = {
-            chart: { 
-                type: itemConfig.type, 
-                height: 450, 
-                width: '100%', 
-                zoom: { enabled: !isPie },
-                toolbar: getToolbarConfig(isPie),
-                stacked: itemConfig.type === 'bar'
-            },
+            chart: { type: itemConfig.type, height: 400, width: '100%', zoom: { enabled: !isPie }, toolbar: getToolbarConfig(isPie), stacked: itemConfig.type === 'bar' },
             stroke: { curve: 'smooth', width: isPie ? 1 : 2 },
             colors: colorMapping,
             legend: { position: isPie ? 'right' : 'bottom', fontSize: '13px', labels: { colors: '#0c4a6e', fontFamily: 'Cairo' } },
@@ -409,9 +421,7 @@
                         if (isPie || itemConfig.type === 'donut') return val;
                         if (opts.w.globals.series.length > 1) {
                             let total = 0;
-                            opts.w.globals.series.forEach(s => {
-                                total += (parseFloat(s[opts.dataPointIndex]) || 0);
-                            });
+                            opts.w.globals.series.forEach(s => total += (parseFloat(s[opts.dataPointIndex]) || 0));
                             return val + ' (المجموع: ' + total + ')';
                         }
                         return val;
@@ -445,6 +455,21 @@
 
         activeDetailChart = new ApexCharts(document.querySelector("#c-detail-view"), cfg);
         activeDetailChart.render();
+
+        // 🌟 بناء جدول البيانات (Data Table) أسفل المخطط
+        let tableHtml = `<h6 class="mt-4 mb-3 fw-bold text-primary-blue"><span style="font-size: 1.2rem;">📋</span> جدول البيانات التفصيلي</h6>
+                         <div class="table-responsive">
+                            <table class="table table-bordered table-hover text-center custom-table">
+                                <thead><tr>`;
+        cols.forEach(c => tableHtml += `<th>${c}</th>`);
+        tableHtml += `</tr></thead><tbody>`;
+        data.forEach(r => {
+            tableHtml += `<tr>`;
+            cols.forEach(c => tableHtml += `<td>${r[c]}</td>`);
+            tableHtml += `</tr>`;
+        });
+        tableHtml += `</tbody></table></div>`;
+        document.getElementById('detail-table-container').innerHTML = tableHtml;
     }
 
     function toggleDarkMode() {
