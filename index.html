@@ -84,38 +84,28 @@
         .custom-table thead { background-color: rgba(56,189,248,0.1); color: var(--primary-blue); }
         .custom-table th, .custom-table td { border-color: rgba(0,0,0,0.05); vertical-align: middle; }
 
-        /* 🌟 حل جذري لمشكلة أبعاد الطباعة 🌟 */
+        /* إعدادات الطباعة */
         @media print {
-            /* إخفاء واجهة المستخدم */
-            .btn, .nav-pills, .apexcharts-toolbar, #lastUpdateBadge { display: none !important; }
+            .btn, .nav-pills, .apexcharts-toolbar, #lastUpdateBadge, select { display: none !important; }
             body { background-color: white !important; color: black !important; padding: 0 !important; margin: 0 !important; }
-            
-            /* إجبار إطار التفاصيل على الترتيب العمودي لتجنب انضغاط المخطط */
             .row { display: block !important; }
             .col-md-3, .col-md-9 { width: 100% !important; max-width: 100% !important; flex: 0 0 100% !important; margin-bottom: 20px !important; padding: 0 !important; }
-            
-            /* إجبار الشبكة في الصفحة الرئيسية على الظهور كعناصر تحت بعضها */
             .dashboard-grid { display: block !important; }
             .dashboard-cell { width: 100% !important; margin-bottom: 20px !important; page-break-inside: avoid !important; }
-
-            /* تحجيم المخطط البياني (ApexCharts) ليناسب الورقة */
-            .apexcharts-canvas, .apexcharts-svg { 
-                max-width: 100% !important; 
-                height: auto !important; 
-            }
-            #c-detail-view, .dashboard-body { 
-                height: auto !important; 
-                min-height: 0 !important; 
-            }
-
-            /* منع قص الجداول والبطاقات بين الصفحات */
-            .chart-wrapper, .stat-card, .dashboard-item, .custom-table { 
-                border: 1px solid #ccc !important; 
-                box-shadow: none !important; 
-                page-break-inside: avoid !important; 
-                break-inside: avoid !important; 
-            }
+            .apexcharts-canvas, .apexcharts-svg { max-width: 100% !important; height: auto !important; }
+            #c-detail-view, .dashboard-body { height: auto !important; min-height: 0 !important; }
+            .chart-wrapper, .stat-card, .dashboard-item, .custom-table { border: 1px solid #ccc !important; box-shadow: none !important; page-break-inside: avoid !important; break-inside: avoid !important; }
         }
+        
+        /* تنسيق القائمة المنسدلة */
+        .year-selector {
+            background-color: rgba(56,189,248,0.1);
+            color: var(--primary-blue);
+            border: 1px solid var(--accent-blue);
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .year-selector:focus { border-color: var(--primary-blue); box-shadow: 0 0 0 0.2rem rgba(56,189,248,0.25); }
     </style>
 </head>
 <body>
@@ -134,8 +124,15 @@
                 <h6 class="mb-0 text-secondary" style="opacity: 0.8;">برمجة وتصميم: م. علي غازي</h6>
             </div>
         </div>
+        
         <div class="d-flex gap-2 align-items-center mt-2 mt-md-0">
-            <span id="lastUpdateBadge" class="badge bg-light text-dark border d-none d-md-block" style="font-size: 0.75rem;">آخر تحديث: --</span>
+            <select class="form-select form-select-sm rounded-pill year-selector" style="width: 120px;" onchange="if(this.value) window.location.href=this.value;">
+                <option value="index.html" selected>عام 2025</option>
+                <option value="dashboard_2026.html">عام 2026</option>
+                <option value="dashboard_2027.html">عام 2027</option>
+            </select>
+            
+            <span id="lastUpdateBadge" class="badge bg-light text-dark border d-none d-lg-block" style="font-size: 0.75rem;">آخر تحديث: --</span>
             <button class="btn btn-sm btn-outline-info rounded-pill px-3" onclick="loadData()" title="جلب أحدث البيانات">🔄 تحديث</button>
             <button class="btn btn-sm btn-outline-primary rounded-pill px-3" onclick="window.print()" title="طباعة الصفحة كتقرير">🖨️ طباعة</button>
             <button class="btn btn-sm btn-outline-secondary rounded-pill px-3" onclick="toggleDarkMode()" id="themeBtn">🌙 الوضع الداكن</button>
