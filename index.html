@@ -41,26 +41,28 @@
         }
         .nav-pills .nav-link.active { background-color: var(--primary-blue); color: white; box-shadow: 0 4px 10px rgba(12,74,110,0.3); }
 
-        /* شبكة 5 أعمدة مع فراغات مضغوطة 10 بكسل */
+        /* شبكة 5 أعمدة مع فراغات 12 بكسل */
         .dashboard-grid {
             display: grid;
-            grid-template-columns: repeat(6, 1fr);
-            gap: 10px; 
+            grid-template-columns: repeat(5, 1fr);
+            gap: 12px; 
             grid-auto-flow: dense;
+            /* إضافة عرض أقصى لضغط المخططات أفقياً على الشاشات الكبيرة */
+            max-width: 1400px;
+            margin: 0 auto;
         }
         
-        @media (max-width: 1400px) { .dashboard-grid { grid-template-columns: repeat(4, 1fr); } }
+        @media (max-width: 1200px) { .dashboard-grid { grid-template-columns: repeat(4, 1fr); max-width: 100%; } }
         @media (max-width: 992px) { .dashboard-grid { grid-template-columns: repeat(2, 1fr); } }
         @media (max-width: 768px) { .dashboard-grid { grid-template-columns: repeat(1, 1fr); } }
 
-        @media (max-width: 1400px) { .span-large { grid-column: span 2 !important; } }
+        @media (max-width: 1200px) { .span-large { grid-column: span 2 !important; } }
         @media (max-width: 992px) { .span-large { grid-column: span 2 !important; } }
         @media (max-width: 768px) { .span-large { grid-column: span 1 !important; grid-row: span 1 !important; } .span-tall { grid-row: span 1 !important; } }
 
         .dashboard-item { background: var(--bg-card); border-radius: 12px; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 2px 4px rgba(0,0,0,0.02); display: flex; flex-direction: column; height: 100%; transition: 0.2s; position: relative; overflow: visible; }
         .dashboard-item:hover { transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.06); }
         
-        /* عناوين مصغرة */
         .dashboard-header { background: rgba(56,189,248,0.05); padding: 5px; border-bottom: 1px solid rgba(0,0,0,0.05); border-top-left-radius: 12px; border-top-right-radius: 12px; display: flex; flex-direction: column; align-items: center; }
         .dashboard-header h6 { margin: 0 0 3px 0; font-weight: bold; font-size: 0.7rem; color: var(--primary-blue); text-align: center; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
         
@@ -100,7 +102,7 @@
     </div>
 </div>
 
-<div class="container-fluid px-2 pb-3 mt-2">
+<div class="container-fluid px-3 px-xl-5 pb-3 mt-2">
     
     <ul class="nav nav-pills" id="mainTabs" role="tablist">
         <li class="nav-item" role="presentation"><button class="nav-link active" data-bs-toggle="pill" data-bs-target="#tab-home" type="button" role="tab">🏠 الرئيسية</button></li>
@@ -135,7 +137,6 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-    // تم إضافة rowSpan: 2 لمخطط المنتسبين للأقسام (emp_dept)
     const CONFIG = [
         { id: 'emp_total', title: 'أعداد المنتسبين', type: 'pie', horizontal: false, url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=398430626&single=true&output=csv' },
         { id: 'emp_dept', title: 'المنتسبين للأقسام', type: 'bar', horizontal: false, rowSpan: 2, url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=255359164&single=true&output=csv' },
@@ -163,8 +164,9 @@
             const gridStyle = (item.colSpan ? `grid-column: span ${item.colSpan}; ` : '') + (item.rowSpan ? `grid-row: span ${item.rowSpan}; ` : '');
             const spanClass = item.colSpan > 1 ? 'span-large' : '';
             const tallClass = item.rowSpan > 1 ? 'span-tall' : '';
-            // ارتفاع مضغوط بدقة: 130px للعادي، و 295px للمزدوج
-            const bodyHeight = item.rowSpan === 2 ? 200 : 130;
+            
+            // الحسبة الدقيقة: 130 بكسل للعادي. للمزدوج: 130 + 130 + 12 (الفراغ) = 272 بكسل
+            const bodyHeight = item.rowSpan === 2 ? 272 : 130;
 
             html += `
             <div class="dashboard-cell ${spanClass} ${tallClass}" style="${gridStyle}">
@@ -250,224 +252,4 @@
             let labels = [];
             let series = [];
 
-            if (isPie) {
-                labels = data.map(r => r[cols[0]]);
-                series = data.map(r => {
-                    let val = parseFloat(String(r[cols[1]] || '0').replace(/[^0-9.-]+/g,"")) || 0;
-                    totalSum += val;
-                    return val;
-                });
-            } else {
-                labels = data.map(r => r[cols[0]]);
-                series = cols.slice(1).map(colName => ({
-                    name: colName,
-                    type: itemConfig.type,
-                    data: data.map(r => {
-                        let val = parseFloat(String(r[colName] || '0').replace(/[^0-9.-]+/g,"")) || 0;
-                        totalSum += val; 
-                        return val;
-                    })
-                }));
-            }
-
-            const totalEl = document.getElementById(`v-${itemConfig.id}-total`);
-            if(totalEl) totalEl.innerText = totalSum.toLocaleString();
-
-            document.getElementById(`c-${itemConfig.id}`).innerHTML = '';
-
-            let colorMapping = ['#0c4a6e', '#38bdf8', '#0ea5e9', '#0284c7', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#14b8a6'];
-            if (isEmpDept) {
-                colorMapping = [function({ value }) {
-                    let ratio = value / totalSum;
-                    if (ratio > 0.20) return '#082f49'; 
-                    if (ratio > 0.10) return '#0c4a6e'; 
-                    if (ratio > 0.05) return '#0284c7'; 
-                    if (ratio > 0.02) return '#0ea5e9'; 
-                    return '#7dd3fc'; 
-                }];
-            }
-
-            const chartHeight = itemConfig.rowSpan === 2 ? 200 : 130;
-
-            const cfg = {
-                chart: { 
-                    type: itemConfig.type, 
-                    height: chartHeight, 
-                    width: '100%', 
-                    zoom: { enabled: !isPie },
-                    toolbar: getToolbarConfig(isPie),
-                    animations: { enabled: true },
-                    parentHeightOffset: 0,
-                    stacked: itemConfig.type === 'bar'
-                },
-                stroke: { curve: 'smooth', width: isPie ? 1 : 1.5 },
-                colors: colorMapping,
-                grid: { padding: { left: 0, right: 0, top: 0, bottom: 0 } },
-                legend: { show: false },
-                tooltip: {
-                    y: {
-                        formatter: function(val, opts) {
-                            if (isPie || itemConfig.type === 'donut') return val;
-                            if (opts.w.globals.series.length > 1) {
-                                let total = 0;
-                                opts.w.globals.series.forEach(s => {
-                                    total += (parseFloat(s[opts.dataPointIndex]) || 0);
-                                });
-                                return val + ' (المجموع: ' + total + ')';
-                            }
-                            return val;
-                        }
-                    }
-                },
-                dataLabels: { 
-                    enabled: isPie || isEmpDept, 
-                    formatter: function (val) {
-                        if (isEmpDept) return ((val / totalSum) * 100).toFixed(1) + '%';
-                        if (isPie) return val.toFixed(1) + '%';
-                        return val;
-                    },
-                    offsetY: isEmpDept ? -5 : 0,
-                    // تكبير خط نسب الأقسام قليلاً لأن ارتفاع المخطط أصبح مضاعفاً ومريحاً
-                    style: { fontSize: itemConfig.rowSpan === 2 ? '10px' : '7px', fontFamily: 'Cairo', colors: isEmpDept ? ['#073b52'] : undefined }
-                },
-                plotOptions: isPie ? { pie: { expandOnClick: true, customScale: itemConfig.rowSpan === 2 ? 1 : 0.9 } } : { bar: { horizontal: itemConfig.horizontal, columnWidth: '70%', borderRadius: 2, distributed: isEmpDept, dataLabels: { position: 'top' } } }
-            };
-
-            if (isPie) {
-                cfg.labels = labels;
-                cfg.series = series;
-                if (itemConfig.colSpan > 1) {
-                    cfg.legend = { show: true, position: 'bottom', fontSize: '10px', fontFamily: 'Cairo' };
-                }
-            } else {
-                cfg.xaxis = { categories: labels, labels: { show: false }, axisBorder: { show: false }, axisTicks: { show: false }, tooltip: { enabled: false } };
-                cfg.yaxis = { labels: { show: false } };
-                cfg.series = series;
-            }
-
-            chartsObj[itemConfig.id] = new ApexCharts(document.querySelector(`#c-${itemConfig.id}`), cfg);
-            chartsObj[itemConfig.id].render();
-
-        } catch (e) {
-            document.getElementById(`c-${itemConfig.id}`).innerHTML = '<span class="text-danger" style="font-size: 10px;">خطأ</span>';
-        }
-    }
-
-    function openDetailView(id) {
-        const itemConfig = CONFIG.find(c => c.id === id);
-        const data = rawDataStore[id];
-        if(!itemConfig || !data) return;
-
-        const detailTabBtn = new bootstrap.Tab(document.querySelector('button[data-bs-target="#tab-detail"]'));
-        detailTabBtn.show();
-
-        const cols = Object.keys(data[0]).filter(k => k && k.trim() !== '');
-        let statsHtml = `<h6 style="margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px dashed rgba(0,0,0,0.1); text-align: center;">${itemConfig.title}</h6>`;
-        
-        let total = 0;
-        cols.slice(1).forEach(col => {
-            let colSum = 0;
-            data.forEach(r => colSum += parseFloat(String(r[col] || '0').replace(/[^0-9.-]+/g,"")) || 0);
-            total += colSum;
-            statsHtml += `<div class="d-flex justify-content-between mb-3" style="font-size:0.9rem;"><span>${col}:</span> <strong>${colSum.toLocaleString()}</strong></div>`;
-        });
-        statsHtml += `<div class="d-flex justify-content-between p-2 rounded mt-3" style="background: rgba(56,189,248,0.1);"><span>الإجمالي الكلي:</span> <strong>${total.toLocaleString()}</strong></div>`;
-        document.getElementById('detail-stats-container').innerHTML = statsHtml;
-
-        if(activeDetailChart) activeDetailChart.destroy();
-        
-        const isPie = itemConfig.type === 'pie' || itemConfig.type === 'donut';
-        const isEmpDept = itemConfig.id === 'emp_dept';
-
-        let colorMapping = ['#0c4a6e', '#38bdf8', '#0ea5e9', '#0284c7', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#14b8a6'];
-        if (isEmpDept) {
-            colorMapping = [function({ value }) {
-                let ratio = value / total;
-                if (ratio > 0.20) return '#082f49';
-                if (ratio > 0.10) return '#0c4a6e';
-                if (ratio > 0.05) return '#0284c7';
-                if (ratio > 0.02) return '#0ea5e9';
-                return '#7dd3fc';
-            }];
-        }
-
-        const cfg = {
-            chart: { 
-                type: itemConfig.type, 
-                height: 450, 
-                width: '100%', 
-                zoom: { enabled: !isPie },
-                toolbar: getToolbarConfig(isPie),
-                stacked: itemConfig.type === 'bar'
-            },
-            stroke: { curve: 'smooth', width: isPie ? 1 : 2 },
-            colors: colorMapping,
-            legend: { position: isPie ? 'right' : 'bottom', fontSize: '13px', labels: { colors: '#0c4a6e', fontFamily: 'Cairo' } },
-            tooltip: {
-                y: {
-                    formatter: function(val, opts) {
-                        if (isPie || itemConfig.type === 'donut') return val;
-                        if (opts.w.globals.series.length > 1) {
-                            let total = 0;
-                            opts.w.globals.series.forEach(s => {
-                                total += (parseFloat(s[opts.dataPointIndex]) || 0);
-                            });
-                            return val + ' (المجموع: ' + total + ')';
-                        }
-                        return val;
-                    }
-                }
-            },
-            dataLabels: { 
-                enabled: isPie || isEmpDept, 
-                formatter: function (val) { 
-                    if (isEmpDept) return ((val / total) * 100).toFixed(1) + '%';
-                    if (isPie) return val.toFixed(1) + "%";
-                    return val;
-                },
-                offsetY: isEmpDept ? -20 : 0,
-                style: { colors: isEmpDept ? ['#073b52'] : undefined }
-            },
-            plotOptions: isPie ? {} : { bar: { horizontal: itemConfig.horizontal, columnWidth: '50%', borderRadius: 4, distributed: isEmpDept, dataLabels: { position: 'top' } } }
-        };
-
-        if (isPie) {
-            cfg.labels = data.map(r => r[cols[0]]);
-            cfg.series = data.map(r => parseFloat(String(r[cols[1]] || '0').replace(/[^0-9.-]+/g,"")) || 0);
-        } else {
-            cfg.xaxis = { categories: data.map(r => r[cols[0]]), labels: { show: true, rotate: -45, style: { colors: '#0c4a6e', fontFamily: 'Cairo', fontSize: '11px' } } };
-            cfg.yaxis = { labels: { show: true, style: { colors: '#0c4a6e', fontFamily: 'Cairo' } } };
-            cfg.series = cols.slice(1).map(colName => ({
-                name: colName, type: itemConfig.type,
-                data: data.map(r => parseFloat(String(r[colName] || '0').replace(/[^0-9.-]+/g,"")) || 0)
-            }));
-        }
-
-        activeDetailChart = new ApexCharts(document.querySelector("#c-detail-view"), cfg);
-        activeDetailChart.render();
-    }
-
-    function toggleDarkMode() {
-        const h = document.getElementById('mainHtml');
-        const nm = h.getAttribute('data-bs-theme') === 'dark' ? 'light' : 'dark';
-        h.setAttribute('data-bs-theme', nm);
-        document.getElementById('themeBtn').innerHTML = nm === 'dark' ? '🌙 الوضع الداكن' : '☀️ الوضع الفاتح';
-        
-        const tc = nm === 'dark' ? '#f0f9ff' : '#0c4a6e';
-        const updateCfg = { theme: { mode: nm } };
-        
-        Object.values(chartsObj).forEach(c => c.updateOptions(updateCfg));
-        if(activeDetailChart) {
-            const isPie = activeDetailChart.w.config.chart.type === 'pie' || activeDetailChart.w.config.chart.type === 'donut';
-            if (isPie) {
-                 activeDetailChart.updateOptions({ theme: { mode: nm }, legend: { labels: { colors: tc } } });
-            } else {
-                 activeDetailChart.updateOptions({ theme: { mode: nm }, xaxis: { labels: { style: { colors: tc } } }, yaxis: { labels: { style: { colors: tc } } }, legend: { labels: { colors: tc } } });
-            }
-        }
-    }
-
-    window.onload = loadData;
-</script>
-</body>
-</html>
+            if (isPie)
