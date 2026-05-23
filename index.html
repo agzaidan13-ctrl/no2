@@ -135,17 +135,18 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
+    // تم إرجاع الشهادات العليا للوضع القياسي، وإضافة rowSpan: 2 لأعداد الطلبة
     const CONFIG = [
         { id: 'emp_total', title: 'أعداد المنتسبين', type: 'pie', horizontal: false, url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=398430626&single=true&output=csv' },
         { id: 'emp_dept', title: 'المنتسبين للأقسام', type: 'bar', horizontal: false, rowSpan: 2, url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=255359164&single=true&output=csv' },
-        { id: 'emp_degrees', title: 'الشهادات العليا', type: 'pie', horizontal: false, colSpan: 2, rowSpan: 2, url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=1489382222&single=true&output=csv' },
+        { id: 'emp_degrees', title: 'الشهادات العليا', type: 'pie', horizontal: false, url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=1489382222&single=true&output=csv' },
         { id: 'specialized_centers', title: 'المراكز التخصصية', type: 'pie', horizontal: false, url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=307948542&single=true&output=csv' },
         { id: 'scientific_activities', title: 'الأنشطة العلمية', type: 'pie', horizontal: false, url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=519215277&single=true&output=csv' },
         { id: 'participants_internal', title: 'المشاركين داخلياً', type: 'bar', horizontal: false, url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=845162776&single=true&output=csv' },
         { id: 'courses_external', title: 'الدورات الخارجية', type: 'line', horizontal: false, url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=1627689816&single=true&output=csv' },
         { id: 'workshops_seminars', title: 'الندوات والورش', type: 'bar', horizontal: false, url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=1501097808&single=true&output=csv' },
         { id: 'youth_support', title: 'دعم الشباب', type: 'area', horizontal: false, url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=1843138364&single=true&output=csv' },
-        { id: 'student_count', title: 'أعداد الطلبة', type: 'bar', horizontal: false, url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=876030086&single=true&output=csv' },
+        { id: 'student_count', title: 'أعداد الطلبة', type: 'bar', horizontal: false, rowSpan: 2, url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=876030086&single=true&output=csv' },
         { id: 'graduates', title: 'الخريجين', type: 'area', horizontal: false, url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=325367955&single=true&output=csv' },
         { id: 'scientific_visits', title: 'الزيارات العلمية', type: 'bar', horizontal: false, url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=340829433&single=true&output=csv' },
         { id: 'institutes_festival', title: 'مهرجان المعاهد', type: 'bar', horizontal: true, url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=152544274&single=true&output=csv' }
@@ -162,8 +163,9 @@
             const gridStyle = (item.colSpan ? `grid-column: span ${item.colSpan}; ` : '') + (item.rowSpan ? `grid-row: span ${item.rowSpan}; ` : '');
             const spanClass = item.colSpan > 1 ? 'span-large' : '';
             const tallClass = item.rowSpan > 1 ? 'span-tall' : '';
-            // ارتفاع مضغوط بدقة: 130px للعادي، و 295px للمزدوج
-            const bodyHeight = item.rowSpan === 2 ? 295 : 130;
+            
+            // الحسبة الدقيقة: 130px للعادي، و 272px للمزدوج
+            const bodyHeight = item.rowSpan === 2 ? 272 : 130;
 
             html += `
             <div class="dashboard-cell ${spanClass} ${tallClass}" style="${gridStyle}">
@@ -286,7 +288,7 @@
                 }];
             }
 
-            const chartHeight = itemConfig.rowSpan === 2 ? 295 : 130;
+            const chartHeight = itemConfig.rowSpan === 2 ? 272 : 130;
 
             const cfg = {
                 chart: { 
@@ -326,16 +328,16 @@
                         return val;
                     },
                     offsetY: isEmpDept ? -5 : 0,
-                    style: { fontSize: itemConfig.rowSpan === 2 ? '10px' : '7px', fontFamily: 'Cairo', colors: isEmpDept ? ['#073b52'] : undefined }
+                    style: { fontSize: itemConfig.rowSpan === 2 ? '9px' : '7px', fontFamily: 'Cairo', colors: isEmpDept ? ['#073b52'] : undefined }
                 },
-                plotOptions: isPie ? { pie: { expandOnClick: true, customScale: itemConfig.rowSpan === 2 ? 1 : 0.9 } } : { bar: { horizontal: itemConfig.horizontal, columnWidth: '70%', borderRadius: 2, distributed: isEmpDept, dataLabels: { position: 'top' } } }
+                plotOptions: isPie ? { pie: { expandOnClick: true, customScale: itemConfig.rowSpan === 2 ? 0.9 : 0.8 } } : { bar: { horizontal: itemConfig.horizontal, columnWidth: '50%', borderRadius: 2, distributed: isEmpDept, dataLabels: { position: 'top' } } }
             };
 
             if (isPie) {
                 cfg.labels = labels;
                 cfg.series = series;
                 if (itemConfig.colSpan > 1) {
-                    cfg.legend = { show: true, position: 'bottom', fontSize: '10px', fontFamily: 'Cairo' };
+                    cfg.legend = { show: true, position: 'bottom', fontSize: '9px', fontFamily: 'Cairo' };
                 }
             } else {
                 cfg.xaxis = { categories: labels, labels: { show: false }, axisBorder: { show: false }, axisTicks: { show: false }, tooltip: { enabled: false } };
