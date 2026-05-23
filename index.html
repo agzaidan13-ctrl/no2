@@ -280,4 +280,192 @@
                     let ratio = value / totalSum;
                     if (ratio > 0.20) return '#082f49'; 
                     if (ratio > 0.10) return '#0c4a6e'; 
-                    if (ratio > 0.05) return '#0284
+                    if (ratio > 0.05) return '#0284c7'; 
+                    if (ratio > 0.02) return '#0ea5e9'; 
+                    return '#7dd3fc'; 
+                }];
+            }
+
+            const chartHeight = itemConfig.rowSpan === 2 ? 315 : 130;
+
+            const cfg = {
+                chart: { 
+                    type: itemConfig.type, 
+                    height: chartHeight, 
+                    width: '100%', 
+                    zoom: { enabled: !isPie },
+                    toolbar: getToolbarConfig(isPie),
+                    animations: { enabled: true },
+                    parentHeightOffset: 0,
+                    stacked: itemConfig.type === 'bar'
+                },
+                stroke: { curve: 'smooth', width: isPie ? 1 : 1.5 },
+                colors: colorMapping,
+                grid: { padding: { left: 0, right: 0, top: 0, bottom: 0 } },
+                legend: { show: false },
+                tooltip: {
+                    y: {
+                        formatter: function(val, opts) {
+                            if (isPie || itemConfig.type === 'donut') return val;
+                            if (opts.w.globals.series.length > 1) {
+                                let total = 0;
+                                opts.w.globals.series.forEach(s => {
+                                    total += (parseFloat(s[opts.dataPointIndex]) || 0);
+                                });
+                                return val + ' (المجموع: ' + total + ')';
+                            }
+                            return val;
+                        }
+                    }
+                },
+                dataLabels: { 
+                    enabled: isPie || isEmpDept, 
+                    formatter: function (val) {
+                        if (isEmpDept) return ((val / totalSum) * 100).toFixed(1) + '%';
+                        if (isPie) return val.toFixed(1) + '%';
+                        return val;
+                    },
+                    offsetY: isEmpDept ? -5 : 0,
+                    style: { fontSize: itemConfig.rowSpan === 2 ? '10px' : '7px', fontFamily: 'Cairo', colors: isEmpDept ? ['#073b52'] : undefined }
+                },
+                plotOptions: isPie ? { pie: { expandOnClick: true, customScale: itemConfig.rowSpan === 2 ? 1 : 0.9 } } : { bar: { horizontal: itemConfig.horizontal, columnWidth: '70%', borderRadius: 2, distributed: isEmpDept, dataLabels: { position: 'top' } } }
+            };
+
+            if (isPie) {
+                cfg.labels = labels;
+                cfg.series = series;
+                if (itemConfig.rowSpan === 2) {
+                    cfg.legend = { show: true, position: 'bottom', fontSize: '10px', fontFamily: 'Cairo' };
+                }
+            } else {
+                cfg.xaxis = { categories: labels, labels: { show: false }, axisBorder: { show: false }, axisTicks: { show: false }, tooltip: { enabled: false } };
+                cfg.yaxis = { labels: { show: false } };
+                cfg.series = series;
+            }
+
+            chartsObj[itemConfig.id] = new ApexCharts(document.querySelector(`#c-${itemConfig.id}`), cfg);
+            chartsObj[itemConfig.id].render();
+
+        } catch (e) {
+            document.getElementById(`c-${itemConfig.id}`).innerHTML = '<span class="text-danger" style="font-size: 10px;">خطأ</span>';
+        }
+    }
+
+    function openDetailView(id) {
+        const itemConfig = CONFIG.find(c => c.id === id);
+        const data = rawDataStore[id];
+        if(!itemConfig || !data) return;
+
+        const detailTabBtn = new bootstrap.Tab(document.querySelector('button[data-bs-target="#tab-detail"]'));
+        detailTabBtn.show();
+
+        const cols = Object.keys(data[0]).filter(k => k && k.trim() !== '');
+        let statsHtml = `<h6 style="margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px dashed rgba(0,0,0,0.1); text-align: center;">${itemConfig.title}</h6>`;
+        
+        let total = 0;
+        cols.slice(1).forEach(col => {
+            let colSum = 0;
+            data.forEach(r => colSum += parseFloat(String(r[col] || '0').replace(/[^0-9.-]+/g,"")) || 0);
+            total += colSum;
+            statsHtml += `<div class="d-flex justify-content-between mb-3" style="font-size:0.9rem;"><span>${col}:</span> <strong>${colSum.toLocaleString()}</strong></div>`;
+        });
+        statsHtml += `<div class="d-flex justify-content-between p-2 rounded mt-3" style="background: rgba(56,189,248,0.1);"><span>الإجمالي الكلي:</span> <strong>${total.toLocaleString()}</strong></div>`;
+        document.getElementById('detail-stats-container').innerHTML = statsHtml;
+
+        if(activeDetailChart) activeDetailChart.destroy();
+        
+        const isPie = itemConfig.type === 'pie' || itemConfig.type === 'donut';
+        const isEmpDept = itemConfig.id === 'emp_dept';
+
+        let colorMapping = ['#0c4a6e', '#38bdf8', '#0ea5e9', '#0284c7', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#14b8a6'];
+        if (isEmpDept) {
+            colorMapping = [function({ value }) {
+                let ratio = value / total;
+                if (ratio > 0.20) return '#082f49';
+                if (ratio > 0.10) return '#0c4a6e';
+                if (ratio > 0.05) return '#0284c7';
+                if (ratio > 0.02) return '#0ea5e9';
+                return '#7dd3fc';
+            }];
+        }
+
+        const cfg = {
+            chart: { 
+                type: itemConfig.type, 
+                height: 450, 
+                width: '100%', 
+                zoom: { enabled: !isPie },
+                toolbar: getToolbarConfig(isPie),
+                stacked: itemConfig.type === 'bar'
+            },
+            stroke: { curve: 'smooth', width: isPie ? 1 : 2 },
+            colors: colorMapping,
+            legend: { position: isPie ? 'right' : 'bottom', fontSize: '13px', labels: { colors: '#0c4a6e', fontFamily: 'Cairo' } },
+            tooltip: {
+                y: {
+                    formatter: function(val, opts) {
+                        if (isPie || itemConfig.type === 'donut') return val;
+                        if (opts.w.globals.series.length > 1) {
+                            let total = 0;
+                            opts.w.globals.series.forEach(s => {
+                                total += (parseFloat(s[opts.dataPointIndex]) || 0);
+                            });
+                            return val + ' (المجموع: ' + total + ')';
+                        }
+                        return val;
+                    }
+                }
+            },
+            dataLabels: { 
+                enabled: isPie || isEmpDept, 
+                formatter: function (val) { 
+                    if (isEmpDept) return ((val / total) * 100).toFixed(1) + '%';
+                    if (isPie) return val.toFixed(1) + "%";
+                    return val;
+                },
+                offsetY: isEmpDept ? -20 : 0,
+                style: { colors: isEmpDept ? ['#073b52'] : undefined }
+            },
+            plotOptions: isPie ? {} : { bar: { horizontal: itemConfig.horizontal, columnWidth: '50%', borderRadius: 4, distributed: isEmpDept, dataLabels: { position: 'top' } } }
+        };
+
+        if (isPie) {
+            cfg.labels = data.map(r => r[cols[0]]);
+            cfg.series = data.map(r => parseFloat(String(r[cols[1]] || '0').replace(/[^0-9.-]+/g,"")) || 0);
+        } else {
+            cfg.xaxis = { categories: data.map(r => r[cols[0]]), labels: { show: true, rotate: -45, style: { colors: '#0c4a6e', fontFamily: 'Cairo', fontSize: '11px' } } };
+            cfg.yaxis = { labels: { show: true, style: { colors: '#0c4a6e', fontFamily: 'Cairo' } } };
+            cfg.series = cols.slice(1).map(colName => ({
+                name: colName, type: itemConfig.type,
+                data: data.map(r => parseFloat(String(r[colName] || '0').replace(/[^0-9.-]+/g,"")) || 0)
+            }));
+        }
+
+        activeDetailChart = new ApexCharts(document.querySelector("#c-detail-view"), cfg);
+        activeDetailChart.render();
+    }
+
+    function toggleDarkMode() {
+        const h = document.getElementById('mainHtml');
+        const nm = h.getAttribute('data-bs-theme') === 'dark' ? 'light' : 'dark';
+        h.setAttribute('data-bs-theme', nm);
+        document.getElementById('themeBtn').innerHTML = nm === 'dark' ? '🌙 الوضع الداكن' : '☀️ الوضع الفاتح';
+        
+        const tc = nm === 'dark' ? '#f0f9ff' : '#0c4a6e';
+        const updateCfg = { theme: { mode: nm } };
+        
+        Object.values(chartsObj).forEach(c => c.updateOptions(updateCfg));
+        if(activeDetailChart) {
+            const isPie = activeDetailChart.w.config.chart.type === 'pie' || activeDetailChart.w.config.chart.type === 'donut';
+            if (isPie) {
+                 activeDetailChart.updateOptions({ theme: { mode: nm }, legend: { labels: { colors: tc } } });
+            } else {
+                 activeDetailChart.updateOptions({ theme: { mode: nm }, xaxis: { labels: { style: { colors: tc } } }, yaxis: { labels: { style: { colors: tc } } }, legend: { labels: { colors: tc } } });
+            }
+        }
+    }
+
+    window.onload = loadData;
+</script>
+</body>
+</html>
