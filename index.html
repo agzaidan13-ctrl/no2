@@ -166,7 +166,7 @@
             const tallClass = item.rowSpan > 1 ? 'span-tall' : '';
             
             // الحسبة الدقيقة: 130 بكسل للعادي. للمزدوج: 130 + 130 + 12 (الفراغ) = 272 بكسل
-            const bodyHeight = item.rowSpan === 2 ? 272 : 130;
+            const bodyHeight = item.rowSpan === 2 ? 212 : 100;
 
             html += `
             <div class="dashboard-cell ${spanClass} ${tallClass}" style="${gridStyle}">
@@ -289,7 +289,7 @@
                 }];
             }
 
-            const chartHeight = itemConfig.rowSpan === 2 ? 272 : 130;
+            const chartHeight = itemConfig.rowSpan === 2 ? 212 : 100;
 
             const cfg = {
                 chart: { 
