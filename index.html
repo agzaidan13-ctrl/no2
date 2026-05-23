@@ -28,51 +28,55 @@
 
         body { font-family: 'Cairo', sans-serif; background-color: var(--bg-body); color: var(--text-dark); transition: 0.3s; margin: 0; }
         
-        .top-navbar { background-color: var(--bg-card); padding: 10px 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); border-bottom: 1px solid rgba(0,0,0,0.05); }
+        /* تقليص حجم الشريط العلوي */
+        .top-navbar { background-color: var(--bg-card); padding: 5px 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .top-navbar img { height: 50px !important; width: auto; }
+        .top-navbar h4 { font-size: 1.2rem; }
+        .top-navbar h6 { font-size: 0.8rem; }
         
-        .nav-pills { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+        .nav-pills { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 10px !important; }
         .nav-pills .nav-link { 
             border-radius: 12px; font-weight: bold; color: var(--primary-blue); 
-            padding: 8px 15px; font-size: 0.95rem; transition: 0.3s; border: 1px solid transparent; 
+            padding: 6px 15px; font-size: 0.9rem; transition: 0.3s; border: 1px solid transparent; 
         }
         .nav-pills .nav-link.active { background-color: var(--primary-blue); color: white; box-shadow: 0 4px 10px rgba(12,74,110,0.3); }
 
-        /* الانتقال إلى تخطيط 5 أعمدة بدلاً من 6 */
+        /* تقليل الفراغات بين المربعات إلى 10px */
         .dashboard-grid {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
-            gap: 15px; 
+            gap: 10px; 
             grid-auto-flow: dense;
         }
         
-        /* التجاوب مع الشاشات المختلفة */
         @media (max-width: 1400px) { .dashboard-grid { grid-template-columns: repeat(4, 1fr); } }
         @media (max-width: 992px) { .dashboard-grid { grid-template-columns: repeat(2, 1fr); } }
         @media (max-width: 768px) { .dashboard-grid { grid-template-columns: repeat(1, 1fr); } }
 
-        /* استجابة المربعات الكبيرة للشاشات الصغيرة */
         @media (max-width: 1400px) { .span-large { grid-column: span 2 !important; } }
         @media (max-width: 992px) { .span-large { grid-column: span 2 !important; } }
         @media (max-width: 768px) { .span-large { grid-column: span 1 !important; grid-row: span 1 !important; } }
 
         .dashboard-item { background: var(--bg-card); border-radius: 12px; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 2px 4px rgba(0,0,0,0.02); display: flex; flex-direction: column; height: 100%; transition: 0.2s; position: relative; overflow: visible; }
-        .dashboard-item:hover { transform: translateY(-3px); box-shadow: 0 6px 12px rgba(0,0,0,0.06); }
+        .dashboard-item:hover { transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.06); }
         
-        .dashboard-header { background: rgba(56,189,248,0.05); padding: 8px 5px; border-bottom: 1px solid rgba(0,0,0,0.05); border-top-left-radius: 12px; border-top-right-radius: 12px; display: flex; flex-direction: column; align-items: center; }
-        .dashboard-header h6 { margin: 0 0 5px 0; font-weight: bold; font-size: 0.75rem; color: var(--primary-blue); text-align: center; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+        /* تقليص مساحات العناوين العلوية */
+        .dashboard-header { background: rgba(56,189,248,0.05); padding: 5px; border-bottom: 1px solid rgba(0,0,0,0.05); border-top-left-radius: 12px; border-top-right-radius: 12px; display: flex; flex-direction: column; align-items: center; }
+        .dashboard-header h6 { margin: 0 0 3px 0; font-weight: bold; font-size: 0.7rem; color: var(--primary-blue); text-align: center; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
         
-        .dashboard-body { padding: 5px; flex-grow: 1; display: flex; justify-content: center; align-items: center; position: relative; width: 100%; }
+        .dashboard-body { padding: 3px; flex-grow: 1; display: flex; justify-content: center; align-items: center; position: relative; width: 100%; }
 
         .stat-card { background: var(--bg-card); border-radius: 15px; padding: 20px; border: 1px solid rgba(0,0,0,0.05); height: 100%; box-shadow: 0 4px 6px rgba(0,0,0,0.02); display: flex; flex-direction: column; }
         .chart-wrapper { background: var(--bg-card); border-radius: 20px; padding: 20px; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
 
+        /* تصغير حجم خط الأرقام الكلية لتوفير مساحة */
         .details-grid { display: flex; gap: 3px; width: 100%; flex-wrap: wrap; justify-content: center; }
-        .details-box { background: var(--bg-card); border: 1px solid rgba(0,0,0,0.08); padding: 3px; border-radius: 6px; flex: 1; min-width: 40px; text-align: center; display: flex; flex-direction: column; justify-content: center;}
-        .details-box span { display: block; font-size: 0.55rem; font-weight: bold; opacity: 0.8; margin-bottom: 1px; }
-        .details-box strong { font-size: 0.85rem; color: var(--primary-blue); }
+        .details-box { background: var(--bg-card); border: 1px solid rgba(0,0,0,0.08); padding: 2px; border-radius: 6px; flex: 1; min-width: 40px; text-align: center; display: flex; flex-direction: column; justify-content: center;}
+        .details-box span { display: block; font-size: 0.5rem; font-weight: bold; opacity: 0.8; margin-bottom: 1px; }
+        .details-box strong { font-size: 0.75rem; color: var(--primary-blue); line-height: 1; }
 
         .apexcharts-toolbar { position: absolute !important; top: -5px !important; right: 5px !important; z-index: 100 !important; display: flex !important; visibility: visible !important; opacity: 1 !important; }
-        .apexcharts-menu { z-index: 999 !important; background-color: var(--bg-card) !important; border: 1px solid rgba(0,0,0,0.1) !important; color: var(--text-dark) !important; }
+        .apexcharts-menu { z-index: 999 !important; background-color: var(--bg-card) !important; border: 1px solid rgba(0,0,0,0.1) !important; color: var(--text-dark) !important; font-size: 0.75rem !important; }
 
         .loading-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 9999; justify-content: center; align-items: center; color: white; flex-direction: column; backdrop-filter: blur(5px); }
     </style>
@@ -81,25 +85,25 @@
 
 <div id="loader" class="loading-overlay">
     <div class="spinner-border text-info mb-3" style="width: 3rem; height: 3rem;"></div>
-    <h5 id="loadMsg" class="fw-bold">جاري تحميل وتحديث المنظومة الإحصائية بسرعة فائقة...</h5>
+    <h5 id="loadMsg" class="fw-bold">جاري تحميل وتحديث المنظومة الإحصائية...</h5>
 </div>
 
 <div class="top-navbar">
-    <div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
-        <div class="d-flex align-items-center gap-3 text-center text-md-start flex-column flex-md-row">
-            <img src="https://raw.githubusercontent.com/agzaidan13-ctrl/no2/main/boti.png" alt="شعار المعهد" style="height: 70px; width: auto;">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-2">
+        <div class="d-flex align-items-center gap-2 text-center text-md-start flex-column flex-md-row">
+            <img src="https://raw.githubusercontent.com/agzaidan13-ctrl/no2/main/boti.png" alt="شعار المعهد">
             <div>
-                <h4 class="fw-bold mb-1 text-primary-blue">إحصائيات معهد التدريب النفطي / بغداد</h4>
-                <h6 class="mb-0 text-secondary" style="font-size: 0.95rem; opacity: 0.8;">برمجة وتصميم: م. علي غازي</h6>
+                <h4 class="fw-bold mb-0 text-primary-blue">إحصائيات معهد التدريب النفطي / بغداد</h4>
+                <h6 class="mb-0 text-secondary" style="opacity: 0.8;">برمجة وتصميم: م. علي غازي</h6>
             </div>
         </div>
-        <button class="btn btn-sm btn-outline-secondary rounded-pill px-3 mt-2 mt-md-0" onclick="toggleDarkMode()" id="themeBtn">🌙 الوضع الداكن</button>
+        <button class="btn btn-sm btn-outline-secondary rounded-pill px-3" onclick="toggleDarkMode()" id="themeBtn">🌙 الوضع الداكن</button>
     </div>
 </div>
 
-<div class="container-fluid px-2 pb-5 mt-3">
+<div class="container-fluid px-2 pb-3 mt-2">
     
-    <ul class="nav nav-pills mb-4" id="mainTabs" role="tablist">
+    <ul class="nav nav-pills" id="mainTabs" role="tablist">
         <li class="nav-item" role="presentation"><button class="nav-link active" data-bs-toggle="pill" data-bs-target="#tab-home" type="button" role="tab">🏠 الرئيسية</button></li>
         <li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-detail" type="button" role="tab">📊 التفاصيل الكاملة</button></li>
     </ul>
@@ -132,7 +136,6 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-    // تم ضبط colSpan الخاص بالشهادات العليا ليكون 2 ليناسب التقسيم الخماسي بشكل جميل
     const CONFIG = [
         { id: 'emp_total', title: 'أعداد المنتسبين', type: 'pie', horizontal: false, url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=398430626&single=true&output=csv' },
         { id: 'emp_dept', title: 'المنتسبين للأقسام', type: 'bar', horizontal: false, url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=255359164&single=true&output=csv' },
@@ -159,7 +162,8 @@
         CONFIG.forEach(item => {
             const gridStyle = (item.colSpan ? `grid-column: span ${item.colSpan}; ` : '') + (item.rowSpan ? `grid-row: span ${item.rowSpan}; ` : '');
             const spanClass = item.colSpan > 1 ? 'span-large' : '';
-            const bodyHeight = item.rowSpan === 2 ? 380 : 160;
+            // تم تخفيض الأطوال: العادي 130، المزدوج 315
+            const bodyHeight = item.rowSpan === 2 ? 315 : 130;
 
             html += `
             <div class="dashboard-cell ${spanClass}" style="${gridStyle}">
@@ -195,7 +199,7 @@
                 zoomin: !isPie,
                 zoomout: !isPie,
                 pan: !isPie,
-                reset: !isPie ? '<svg class="lens-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>' : false
+                reset: !isPie ? '<svg class="lens-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>' : false
             },
             autoSelected: !isPie ? 'zoom' : undefined
         };
@@ -239,7 +243,7 @@
             const cols = Object.keys(data[0]).filter(k => k && k.trim() !== '');
             if(cols.length < 2) throw new Error("أعمدة غير كافية");
 
-            const isPie = itemConfig.type === 'pie';
+            const isPie = itemConfig.type === 'pie' || itemConfig.type === 'donut';
             const isEmpDept = itemConfig.id === 'emp_dept';
             let totalSum = 0;
             let labels = [];
@@ -276,192 +280,4 @@
                     let ratio = value / totalSum;
                     if (ratio > 0.20) return '#082f49'; 
                     if (ratio > 0.10) return '#0c4a6e'; 
-                    if (ratio > 0.05) return '#0284c7'; 
-                    if (ratio > 0.02) return '#0ea5e9'; 
-                    return '#7dd3fc'; 
-                }];
-            }
-
-            const chartHeight = itemConfig.rowSpan === 2 ? 380 : 160;
-
-            const cfg = {
-                chart: { 
-                    type: itemConfig.type, 
-                    height: chartHeight, 
-                    width: '100%', 
-                    zoom: { enabled: !isPie },
-                    toolbar: getToolbarConfig(isPie),
-                    animations: { enabled: true },
-                    parentHeightOffset: 0,
-                    stacked: itemConfig.type === 'bar'
-                },
-                stroke: { curve: 'smooth', width: isPie ? 1 : 1.5 },
-                colors: colorMapping,
-                grid: { padding: { left: 0, right: 0, top: 0, bottom: 0 } },
-                legend: { show: false },
-                tooltip: {
-                    y: {
-                        formatter: function(val, opts) {
-                            if (isPie) return val;
-                            if (opts.w.globals.series.length > 1) {
-                                let total = 0;
-                                opts.w.globals.series.forEach(s => {
-                                    total += (parseFloat(s[opts.dataPointIndex]) || 0);
-                                });
-                                return val + ' (المجموع: ' + total + ')';
-                            }
-                            return val;
-                        }
-                    }
-                },
-                dataLabels: { 
-                    enabled: isPie || isEmpDept, 
-                    formatter: function (val) {
-                        if (isEmpDept) return ((val / totalSum) * 100).toFixed(1) + '%';
-                        if (isPie) return val.toFixed(1) + '%';
-                        return val;
-                    },
-                    offsetY: isEmpDept ? -5 : 0,
-                    style: { fontSize: itemConfig.rowSpan === 2 ? '12px' : '8px', fontFamily: 'Cairo', colors: isEmpDept ? ['#073b52'] : undefined }
-                },
-                plotOptions: isPie ? { pie: { expandOnClick: true, customScale: itemConfig.rowSpan === 2 ? 1 : 0.9 } } : { bar: { horizontal: itemConfig.horizontal, columnWidth: '70%', borderRadius: 2, distributed: isEmpDept, dataLabels: { position: 'top' } } }
-            };
-
-            if (isPie) {
-                cfg.labels = labels;
-                cfg.series = series;
-                if (itemConfig.rowSpan === 2) {
-                    cfg.legend = { show: true, position: 'bottom', fontSize: '11px', fontFamily: 'Cairo' };
-                }
-            } else {
-                cfg.xaxis = { categories: labels, labels: { show: false }, axisBorder: { show: false }, axisTicks: { show: false }, tooltip: { enabled: false } };
-                cfg.yaxis = { labels: { show: false } };
-                cfg.series = series;
-            }
-
-            chartsObj[itemConfig.id] = new ApexCharts(document.querySelector(`#c-${itemConfig.id}`), cfg);
-            chartsObj[itemConfig.id].render();
-
-        } catch (e) {
-            document.getElementById(`c-${itemConfig.id}`).innerHTML = '<span class="text-danger" style="font-size: 10px;">خطأ</span>';
-        }
-    }
-
-    function openDetailView(id) {
-        const itemConfig = CONFIG.find(c => c.id === id);
-        const data = rawDataStore[id];
-        if(!itemConfig || !data) return;
-
-        const detailTabBtn = new bootstrap.Tab(document.querySelector('button[data-bs-target="#tab-detail"]'));
-        detailTabBtn.show();
-
-        const cols = Object.keys(data[0]).filter(k => k && k.trim() !== '');
-        let statsHtml = `<h6 style="margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px dashed rgba(0,0,0,0.1); text-align: center;">${itemConfig.title}</h6>`;
-        
-        let total = 0;
-        cols.slice(1).forEach(col => {
-            let colSum = 0;
-            data.forEach(r => colSum += parseFloat(String(r[col] || '0').replace(/[^0-9.-]+/g,"")) || 0);
-            total += colSum;
-            statsHtml += `<div class="d-flex justify-content-between mb-3" style="font-size:0.9rem;"><span>${col}:</span> <strong>${colSum.toLocaleString()}</strong></div>`;
-        });
-        statsHtml += `<div class="d-flex justify-content-between p-2 rounded mt-3" style="background: rgba(56,189,248,0.1);"><span>الإجمالي الكلي:</span> <strong>${total.toLocaleString()}</strong></div>`;
-        document.getElementById('detail-stats-container').innerHTML = statsHtml;
-
-        if(activeDetailChart) activeDetailChart.destroy();
-        
-        const isPie = itemConfig.type === 'pie';
-        const isEmpDept = itemConfig.id === 'emp_dept';
-
-        let colorMapping = ['#0c4a6e', '#38bdf8', '#0ea5e9', '#0284c7', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#14b8a6'];
-        if (isEmpDept) {
-            colorMapping = [function({ value }) {
-                let ratio = value / total;
-                if (ratio > 0.20) return '#082f49';
-                if (ratio > 0.10) return '#0c4a6e';
-                if (ratio > 0.05) return '#0284c7';
-                if (ratio > 0.02) return '#0ea5e9';
-                return '#7dd3fc';
-            }];
-        }
-
-        const cfg = {
-            chart: { 
-                type: itemConfig.type, 
-                height: 450, 
-                width: '100%', 
-                zoom: { enabled: !isPie },
-                toolbar: getToolbarConfig(isPie),
-                stacked: itemConfig.type === 'bar'
-            },
-            stroke: { curve: 'smooth', width: isPie ? 1 : 2 },
-            colors: colorMapping,
-            legend: { position: isPie ? 'right' : 'bottom', fontSize: '13px', labels: { colors: '#0c4a6e', fontFamily: 'Cairo' } },
-            tooltip: {
-                y: {
-                    formatter: function(val, opts) {
-                        if (isPie) return val;
-                        if (opts.w.globals.series.length > 1) {
-                            let total = 0;
-                            opts.w.globals.series.forEach(s => {
-                                total += (parseFloat(s[opts.dataPointIndex]) || 0);
-                            });
-                            return val + ' (المجموع: ' + total + ')';
-                        }
-                        return val;
-                    }
-                }
-            },
-            dataLabels: { 
-                enabled: isPie || isEmpDept, 
-                formatter: function (val) { 
-                    if (isEmpDept) return ((val / total) * 100).toFixed(1) + '%';
-                    if (isPie) return val.toFixed(1) + "%";
-                    return val;
-                },
-                offsetY: isEmpDept ? -20 : 0,
-                style: { colors: isEmpDept ? ['#073b52'] : undefined }
-            },
-            plotOptions: isPie ? {} : { bar: { horizontal: itemConfig.horizontal, columnWidth: '50%', borderRadius: 4, distributed: isEmpDept, dataLabels: { position: 'top' } } }
-        };
-
-        if (isPie) {
-            cfg.labels = data.map(r => r[cols[0]]);
-            cfg.series = data.map(r => parseFloat(String(r[cols[1]] || '0').replace(/[^0-9.-]+/g,"")) || 0);
-        } else {
-            cfg.xaxis = { categories: data.map(r => r[cols[0]]), labels: { show: true, rotate: -45, style: { colors: '#0c4a6e', fontFamily: 'Cairo', fontSize: '11px' } } };
-            cfg.yaxis = { labels: { show: true, style: { colors: '#0c4a6e', fontFamily: 'Cairo' } } };
-            cfg.series = cols.slice(1).map(colName => ({
-                name: colName, type: itemConfig.type,
-                data: data.map(r => parseFloat(String(r[colName] || '0').replace(/[^0-9.-]+/g,"")) || 0)
-            }));
-        }
-
-        activeDetailChart = new ApexCharts(document.querySelector("#c-detail-view"), cfg);
-        activeDetailChart.render();
-    }
-
-    function toggleDarkMode() {
-        const h = document.getElementById('mainHtml');
-        const nm = h.getAttribute('data-bs-theme') === 'dark' ? 'light' : 'dark';
-        h.setAttribute('data-bs-theme', nm);
-        document.getElementById('themeBtn').innerHTML = nm === 'dark' ? '🌙 الوضع الداكن' : '☀️ الوضع الفاتح';
-        
-        const tc = nm === 'dark' ? '#f0f9ff' : '#0c4a6e';
-        const updateCfg = { theme: { mode: nm } };
-        
-        Object.values(chartsObj).forEach(c => c.updateOptions(updateCfg));
-        if(activeDetailChart) {
-            const isPie = activeDetailChart.w.config.chart.type === 'pie' || activeDetailChart.w.config.chart.type === 'donut';
-            if (isPie) {
-                 activeDetailChart.updateOptions({ theme: { mode: nm }, legend: { labels: { colors: tc } } });
-            } else {
-                 activeDetailChart.updateOptions({ theme: { mode: nm }, xaxis: { labels: { style: { colors: tc } } }, yaxis: { labels: { style: { colors: tc } } }, legend: { labels: { colors: tc } } });
-            }
-        }
-    }
-
-    window.onload = loadData;
-</script>
-</body>
-</html>
+                    if (ratio > 0.05) return '#0284
