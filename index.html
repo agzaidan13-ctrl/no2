@@ -129,9 +129,7 @@
             <select class="form-select form-select-sm rounded-pill year-selector" style="width: 120px;" onchange="if(this.value) window.location.href=this.value;">
                 <option value="index.html" selected>عام 2025</option>
                 <option value="dashboard_2026.html">عام 2026</option>
-                <!--<option value="dashboard_2027.html">عام 2027</option>-->
-                <!--<option value="dashboard_2028.html">عام 2028</option>-->
-            </select>
+                </select>
             
             <span id="lastUpdateBadge" class="badge bg-light text-dark border d-none d-lg-block" style="font-size: 0.75rem;">آخر تحديث: --</span>
             <button class="btn btn-sm btn-outline-info rounded-pill px-3" onclick="loadData()" title="جلب أحدث البيانات">🔄 تحديث</button>
@@ -290,7 +288,7 @@
             if(cols.length < 2) throw new Error("أعمدة غير كافية");
 
             const isPie = itemConfig.type === 'pie' || itemConfig.type === 'donut';
-            const isEmpDept = itemConfig.id === 'emp_dept';
+            const isEmpDept = itemConfig.id === 'emp_dept' || itemConfig.id === 'youth_support';
             let totalSum = 0;
             let labels = [];
             let series = [];
@@ -421,7 +419,7 @@
         if(activeDetailChart) activeDetailChart.destroy();
         
         const isPie = itemConfig.type === 'pie' || itemConfig.type === 'donut';
-        const isEmpDept = itemConfig.id === 'emp_dept';
+        const isEmpDept = itemConfig.id === 'emp_dept' || itemConfig.id === 'youth_support';
 
         let colorMapping = ['#0c4a6e', '#38bdf8', '#0ea5e9', '#0284c7', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#14b8a6'];
         if (isEmpDept) {
