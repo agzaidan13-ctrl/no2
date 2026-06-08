@@ -192,13 +192,6 @@
         { id: 'scientific_activities', title: 'الأنشطة العلمية', type: 'pie', horizontal: false, url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=519215277&single=true&output=csv' },
         { id: 'institutes_festival', title: 'مهرجان المعاهد', type: 'bar', horizontal: true, url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=152544274&single=true&output=csv' }
 
-
-
-
-
-
-
-
     ];
 
     let chartsObj = {};
@@ -403,6 +396,143 @@
             document.getElementById(`c-${itemConfig.id}`).innerHTML = '<span class="text-danger" style="font-size: 10px;">خطأ</span>';
         }
     }
+
+
+
+
+
+
+
+
+
+
+
+    function renderChartData(itemConfig, data) {
+        try {
+            const cols = Object.keys(data[0]).filter(k => k && k.trim() !== '');
+            if(cols.length < 2) throw new Error("أعمدة غير كافية");
+
+            const isPie = itemConfig.type === 'pie' || itemConfig.type === 'donut';
+            const isyouthsupport = itemConfig.id === 'youth_support';
+            let totalSum = 0;
+            let labels = [];
+            let series = [];
+
+            if (isPie) {
+                labels = data.map(r => r[cols[0]]);
+                series = data.map(r => {
+                    let val = parseFloat(String(r[cols[1]] || '0').replace(/[^0-9.-]+/g,"")) || 0;
+                    totalSum += val;
+                    return val;
+                });
+            } else {
+                labels = data.map(r => r[cols[0]]);
+                series = cols.slice(1).map(colName => ({
+                    name: colName,
+                    type: itemConfig.type,
+                    data: data.map(r => {
+                        let val = parseFloat(String(r[colName] || '0').replace(/[^0-9.-]+/g,"")) || 0;
+                        totalSum += val; 
+                        return val;
+                    })
+                }));
+            }
+
+            const totalEl = document.getElementById(`v-${itemConfig.id}-total`);
+            if(totalEl) totalEl.innerText = totalSum.toLocaleString();
+
+            document.getElementById(`c-${itemConfig.id}`).innerHTML = '';
+
+            let colorMapping = ['#0c4a6e', '#38bdf8', '#0ea5e9', '#0284c7', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#14b8a6'];
+            if (isyouthsupport) {
+                colorMapping = [function({ value }) {
+                    let ratio = value / totalSum;
+                    if (ratio > 0.20) return '#082f49'; 
+                    if (ratio > 0.10) return '#0c4a6e'; 
+                    if (ratio > 0.05) return '#0284c7'; 
+                    if (ratio > 0.02) return '#0ea5e9'; 
+                    return '#7dd3fc'; 
+                }];
+            }
+
+            const chartHeight = itemConfig.rowSpan === 2 ? 295 : 130;
+
+            const cfg = {
+                chart: { 
+                    type: itemConfig.type, 
+                    height: chartHeight, 
+                    width: '100%', 
+                    zoom: { enabled: !isPie },
+                    toolbar: getToolbarConfig(isPie),
+                    animations: { enabled: true },
+                    parentHeightOffset: 0,
+                    stacked: itemConfig.type === 'bar'
+                },
+                stroke: { curve: 'smooth', width: isPie ? 1 : 1.5 },
+                colors: colorMapping,
+                grid: { padding: { left: 0, right: 0, top: 0, bottom: 0 } },
+                legend: { show: false },
+                tooltip: {
+                    y: {
+                        formatter: function(val, opts) {
+                            if (isPie || itemConfig.type === 'donut') return val;
+                            if (opts.w.globals.series.length > 1) {
+                                let total = 0;
+                                opts.w.globals.series.forEach(s => {
+                                    total += (parseFloat(s[opts.dataPointIndex]) || 0);
+                                });
+                                return val + ' (المجموع: ' + total + ')';
+                            }
+                            return val;
+                        }
+                    }
+                },
+                dataLabels: { 
+                    enabled: isPie || isyouthsupport, 
+                    formatter: function (val) {
+                        if (isyouthsupport) return ((val / totalSum) * 100).toFixed(1) + '%';
+                        if (isPie) return val.toFixed(1) + '%';
+                        return val;
+                    },
+                    offsetY: isEmpDept ? -5 : 0,
+                    style: { fontSize: itemConfig.rowSpan === 2 ? '10px' : '7px', fontFamily: 'Cairo', colors: isEmpDept ? ['#073b52'] : undefined }
+                },
+                plotOptions: isPie ? { pie: { expandOnClick: true, customScale: itemConfig.rowSpan === 2 ? 1 : 0.9 } } : { bar: { horizontal: itemConfig.horizontal, columnWidth: '70%', borderRadius: 2, distributed: isyouthsupport, dataLabels: { position: 'top' } } }
+            };
+
+            if (isPie) {
+                cfg.labels = labels;
+                cfg.series = series;
+                if (itemConfig.colSpan > 1) {
+                    cfg.legend = { show: true, position: 'bottom', fontSize: '10px', fontFamily: 'Cairo' };
+                }
+            } else {
+                cfg.xaxis = { categories: labels, labels: { show: false }, axisBorder: { show: false }, axisTicks: { show: false }, tooltip: { enabled: false } };
+                cfg.yaxis = { labels: { show: false } };
+                cfg.series = series;
+            }
+
+            chartsObj[itemConfig.id] = new ApexCharts(document.querySelector(`#c-${itemConfig.id}`), cfg);
+            chartsObj[itemConfig.id].render();
+
+        } catch (e) {
+            document.getElementById(`c-${itemConfig.id}`).innerHTML = '<span class="text-danger" style="font-size: 10px;">خطأ</span>';
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     function openDetailView(id) {
         const itemConfig = CONFIG.find(c => c.id === id);
