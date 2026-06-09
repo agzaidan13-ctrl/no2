@@ -209,12 +209,17 @@
         &copy; 2026 جميع الحقوق محفوظة | برمجة وتصميم: م. علي غازي
     </div>
 
-    <script>
+       <script>
         function toggleDarkMode() {
             const h = document.getElementById('mainHtml');
+            // تحديد الوضع الجديد بناءً على الوضع الحالي
             const nm = h.getAttribute('data-bs-theme') === 'dark' ? 'light' : 'dark';
+            
+            // تطبيق الوضع الجديد على الصفحة
             h.setAttribute('data-bs-theme', nm);
-            document.getElementById('themeBtn').innerHTML = nm === 'dark' ? '🌙 الوضع الداكن' : '☀️ الوضع الفاتح';
+            
+            // تغيير نص الزر ليعرض "الخيار المعاكس" للوضع الحالي
+            document.getElementById('themeBtn').innerHTML = nm === 'dark' ? '☀️ الوضع الفاتح' : '🌙 الوضع الداكن';  
         }
     </script>
 </body>
