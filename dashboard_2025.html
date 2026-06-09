@@ -198,6 +198,10 @@
     let chartsObj = {};
     let activeDetailChart = null;
     let rawDataStore = {};
+    let activeDataForExport = null;
+    let activeTitleForExport = 'export';
+
+
 
     function buildHomeGrid() {
         const container = document.getElementById('home-charts-container');
@@ -482,20 +486,58 @@
         activeDetailChart = new ApexCharts(document.querySelector("#c-detail-view"), cfg);
         activeDetailChart.render();
 
-        let tableHtml = `<h6 class="mt-4 mb-3 fw-bold text-primary-blue"><span style="font-size: 1.2rem;">📋</span> جدول البيانات التفصيلي</h6>
-                         <div class="table-responsive">
-                            <table class="table table-bordered table-hover text-center custom-table">
-                                <thead><tr>`;
+// حفظ البيانات الحالية لاستخدامها في التصدير
+        activeDataForExport = data;
+        activeTitleForExport = itemConfig.title;
+
+        // رسم واجهة الجدول مع زر التصدير
+        let tableHtml = `
+            <div class="d-flex justify-content-between align-items-center mt-4 mb-3 border-bottom pb-2">
+                <h6 class="fw-bold text-primary-blue mb-0"><span style="font-size: 1.2rem;">📋</span> جدول البيانات التفصيلي</h6>
+                <button class="btn btn-sm btn-success rounded-pill px-3 shadow-sm text-white" onclick="exportToExcel()" title="تحميل البيانات كملف إكسل">
+                    📥 تصدير إلى Excel
+                </button>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover text-center custom-table">
+                    <thead><tr>`;
+        
         cols.forEach(c => tableHtml += `<th>${c}</th>`);
         tableHtml += `</tr></thead><tbody>`;
+        
         data.forEach(r => {
             tableHtml += `<tr>`;
             cols.forEach(c => tableHtml += `<td>${r[c]}</td>`);
             tableHtml += `</tr>`;
         });
+        
         tableHtml += `</tbody></table></div>`;
         document.getElementById('detail-table-container').innerHTML = tableHtml;
+
+
+
+
+
+function exportToExcel() {
+        if (!activeDataForExport || activeDataForExport.length === 0) return;
+
+        // تحويل مصفوفة البيانات إلى صيغة CSV باستخدام مكتبة PapaParse
+        const csv = Papa.unparse(activeDataForExport);
+
+        // إضافة (BOM) لضمان قراءة الإكسل للغة العربية بشكل صحيح
+        const csvData = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+        const csvUrl = URL.createObjectURL(csvData);
+
+        // إنشاء رابط تحميل وهمي والضغط عليه برمجياً
+        const link = document.createElement('a');
+        link.href = csvUrl;
+        link.setAttribute('download', `إحصائيات_${activeTitleForExport.replace(/\s+/g, '_')}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
     }
+
+
 
 function toggleDarkMode() {
         const h = document.getElementById('mainHtml');
