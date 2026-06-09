@@ -31,13 +31,13 @@
         /* الشريط العلوي  */
         .top-navbar { background-color: var(--bg-card); padding: 5px 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); border-bottom: 1px solid rgba(0,0,0,0.05); }
         .top-navbar img { height: 50px !important; width: auto; }
-        .top-navbar h4 { font-size: 1.2rem; }
-        .top-navbar h6 { font-size: 0.8rem; }
+        .top-navbar h4 { font-size: 1.3rem; }
+        .top-navbar h6 { font-size: 0.9rem; }
         
         .nav-pills { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 10px !important; }
         .nav-pills .nav-link { 
             border-radius: 12px; font-weight: bold; color: var(--primary-blue); 
-            padding: 6px 15px; font-size: 0.9rem; transition: 0.3s; border: 1px solid transparent; 
+            padding: 6px 15px; font-size: 1rem; transition: 0.3s; border: 1px solid transparent; 
         }
         .nav-pills .nav-link.active { background-color: var(--primary-blue); color: white; box-shadow: 0 4px 10px rgba(12,74,110,0.3); }
 
@@ -62,7 +62,7 @@
         
         /* عناوين مصغرة */
         .dashboard-header { background: rgba(56,189,248,0.05); padding: 5px; border-bottom: 1px solid rgba(0,0,0,0.05); border-top-left-radius: 12px; border-top-right-radius: 12px; display: flex; flex-direction: column; align-items: center; }
-        .dashboard-header h6 { margin: 0 0 3px 0; font-weight: bold; font-size: 1.0rem; color: var(--primary-blue); text-align: center; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+        .dashboard-header h6 { margin: 0 0 3px 0; font-weight: bold; font-size: 1.2rem; color: var(--primary-blue); text-align: center; line-height: 1.3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
         
         .dashboard-body { padding: 3px; flex-grow: 1; display: flex; justify-content: center; align-items: center; position: relative; width: 100%; }
 
@@ -80,7 +80,7 @@
         .loading-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 9999; justify-content: center; align-items: center; color: white; flex-direction: column; backdrop-filter: blur(5px); }
 
         /* تنسيق جدول البيانات التفصيلي */
-        .custom-table { font-size: 0.85rem; }
+        .custom-table { font-size: 0.9rem; }
         .custom-table thead { background-color: rgba(56,189,248,0.1); color: var(--primary-blue); }
         .custom-table th, .custom-table td { border-color: rgba(0,0,0,0.05); vertical-align: middle; }
 
@@ -130,9 +130,7 @@
                 <option value="index.html">الرئيسية</option>
                 <option value="dashboard_2025.html">عام 2025</option>
                 <option value="dashboard_2026.html" selected>عام 2026</option>
-        <!-- <p><option value="dashboard_2027.html">عام 2027</option></p> -->
-        <!-- <p><option value="dashboard_2028.html">عام 2028</option></p> -->
-                </select>
+            </select>
             
             <span id="lastUpdateBadge" class="badge bg-light text-dark border d-none d-lg-block" style="font-size: 0.75rem;">آخر تحديث: --</span>
             <button class="btn btn-sm btn-outline-info rounded-pill px-3" onclick="loadData()" title="جلب أحدث البيانات">🔄 تحديث</button>
@@ -192,12 +190,15 @@
         { id: 'youth_support', title: 'تنفيذ الدورات خارج الخطة', type: 'bar', horizontal: false,rowSpan: 2, url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=1843138364&single=true&output=csv' },
         { id: 'scientific_activities', title: 'الأنشطة العلمية', type: 'pie', horizontal: false, url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=519215277&single=true&output=csv' },
         { id: 'institutes_festival', title: 'مهرجان المعاهد', type: 'bar', horizontal: true, url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS20fiBfInxAzyeRRxCjo7BPeivzjPWX0RbUIoLQxOnnn3JcN3EVdKDIwOQETajC53LTKz39840MTIp/pub?gid=152544274&single=true&output=csv' }
-
     ];
 
     let chartsObj = {};
     let activeDetailChart = null;
     let rawDataStore = {};
+    
+    // متغيرات التصدير إلى إكسل
+    let activeDataForExport = null;
+    let activeTitleForExport = 'export';
 
     function buildHomeGrid() {
         const container = document.getElementById('home-charts-container');
@@ -482,26 +483,59 @@
         activeDetailChart = new ApexCharts(document.querySelector("#c-detail-view"), cfg);
         activeDetailChart.render();
 
-        let tableHtml = `<h6 class="mt-4 mb-3 fw-bold text-primary-blue"><span style="font-size: 1.2rem;">📋</span> جدول البيانات التفصيلي</h6>
-                         <div class="table-responsive">
-                            <table class="table table-bordered table-hover text-center custom-table">
-                                <thead><tr>`;
+        // حفظ البيانات الحالية لاستخدامها في التصدير
+        activeDataForExport = data;
+        activeTitleForExport = itemConfig.title;
+
+        // رسم واجهة الجدول مع زر التصدير
+        let tableHtml = `
+            <div class="d-flex justify-content-between align-items-center mt-4 mb-3 border-bottom pb-2">
+                <h6 class="fw-bold text-primary-blue mb-0"><span style="font-size: 1.2rem;">📋</span> جدول البيانات التفصيلي</h6>
+                <button class="btn btn-sm btn-success rounded-pill px-3 shadow-sm text-white" onclick="exportToExcel()" title="تحميل البيانات كملف إكسل">
+                    📥 تصدير إلى Excel
+                </button>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover text-center custom-table">
+                    <thead><tr>`;
+        
         cols.forEach(c => tableHtml += `<th>${c}</th>`);
         tableHtml += `</tr></thead><tbody>`;
+        
         data.forEach(r => {
             tableHtml += `<tr>`;
             cols.forEach(c => tableHtml += `<td>${r[c]}</td>`);
             tableHtml += `</tr>`;
         });
+        
         tableHtml += `</tbody></table></div>`;
         document.getElementById('detail-table-container').innerHTML = tableHtml;
     }
 
+    // دالة تصدير البيانات إلى Excel مع دعم اللغة العربية (BOM)
+    function exportToExcel() {
+        if (!activeDataForExport || activeDataForExport.length === 0) return;
+
+        const csv = Papa.unparse(activeDataForExport);
+        const csvData = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+        const csvUrl = URL.createObjectURL(csvData);
+
+        const link = document.createElement('a');
+        link.href = csvUrl;
+        link.setAttribute('download', `إحصائيات_${activeTitleForExport.replace(/\s+/g, '_')}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
+    // دالة تبديل الوضع الداكن والفاتح
     function toggleDarkMode() {
         const h = document.getElementById('mainHtml');
         const nm = h.getAttribute('data-bs-theme') === 'dark' ? 'light' : 'dark';
         h.setAttribute('data-bs-theme', nm);
-        document.getElementById('themeBtn').innerHTML = nm === 'dark' ? '🌙 الوضع الداكن' : '☀️ الوضع الفاتح';
+        
+        // السطر الذي تم تصحيحه لعكس النص بشكل سليم
+        document.getElementById('themeBtn').innerHTML = nm === 'dark' ? '☀️ الوضع الفاتح' : '🌙 الوضع الداكن';
         
         const tc = nm === 'dark' ? '#f0f9ff' : '#0c4a6e';
         const updateCfg = { theme: { mode: nm } };
