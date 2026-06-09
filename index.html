@@ -10,7 +10,7 @@
     
     <style>
         :root { 
-            --bg-body: #f4f9fd; /* لون خلفية مائل للأزرق الفاتح جداً */
+            --bg-body: #f4f9fd; 
             --bg-card: #ffffff;          
             --primary-blue: #0c4a6e;     
             --accent-blue: #38bdf8;      
@@ -28,7 +28,7 @@
             font-family: 'Cairo', sans-serif; 
             background-color: var(--bg-body); 
             color: var(--text-dark); 
-            transition: 0.3s; 
+            transition: background-color 0.3s, color 0.3s; 
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -37,31 +37,30 @@
             margin: 0;
         }
 
-/* حاوية الخلفية المتحركة */
+        /* حاوية الخلفية المتحركة */
         .animated-bg {
             position: fixed;
             top: 0; left: 0;
             width: 100%; height: 100%;
             z-index: -1;
-            opacity: 0.08; /* شفافية خفيفة جداً لكي لا تشوش على الأزرار */
-            background-size: cover; /* لجعل الصورة تغطي الشاشة بالكامل */
+            opacity: 0.15; /* تم زيادة الوضوح قليلاً لكي تراها بوضوح */
+            background-size: cover; 
             background-position: center;
-            transition: background-image 2s ease-in-out; /* انتقال ناعم جداً عند تغير الصورة */
-            animation: slowPan 20s infinite alternate ease-in-out; /* تأثير الحركة البطيئة */
+            transition: background-image 2s ease-in-out; 
+            animation: slowPan 25s infinite alternate ease-in-out; 
         }
 
         /* تغميق الصور في الوضع الداكن للحفاظ على راحة العين */
         [data-bs-theme="dark"] .animated-bg {
-            opacity: 0.04;
-            filter: grayscale(50%) brightness(0.5); 
+            opacity: 0.05;
+            filter: grayscale(30%) brightness(0.6); 
         }
 
         /* المحرك الحركي (Zoom & Pan) */
         @keyframes slowPan {
             0% { transform: scale(1) translate(0px, 0px); }
-            100% { transform: scale(1.1) translate(-15px, -15px); } /* تكبير بنسبة 10% وسحب خفيف */
+            100% { transform: scale(1.1) translate(-20px, -15px); } 
         }
-
 
         /* تنسيق الشريط العلوي */
         .portal-header {
@@ -74,7 +73,7 @@
 
         .header-titles {
             text-align: right;
-            margin-right: 15px; /* تم التغيير إلى right لتبتعد النصوص عن الشعار */
+            margin-right: 15px; /* مسافة بين النص والشعار لجهة اليمين */
         }
 
         .main-title {
@@ -125,7 +124,7 @@
             justify-content: center;
             gap: 10px;
             background: var(--bg-card);
-            border-radius: 50px; /* الحواف الدائرية */
+            border-radius: 50px; 
             border: 1px solid var(--primary-blue);
             padding: 12px 30px;
             text-align: center;
@@ -150,7 +149,7 @@
         /* الفوتر (أسفل اليسار) */
         .portal-footer {
             padding: 15px 40px;
-            text-align: left; /* المحاذاة لليسار */
+            text-align: left; 
             font-size: 0.85rem;
             color: #6c757d;
             z-index: 10;
@@ -160,8 +159,8 @@
 
         /* التجاوب مع شاشات الهواتف */
         @media (max-width: 768px) {
-            .portal-header { flex-direction: column-reverse; align-items: center; text-align: center; gap: 20px; padding: 20px;}
-            .header-titles { text-align: center; margin-left: 0; margin-top: 10px;}
+            .portal-header { flex-direction: column; align-items: center; text-align: center; gap: 20px; padding: 20px;}
+            .header-titles { text-align: center; margin-right: 0; margin-top: 10px;}
             .selection-box { margin: 0 auto; text-align: center;}
             .selection-title { text-align: center; }
             .portal-footer { text-align: center; }
@@ -171,17 +170,17 @@
 <body>
 
     <div class="animated-bg" id="movingBg"></div>
+
     <div class="portal-header w-100">
         <div class="d-flex align-items-center">
             <img src="images/boti.png" alt="شعار معهد التدريب النفطي" class="header-logo" onerror="this.src='https://raw.githubusercontent.com/agzaidan13-ctrl/no2/main/boti.png'">
-            
             <div class="header-titles">
-                <h1 class="main-title">معهد التدريب النفطي / بغداد</h1>
-                <p class="sub-title">المنظومة الإحصائية الموحدة</p>
+                <h1 class="main-title">المنظومة الإحصائية الموحدة</h1>
+                <p class="sub-title">معهد التدريب النفطي / بغداد - قسم الإحصاء والتحول الرقمي</p>
             </div>
         </div>
 
-        <button class="btn btn-outline-secondary rounded-pill px-4" style="background-color: var(--bg-card);" onclick="toggleDarkMode()" id="themeBtn">🌙 الوضع الداكن</button>
+        <button class="btn btn-outline-primary rounded-pill px-4 bg-body" onclick="toggleDarkMode()" id="themeBtn">🌙 الوضع الداكن</button>
     </div>
 
     <div class="main-content w-100">
@@ -189,7 +188,7 @@
             <div class="row">
                 <div class="col-md-6 col-lg-4 offset-lg-1">
                     <div class="selection-box">
-                        <h4 class="selection-title">إختر العام لعرض المؤشرات:</h4>
+                        <h4 class="selection-title">اختر العام التدريبي لعرض المؤشرات:</h4>
                         
                         <a href="dashboard_2025.html" class="year-btn-custom">
                             <span>عام 2025</span> 📊
@@ -197,10 +196,6 @@
                         
                         <a href="dashboard_2026.html" class="year-btn-custom">
                             <span>عام 2026</span> 📊
-                        </a>
-
-		        <a href="dashboard_2027.html" class="year-btn-custom">
-                            <span>عام 2027</span> 📊
                         </a>
                     </div>
                 </div>
@@ -212,32 +207,29 @@
         &copy; 2026 جميع الحقوق محفوظة | برمجة وتصميم: م. علي غازي
     </div>
 
-<script>
-        //  مسارات الصور 
+    <script>
+        // 1. صور تجريبية حقيقية من الإنترنت (لترى الحركة بعينك)
         const bgImages = [
-            'images/pic1.jpg',
-            'images/pic2.jpg',
-            'images/pic3.jpg'
-            'images/pic4.jpg',
-            'images/pic5.jpg',
-            'images/pic6.jpg'
+            'https://images.unsplash.com/photo-1581094794329-c8112a89af12?q=80&w=2070&auto=format&fit=crop', // صورة هندسية
+            'https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?q=80&w=2070&auto=format&fit=crop', // صورة تعليم/تدريب
+            'https://images.unsplash.com/photo-1541888086425-d81bb19240f5?q=80&w=2070&auto=format&fit=crop'  // صورة مبنى أكاديمي
         ];
         
         let currentImgIndex = 0;
         const bgElement = document.getElementById('movingBg');
 
-        // 2. تعيين الصورة الأولى فور فتح الصفحة
-        if(bgImages.length > 0) {
+        // 2. تعيين الصورة الأولى فور فتح الصفحة (تأكدنا من وجود العنصر لتجنب الخطأ)
+        if(bgElement && bgImages.length > 0) {
             bgElement.style.backgroundImage = `url('${bgImages[0]}')`;
+            
+            // 3. دالة تبديل الصور كل 6 ثوانٍ
+            setInterval(() => {
+                currentImgIndex = (currentImgIndex + 1) % bgImages.length;
+                bgElement.style.backgroundImage = `url('${bgImages[currentImgIndex]}')`;
+            }, 6000);
         }
 
-        // 3. دالة تبديل الصور كل 5 ثوانٍ
-        setInterval(() => {
-            currentImgIndex = (currentImgIndex + 1) % bgImages.length;
-            bgElement.style.backgroundImage = `url('${bgImages[currentImgIndex]}')`;
-        }, 5000); // 5000 تعني 6 ثواني (يمكنك زيادتها أو تقليلها)
-
-        // دالة الوضع الداكن 
+        // دالة الوضع الداكن (معدلة لتعمل بشكل صحيح)
         function toggleDarkMode() {
             const h = document.getElementById('mainHtml');
             const nm = h.getAttribute('data-bs-theme') === 'dark' ? 'light' : 'dark';
