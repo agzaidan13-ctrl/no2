@@ -43,7 +43,7 @@
             top: 0; left: 0;
             width: 100%; height: 100%;
             z-index: -1;
-            opacity: 0.15; /* تم زيادة الوضوح قليلاً لكي تراها بوضوح */
+            opacity: 0.15;
             background-size: cover; 
             background-position: center;
             transition: background-image 2s ease-in-out; 
@@ -56,7 +56,6 @@
             filter: grayscale(30%) brightness(0.6); 
         }
 
-        /* المحرك الحركي (Zoom & Pan) */
         @keyframes slowPan {
             0% { transform: scale(1) translate(0px, 0px); }
             100% { transform: scale(1.1) translate(-20px, -15px); } 
@@ -73,7 +72,7 @@
 
         .header-titles {
             text-align: right;
-            margin-right: 15px; /* مسافة بين النص والشعار لجهة اليمين */
+            margin-right: 15px; 
         }
 
         .main-title {
@@ -157,7 +156,6 @@
         
         [data-bs-theme="dark"] .portal-footer { color: #adb5bd; }
 
-        /* التجاوب مع شاشات الهواتف */
         @media (max-width: 768px) {
             .portal-header { flex-direction: column; align-items: center; text-align: center; gap: 20px; padding: 20px;}
             .header-titles { text-align: center; margin-right: 0; margin-top: 10px;}
@@ -179,8 +177,7 @@
                 <p class="sub-title">معهد التدريب النفطي / بغداد - قسم الإحصاء والتحول الرقمي</p>
             </div>
         </div>
-
-        <button class="btn btn-outline-primary rounded-pill px-4 bg-body" onclick="toggleDarkMode()" id="themeBtn">🌙 الوضع الداكن</button>
+        <button class="btn btn-outline-primary rounded-pill px-4" style="background-color: var(--bg-card);" onclick="toggleDarkMode()" id="themeBtn">🌙 الوضع الداكن</button>
     </div>
 
     <div class="main-content w-100">
@@ -189,14 +186,8 @@
                 <div class="col-md-6 col-lg-4 offset-lg-1">
                     <div class="selection-box">
                         <h4 class="selection-title">اختر العام التدريبي لعرض المؤشرات:</h4>
-                        
-                        <a href="dashboard_2025.html" class="year-btn-custom">
-                            <span>عام 2025</span> 📊
-                        </a>
-                        
-                        <a href="dashboard_2026.html" class="year-btn-custom">
-                            <span>عام 2026</span> 📊
-                        </a>
+                        <a href="dashboard_2025.html" class="year-btn-custom"><span>عام 2025</span> 📊</a>
+                        <a href="dashboard_2026.html" class="year-btn-custom"><span>عام 2026</span> 📊</a>
                     </div>
                 </div>
             </div>
@@ -208,33 +199,41 @@
     </div>
 
     <script>
-        // 1. صور تجريبية حقيقية من الإنترنت (لترى الحركة بعينك)
-        const bgImages = [
-            'https://images.unsplash.com/photo-1581094794329-c8112a89af12?q=80&w=2070&auto=format&fit=crop', // صورة هندسية
-            'https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?q=80&w=2070&auto=format&fit=crop', // صورة تعليم/تدريب
-            'https://images.unsplash.com/photo-1541888086425-d81bb19240f5?q=80&w=2070&auto=format&fit=crop'  // صورة مبنى أكاديمي
-        ];
-        
-        let currentImgIndex = 0;
-        const bgElement = document.getElementById('movingBg');
-
-        // 2. تعيين الصورة الأولى فور فتح الصفحة (تأكدنا من وجود العنصر لتجنب الخطأ)
-        if(bgElement && bgImages.length > 0) {
-            bgElement.style.backgroundImage = `url('${bgImages[0]}')`;
-            
-            // 3. دالة تبديل الصور كل 6 ثوانٍ
-            setInterval(() => {
-                currentImgIndex = (currentImgIndex + 1) % bgImages.length;
-                bgElement.style.backgroundImage = `url('${bgImages[currentImgIndex]}')`;
-            }, 6000);
-        }
-
-        // دالة الوضع الداكن (معدلة لتعمل بشكل صحيح)
         function toggleDarkMode() {
-            const h = document.getElementById('mainHtml');
-            const nm = h.getAttribute('data-bs-theme') === 'dark' ? 'light' : 'dark';
-            h.setAttribute('data-bs-theme', nm);
-            document.getElementById('themeBtn').innerHTML = nm === 'dark' ? '☀️ الوضع الفاتح' : '🌙 الوضع الداكن';
+            try {
+                const h = document.getElementById('mainHtml');
+                const nm = h.getAttribute('data-bs-theme') === 'dark' ? 'light' : 'dark';
+                h.setAttribute('data-bs-theme', nm);
+                document.getElementById('themeBtn').innerHTML = nm === 'dark' ? '☀️ الوضع الفاتح' : '🌙 الوضع الداكن';
+            } catch (e) {
+                console.error("خطأ في تبديل الوضع الداكن:", e);
+            }
+        }
+    </script>
+
+    <script>
+        try {
+            // ضع أسماء صورك هنا بين علامات التنصيص المفردة
+            // تأكد من وجود الفاصلة بعد كل صورة ما عدا الأخيرة
+            const bgImages = [
+                'images/pic1.jpg',
+                'images/pic2.jpg',
+                'images/pic3.jpg'
+            ];
+            
+            let currentImgIndex = 0;
+            const bgElement = document.getElementById('movingBg');
+
+            if(bgElement && bgImages.length > 0) {
+                bgElement.style.backgroundImage = `url('${bgImages[0]}')`;
+                
+                setInterval(() => {
+                    currentImgIndex = (currentImgIndex + 1) % bgImages.length;
+                    bgElement.style.backgroundImage = `url('${bgImages[currentImgIndex]}')`;
+                }, 6000);
+            }
+        } catch (e) {
+            console.error("خطأ في تحميل الصور:", e);
         }
     </script>
 </body>
