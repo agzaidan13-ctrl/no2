@@ -497,11 +497,13 @@
         document.getElementById('detail-table-container').innerHTML = tableHtml;
     }
 
-    function toggleDarkMode() {
+function toggleDarkMode() {
         const h = document.getElementById('mainHtml');
         const nm = h.getAttribute('data-bs-theme') === 'dark' ? 'light' : 'dark';
         h.setAttribute('data-bs-theme', nm);
-        document.getElementById('themeBtn').innerHTML = nm === 'dark' ? '🌙 الوضع الداكن' : '☀️ الوضع الفاتح';
+        
+        // السطر الذي تم تصحيحه لعكس النص بشكل سليم
+        document.getElementById('themeBtn').innerHTML = nm === 'dark' ? '☀️ الوضع الفاتح' : '🌙 الوضع الداكن';
         
         const tc = nm === 'dark' ? '#f0f9ff' : '#0c4a6e';
         const updateCfg = { theme: { mode: nm } };
@@ -516,6 +518,7 @@
             }
         }
     }
+
 
     window.onload = loadData;
 </script>
