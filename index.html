@@ -66,28 +66,29 @@
             padding: 20px 40px;
             display: flex;
             justify-content: space-between;
-            align-items: flex-start;
+            align-items: flex-start; /* محاذاة العناصر للأعلى */
             z-index: 10;
         }
 
-        /* تنسيق الهيدر الرسمي */
+        /* النصوص في جهة اليمين */
         .header-titles {
             text-align: right;
-            margin-left: 20px; /* مسافة لتبعد النص عن الشعار الموجود على اليسار */
         }
 
+        /* تكبير خط جمهورية العراق ووزارة النفط */
         .gov-title {
-            font-size: 1.1rem;
+            font-size: 2.2rem; /* تم التكبير ليكون الأبرز */
             font-weight: 700;
-            color: var(--text-dark);
-            line-height: 1.5;
+            color: var(--primary-blue);
+            line-height: 1.4;
             margin-bottom: 5px;
         }
 
+        /* تصغير اسم المعهد ليكون أصغر من اسم الدولة والوزارة */
         .main-title {
-            font-size: 1.8rem;
+            font-size: 1.5rem; 
             font-weight: 700;
-            color: var(--primary-blue);
+            color: var(--text-dark);
             margin-bottom: 5px;
         }
 
@@ -98,10 +99,10 @@
         }
         
         [data-bs-theme="dark"] .sub-title { color: #adb5bd; }
-        [data-bs-theme="dark"] .gov-title { color: #e0f2fe; }
 
+        /* الشعار في أقصى اليسار مع استعادة الحجم السابق */
         .header-logo {
-            width: 130px; /* تم تصغير الشعار قليلاً ليتناسب مع الهيدر الرسمي */
+            width: 180px; /* تم إرجاع الحجم كما كان */
             height: auto;
             filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
         }
@@ -166,10 +167,11 @@
         
         [data-bs-theme="dark"] .portal-footer { color: #adb5bd; }
 
+        /* التجاوب مع شاشات الهواتف */
         @media (max-width: 768px) {
             .portal-header { flex-direction: column; align-items: center; text-align: center; gap: 20px; padding: 20px;}
-            .header-group { flex-direction: column-reverse; align-items: center; text-align: center;} /* لعرض الشعار فوق النص في الموبايل */
-            .header-titles { text-align: center; margin-left: 0; margin-top: 15px;}
+            .header-titles { text-align: center; margin: 0;}
+            .left-controls { flex-direction: column-reverse; gap: 15px;} /* لعرض الشعار فوق الزر في الموبايل */
             .selection-box { margin: 0 auto; text-align: center;}
             .selection-title { text-align: center; }
             .portal-footer { text-align: center; }
@@ -181,19 +183,19 @@
     <div class="animated-bg" id="movingBg"></div>
 
     <div class="portal-header w-100">
-        <div class="d-flex align-items-center header-group">
-            <div class="header-titles">
-                <div class="gov-title">
-                    جمهورية العراق<br>
-                    وزارة النفط
-                </div>
-                <h1 class="main-title">معهد التدريب النفطي / بغداد</h1>
-                <p class="sub-title">المنظومة الإحصائية الموحدة</p>
+        <div class="header-titles">
+            <div class="gov-title">
+                جمهورية العراق<br>
+                وزارة النفط
             </div>
-            <img src="images/boti.png" alt="شعار معهد التدريب النفطي" class="header-logo" onerror="this.src='https://raw.githubusercontent.com/agzaidan13-ctrl/no2/main/boti.png'">
+            <h1 class="main-title">معهد التدريب النفطي / بغداد</h1>
+            <p class="sub-title">المنظومة الإحصائية الموحدة</p>
         </div>
         
-        <button class="btn btn-outline-primary rounded-pill px-4" style="background-color: var(--bg-card);" onclick="toggleDarkMode()" id="themeBtn">🌙 الوضع الداكن</button>
+        <div class="d-flex align-items-center gap-4 left-controls">
+            <button class="btn btn-outline-primary rounded-pill px-4" style="background-color: var(--bg-card);" onclick="toggleDarkMode()" id="themeBtn">🌙 الوضع الداكن</button>
+            <img src="images/boti.png" alt="شعار معهد التدريب النفطي" class="header-logo" onerror="this.src='https://raw.githubusercontent.com/agzaidan13-ctrl/no2/main/boti.png'">
+        </div>
     </div>
 
     <div class="main-content w-100">
@@ -229,7 +231,6 @@
 
     <script>
         try {
-
             const bgImages = [
                 'images/pic1.jpg',
                 'images/pic2.jpg',
