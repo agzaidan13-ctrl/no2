@@ -50,7 +50,7 @@
             animation: slowPan 25s infinite alternate ease-in-out; 
         }
 
-        /* تغميق الصور في الوضع الداكن للحفاظ على راحة العين */
+        /* تغميق الصور في الوضع الداكن */
         [data-bs-theme="dark"] .animated-bg {
             opacity: 0.15;
             filter: grayscale(30%) brightness(0.6); 
@@ -173,8 +173,10 @@
         <div class="d-flex align-items-center">
             <img src="images/boti.png" alt="شعار معهد التدريب النفطي" class="header-logo" onerror="this.src='https://raw.githubusercontent.com/agzaidan13-ctrl/no2/main/boti.png'">
             <div class="header-titles">
+                <h1 class="main-title">جمهورية العراق</h1>
+                <h1 class="main-title">وزارة النفط</h1>
                 <h1 class="main-title">معهد التدريب النفطي / بغداد</h1>
-                <p class="sub-title">المنظومة الإحصائية</p>
+                <p class="sub-title">المنظومة الإحصائية الموحدة</p>
             </div>
         </div>
         <button class="btn btn-outline-primary rounded-pill px-4" style="background-color: var(--bg-card);" onclick="toggleDarkMode()" id="themeBtn">🌙 الوضع الداكن</button>
