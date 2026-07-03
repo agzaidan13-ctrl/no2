@@ -84,6 +84,12 @@
             margin-bottom: 5px;
         }
 
+        /* تحريك عبارة وزارة النفط لليسار  */
+        .shift-left {
+            display: inline-block;
+            margin-right: 35px; 
+            }
+
         /* خط معهد التدريب النفطي / بغداد */
         .main-title {
             font-size: 1.5rem; 
@@ -183,11 +189,12 @@
     <div class="animated-bg" id="movingBg"></div>
 
     <div class="portal-header w-100">
-        <div class="header-titles">
-            <div class="gov-title">
+
+                    <div class="gov-title">
                 جمهورية العراق<br>
-                   وزارة النفط
+                <span class="shift-left">وزارة النفط</span>
             </div>
+
             <h1 class="main-title">معهد التدريب النفطي / بغداد</h1>
             <p class="sub-title">المنظومة الإحصائية الموحدة</p>
         </div>
